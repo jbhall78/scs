@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+
+<!-- written by blender2xml.py -->
+<material-lib name="mtl" version="1.0">
+	<material-group name="mtl" default="1">
+		<material name="Hull_MA">
+			<color name="ambient"  r="1.0" g="1.0" b="1.0" />
+			<color name="diffuse"  r="1.0" g="1.0" b="1.0" a="1.0" />
+			<color name="specular" r="1.0" g="1.0" b="1.0" />
+			<color name="emissive" r="0.0" g="0.0" b="0.0" />
+			<shininess value="12" />
+			<texture name="Tex.003" file="texture17.png" />
+		</material>
+		<material name="Plate_MA">
+			<color name="ambient"  r="0.225563928485" g="0.240601420403" b="0.237593874335" />
+			<color name="diffuse"  r="0.225563928485" g="0.240601420403" b="0.237593874335" a="1.0" />
+			<color name="specular" r="1.0" g="1.0" b="1.0" />
+			<color name="emissive" r="0.0" g="0.0" b="0.0" />
+			<shininess value="12" />
+		</material>
+		<material name="TeamColor_MA">
+			<color name="ambient"  r="0.343834638596" g="0.376538932323" b="0.619602262974" />
+			<color name="diffuse"  r="0.343834638596" g="0.376538932323" b="0.619602262974" a="1.0" />
+			<color name="specular" r="1.0" g="1.0" b="1.0" />
+			<color name="emissive" r="0.0" g="0.0" b="0.0" />
+			<shininess value="12" />
+			<texture name="Tex.002" file="texture20.png" />
+		</material>
+		<material name="Window_MA">
+			<color name="ambient"  r="0.0733399987221" g="0.137746751308" b="0.135952159762" />
+			<color name="diffuse"  r="0.0733399987221" g="0.137746751308" b="0.135952159762" a="1.0" />
+			<color name="specular" r="1.0" g="1.0" b="1.0" />
+			<color name="emissive" r="0.0" g="0.0" b="0.0" />
+			<shininess value="12" />
+		</material>
+	</material-group>
+</material-lib>

@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+
+<!-- written by blender2xml.py -->
+<material-lib name="mtl" version="1.0">
+	<material-group name="mtl" default="1">
+		<material name="details">
+			<color name="ambient"  r="0.326141119003" g="0.326141148806" b="0.324896246195" />
+			<color name="diffuse"  r="0.326141119003" g="0.326141148806" b="0.324896246195" a="1.0" />
+			<color name="specular" r="1.0" g="1.0" b="1.0" />
+			<color name="emissive" r="0.0" g="0.0" b="0.0" />
+			<shininess value="12" />
+		</material>
+                <material name="engine">
+                        <color name="ambient"  r="0" g="0" b="0" />
+                        <color name="diffuse"  r="0" g="0" b="0" a="1.0" />
+                        <color name="specular" r="1.0" g="1.0" b="1.0" />
+                        <color name="emissive" r="0.0" g="0.0" b="0.0" />
+                        <shininess value="12" />
+                </material>
+		<material name="highlights">
+			<color name="ambient"  r="0.853690981865" g="0.482008159161" b="0.216988295317" />
+			<color name="diffuse"  r="0.853690981865" g="0.482008159161" b="0.216988295317" a="1.0" />
+			<color name="specular" r="1.0" g="1.0" b="1.0" />
+			<color name="emissive" r="0.853690981865" g="0.482008159161" b="0.216988295317" />
+			<shininess value="12" />
+		</material>
+		<material name="hull">
+			<color name="ambient"  r="1" g="1" b="1" />
+			<color name="diffuse"  r="1" g="1" b="1" a="1.0" />
+			<color name="specular" r="1.0" g="1.0" b="1.0" />
+			<color name="emissive" r="0.0" g="0.0" b="0.0" />
+			<shininess value="12" />
+			<texture name="Tex" file="fighter-hull.png" />
+		</material>
+                <material name="teamcolor">
+                        <color name="ambient"  r="0.343834638596" g="0.376538932323" b="0.619602262974" />
+                        <color name="diffuse"  r="0.343834638596" g="0.376538932323" b="0.619602262974" a="1.0" />
+                        <color name="specular" r="1.0" g="1.0" b="1.0" />
+                        <color name="emissive" r="0.0" g="0.0" b="0.0" />
+                        <shininess value="12" />
+                        <texture name="EnvMap" file="envmap7.png" />
+                        <texture name="alpha" file="alpha3.png" />
+                </material>
+		<material name="window">
+                        <color name="ambient"  r="0.436131593585" g="0.462971073389" b="0.511266183853" a="1.0" />
+                        <color name="diffuse"  r="0.436131593585" g="0.462971073389" b="0.511266183853" a="1.0" />
+                        <color name="specular" r="1.0" g="1.0" b="0.899820506573" />
+			<color name="emissive" r="0.0" g="0.0" b="0.0" />
+			<shininess value="12" />
+                        <texture name="EnvMap" file="envmap4.png" />
+		</material>
+	</material-group>
+</material-lib>

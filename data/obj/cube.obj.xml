@@ -1,0 +1,235 @@
+<?xml version="1.0"?>
+
+<!-- written by blender2xml.py -->
+<mesh name="mesh" version="1.0">
+	<material-lib name="cube.mtl.xml" />
+	<vertices>
+		<!-- Cube -->
+		<vertex id="0" x="2.99999976158" y="3.0" z="-3.0" />
+		<vertex id="1" x="2.99999976158" y="-2.99999952316" z="-3.0" />
+		<vertex id="2" x="-3.00000071526" y="-2.99999904633" z="-3.0" />
+		<vertex id="3" x="-2.99999904633" y="3.00000143051" z="-3.0" />
+		<vertex id="4" x="3.00000143051" y="2.99999856949" z="3.0" />
+		<vertex id="5" x="2.99999785423" y="-3.00000143051" z="3.0" />
+		<vertex id="6" x="-3.00000143051" y="-2.99999856949" z="3.0" />
+		<vertex id="7" x="-3.0" y="3.00000047684" z="3.0" />
+	</vertices>
+	<texture-coords>
+		<!-- Cube -->
+		<uv id="0" u="0.0" v="1.0" />
+		<uv id="1" u="0.0" v="0.0" />
+		<uv id="2" u="1.0" v="0.0" />
+		<uv id="3" u="0.0" v="1.0" />
+		<uv id="4" u="1.0" v="0.0" />
+		<uv id="5" u="1.0" v="1.0" />
+		<uv id="6" u="0.0" v="1.0" />
+		<uv id="7" u="0.0" v="0.0" />
+		<uv id="8" u="1.0" v="0.0" />
+		<uv id="9" u="0.0" v="1.0" />
+		<uv id="10" u="1.0" v="0.0" />
+		<uv id="11" u="1.0" v="1.0" />
+		<uv id="12" u="0.0" v="1.0" />
+		<uv id="13" u="0.0" v="0.0" />
+		<uv id="14" u="1.0" v="0.0" />
+		<uv id="15" u="0.0" v="1.0" />
+		<uv id="16" u="1.0" v="0.0" />
+		<uv id="17" u="1.0" v="1.0" />
+		<uv id="18" u="0.0" v="1.0" />
+		<uv id="19" u="0.0" v="0.0" />
+		<uv id="20" u="1.0" v="0.0" />
+		<uv id="21" u="0.0" v="1.0" />
+		<uv id="22" u="1.0" v="0.0" />
+		<uv id="23" u="1.0" v="1.0" />
+		<uv id="24" u="0.0" v="1.0" />
+		<uv id="25" u="0.0" v="0.0" />
+		<uv id="26" u="1.0" v="0.0" />
+		<uv id="27" u="0.0" v="1.0" />
+		<uv id="28" u="1.0" v="0.0" />
+		<uv id="29" u="1.0" v="1.0" />
+		<uv id="30" u="0.0" v="1.0" />
+		<uv id="31" u="0.0" v="0.0" />
+		<uv id="32" u="1.0" v="0.0" />
+		<uv id="33" u="0.0" v="1.0" />
+		<uv id="34" u="1.0" v="0.0" />
+		<uv id="35" u="1.0" v="1.0" />
+	</texture-coords>
+	<vertex-groups>
+		<vertex-group name="Cube::Bone">
+			<vertex v="0" weight="0.854000508785" />
+			<vertex v="1" weight="0.854000508785" />
+			<vertex v="2" weight="0.854000508785" />
+			<vertex v="3" weight="0.854000508785" />
+			<vertex v="4" weight="0.854000508785" />
+			<vertex v="5" weight="0.854000508785" />
+			<vertex v="6" weight="0.854000508785" />
+			<vertex v="7" weight="0.854000508785" />
+		</vertex-group>
+	</vertex-groups>
+	<facet-normals>
+		<!-- Cube -->
+		<normal id="0" x="0.0" y="0.0" z="-1.0" />
+		<normal id="1" x="0.0" y="-0.0" z="-1.0" />
+		<normal id="2" x="-0.0" y="0.0" z="1.0" />
+		<normal id="3" x="0.0" y="-0.0" z="1.0" />
+		<normal id="4" x="1.0" y="-5.96046447754e-07" z="-2.78155170008e-07" />
+		<normal id="5" x="1.0" y="0.0" z="3.17891448276e-07" />
+		<normal id="6" x="-4.76837215047e-07" y="-1.0" z="-3.17891561963e-07" />
+		<normal id="7" x="-7.94728478581e-08" y="-1.0" z="7.94728478581e-08" />
+		<normal id="8" x="-1.0" y="2.38418635945e-07" z="-1.19209317972e-07" />
+		<normal id="9" x="-1.0" y="2.78154971056e-07" z="-1.58945681505e-07" />
+		<normal id="10" x="2.38418635945e-07" y="1.0" z="2.38418522258e-07" />
+		<normal id="11" x="3.17891363011e-07" y="1.0" z="1.58945780981e-07" />
+	</facet-normals>
+	<vertex-normals>
+		<!-- Cube -->
+		<normal id="0" x="0.577349185944" y="0.577349185944" z="-0.577349185944" />
+		<normal id="1" x="0.577349185944" y="-0.577349185944" z="-0.577349185944" />
+		<normal id="2" x="-0.577349185944" y="-0.577349185944" z="-0.577349185944" />
+		<normal id="3" x="-0.577349185944" y="0.577349185944" z="-0.577349185944" />
+		<normal id="4" x="0.577349185944" y="0.577349185944" z="0.577349185944" />
+		<normal id="5" x="0.577349185944" y="-0.577349185944" z="0.577349185944" />
+		<normal id="6" x="-0.577349185944" y="-0.577349185944" z="0.577349185944" />
+		<normal id="7" x="-0.577349185944" y="0.577349185944" z="0.577349185944" />
+	</vertex-normals>
+	<objects>
+		<object name="Cube">
+			<face material="Material">
+				<vertex v="0" vn="0">
+					<vt uv="0" />
+				</vertex>
+				<vertex v="1" vn="1">
+					<vt uv="1" />
+				</vertex>
+				<vertex v="2" vn="2">
+					<vt uv="2" />
+				</vertex>
+			</face>
+			<face material="Material">
+				<vertex v="0" vn="0">
+					<vt uv="3" />
+				</vertex>
+				<vertex v="2" vn="2">
+					<vt uv="4" />
+				</vertex>
+				<vertex v="3" vn="3">
+					<vt uv="5" />
+				</vertex>
+			</face>
+			<face material="Material" normal="2">
+				<vertex v="4" >
+					<vt uv="6" />
+				</vertex>
+				<vertex v="7" >
+					<vt uv="7" />
+				</vertex>
+				<vertex v="6" >
+					<vt uv="8" />
+				</vertex>
+			</face>
+			<face material="Material" normal="3">
+				<vertex v="4" >
+					<vt uv="9" />
+				</vertex>
+				<vertex v="6" >
+					<vt uv="10" />
+				</vertex>
+				<vertex v="5" >
+					<vt uv="11" />
+				</vertex>
+			</face>
+			<face material="Material">
+				<vertex v="0" vn="0">
+					<vt uv="12" />
+				</vertex>
+				<vertex v="4" vn="4">
+					<vt uv="13" />
+				</vertex>
+				<vertex v="5" vn="5">
+					<vt uv="14" />
+				</vertex>
+			</face>
+			<face material="Material">
+				<vertex v="0" vn="0">
+					<vt uv="15" />
+				</vertex>
+				<vertex v="5" vn="5">
+					<vt uv="16" />
+				</vertex>
+				<vertex v="1" vn="1">
+					<vt uv="17" />
+				</vertex>
+			</face>
+			<face material="Material">
+				<vertex v="1" vn="1">
+					<vt uv="18" />
+				</vertex>
+				<vertex v="5" vn="5">
+					<vt uv="19" />
+				</vertex>
+				<vertex v="6" vn="6">
+					<vt uv="20" />
+				</vertex>
+			</face>
+			<face material="Material">
+				<vertex v="1" vn="1">
+					<vt uv="21" />
+				</vertex>
+				<vertex v="6" vn="6">
+					<vt uv="22" />
+				</vertex>
+				<vertex v="2" vn="2">
+					<vt uv="23" />
+				</vertex>
+			</face>
+			<face material="Material">
+				<vertex v="2" vn="2">
+					<vt uv="24" />
+				</vertex>
+				<vertex v="6" vn="6">
+					<vt uv="25" />
+				</vertex>
+				<vertex v="7" vn="7">
+					<vt uv="26" />
+				</vertex>
+			</face>
+			<face material="Material">
+				<vertex v="2" vn="2">
+					<vt uv="27" />
+				</vertex>
+				<vertex v="7" vn="7">
+					<vt uv="28" />
+				</vertex>
+				<vertex v="3" vn="3">
+					<vt uv="29" />
+				</vertex>
+			</face>
+			<face material="Material">
+				<vertex v="4" vn="4">
+					<vt uv="30" />
+				</vertex>
+				<vertex v="0" vn="0">
+					<vt uv="31" />
+				</vertex>
+				<vertex v="3" vn="3">
+					<vt uv="32" />
+				</vertex>
+			</face>
+			<face material="Material">
+				<vertex v="4" vn="4">
+					<vt uv="33" />
+				</vertex>
+				<vertex v="3" vn="3">
+					<vt uv="34" />
+				</vertex>
+				<vertex v="7" vn="7">
+					<vt uv="35" />
+				</vertex>
+			</face>
+		</object>
+	</objects>
+	<armatures>
+		<armature name="Armature">
+			<bone name="Bone" />
+		</armature>
+	</armatures>
+</mesh>

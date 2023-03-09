@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<!-- written by blender2xml.py -->
+<material-lib name="mtl" version="1.0">
+	<material-group name="mtl" default="1">
+		<material name="Material">
+			<color name="ambient"  r="1.0" g="1.0" b="1.0" />
+			<color name="diffuse"  r="1.0" g="1.0" b="1.0" a="1.0" />
+			<color name="specular" r="1.0" g="1.0" b="1.0" />
+			<color name="emissive" r="0.0" g="0.0" b="0.0" />
+			<shininess value="12" />
+			<texture name="Tex" file="testmap.png" />
+		</material>
+	</material-group>
+</material-lib>

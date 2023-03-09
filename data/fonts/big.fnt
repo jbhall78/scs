@@ -1,0 +1,9 @@
+# nTextures, char width/height, 1=linear filtering,0=nearest filtering
+2 32 32 0
+# lowest/highest ascii char value
+31 127
+# name
+xenotron
+# files
+xenotron.0.png
+xenotron.1.png

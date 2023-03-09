@@ -1,0 +1,46 @@
+CC = gcc
+CFLAGS = -DLINUX -DUNIX -DSCS_ENGINE -DNET_VCR -D_GNU_SOURCE=1 -D_REENTRANT -Wno-unused-variable -Wno-implicit-function-declaration \
+	`pkg-config glib-2.0 --cflags` \
+	`pkg-config gnet-2.0 --cflags` \
+	`pkg-config libxml-2.0 --cflags` \
+	`pkg-config sdl --cflags` \
+	`pkg-config SDL_image --cflags` \
+	`pkg-config openal --cflags` \
+        `pkg-config freealut --cflags`	
+LDFLAGS = -lm -lscs -L. -lGL -lGLU \
+	`pkg-config glib-2.0 --libs` \
+	`pkg-config gnet-2.0 --libs` \
+	`pkg-config libxml-2.0 --libs` \
+	`pkg-config sdl --libs` \
+	`pkg-config SDL_image --libs` \
+	`pkg-config openal --libs` \
+        `pkg-config freealut --libs`	
+H_FILES = client.h cl_bind_map.h cl_light.h tex.h ui.h sys_gl.h sys_gl_auto.h \
+		snd.h wav.h server.h
+# cl_newton.c
+C_FILES = cl_main.c cl_menu.c cl_game.c cl_hud.c \
+		cl_console.c cl_bindings.c cl_light.c tex.c cl_pkt.c \
+		cl_globe.c ui_main.c ui_font.c ui_window.c ui_label.c \
+		ui_button.c ui_text.c ui_checkbox.c ui_clist.c ui_scrollbar.c \
+		ui_select.c ui_root.c ui_tooltip.c ui_draw.c vid.c \
+		sys_gl.c sys_gl_auto.c snd.c wav.c main.c \
+		sv_main.c sv_pkt.c sv_obj.c sys_unix.c tcp_unix.c clock.c
+O_FILES = cl_main.o cl_menu.o cl_game.o cl_hud.o \
+		cl_console.o cl_bindings.o cl_light.o tex.o cl_pkt.o \
+		cl_globe.o ui_main.o ui_font.o ui_window.o ui_label.o \
+		ui_button.o ui_text.o ui_checkbox.o ui_clist.o ui_scrollbar.o \
+		ui_select.o ui_root.o ui_tooltip.o ui_draw.o vid.o \
+		sys_gl.o sys_gl_auto.o snd.o wav.o main.o \
+		sv_main.o sv_pkt.o sv_obj.o sys_unix.o tcp_unix.o clock.o
+
+
+all: scs-client
+
+scs-client: $(O_FILES) $(C_FILES) $(H_FILES)
+	$(CC) -o scs-client $(O_FILES) $(LDFLAGS)
+
+.c.o:
+	$(CC) $(CFLAGS) -c $*.c -o $*.o
+
+clean:
+	rm -f $(O_FILES) scs-client

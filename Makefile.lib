@@ -1,0 +1,42 @@
+CC = gcc
+CFLAGS = -DLINUX -DUNIX -D_GNU_SOURCE=1 -D_REENTRANT -Wno-unused-variable -Wno-implicit-function-declaration \
+	`pkg-config glib-2.0 --cflags` \
+	`pkg-config gnet-2.0 --cflags` \
+	`pkg-config libxml-2.0 --cflags` \
+	`pkg-config sdl --cflags`
+LDFLAGS = -lm \
+	`pkg-config glib-2.0 --libs` \
+	`pkg-config gnet-2.0 --libs` \
+	`pkg-config libxml-2.0 --libs` \
+	`pkg-config sdl --libs`
+H_FILES = scs.h shared.h mathlib.h net.h shell.h mesh.h slist.h dlist.h \
+			hash.h array.h varray.h mem.h url.h parser.h http.h \
+			strlib.h intersect.h filelib.h dirlib.h var.h \
+			thread_func.h thread.h clock.h timer.h game.h dbuf.h \
+			error.h random.h
+C_FILES = util.c mathlib.c net.c shell.c net_drv.c net_drv_udp.c \
+			net_drv_async.c net_pkt_auto.c var_auto.c \
+			net_drv_vcr.c mesh.c xml_mesh.c xml_mesh_mtl.c \
+			slist.c dlist.c hash.c array.c varray.c mem.c url.c \
+			parser.c http.c str.c split.c strip.c intersect.c \
+			filelib.c dirlib.c var.c thread_func.c thread.c \
+			clock.c timer.c dbuf.c error.c random.c
+O_FILES = util.o mathlib.o net.o shell.o net_drv.o net_drv_udp.o \
+			net_drv_async.o net_pkt_auto.o var_auto.o \
+			net_drv_vcr.o mesh.o xml_mesh.o xml_mesh_mtl.o \
+			slist.o dlist.o hash.o array.o varray.o mem.o url.o \
+			parser.o http.o str.o split.o strip.o intersect.o \
+			filelib.o dirlib.o var.o thread_func.o thread.o \
+			clock.o timer.o dbuf.o error.o random.o
+
+all: libscs.a
+
+libscs.a: $(O_FILES) $(C_FILES) $(H_FILES)
+	ar rc libscs.a $(O_FILES)
+	ranlib libscs.a
+
+.c.o:
+	$(CC) $(CFLAGS) -c $*.c -o $*.o
+
+clean:
+	rm -f $(O_FILES) libscs.a

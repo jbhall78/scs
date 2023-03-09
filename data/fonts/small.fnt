@@ -1,0 +1,8 @@
+# nTextures, tex width, char width, char height
+1 8 13 0
+# lowest/highest ascii char value
+32 128
+# name
+small
+# files
+small.png
