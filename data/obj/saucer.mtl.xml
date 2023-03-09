@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+
+<!-- written by blender2xml.py -->
+<material-lib name="mtl" version="1.0">
+	<material-group name="mtl" default="1">
+		<material name="Material">
+			<color name="ambient"  r="0.7" g="0.0777315497398" b="0.117543168366" />
+			<color name="diffuse"  r="0.7" g="0.0777315497398" b="0.117543168366" a="1.0" />
+			<color name="specular" r="1.0" g="1.0" b="1.0" />
+			<color name="emissive" r="0.0" g="0.0" b="0.0" />
+			<shininess value="12" />
+                        <texture name="EnvMap" file="envmap9.png" />
+		</material>
+		<material name="Material.001">
+			<color name="ambient"  r="0.871703326702" g="0.884156167507" b="0.933967828751" />
+			<color name="diffuse"  r="0.871703326702" g="0.884156167507" b="0.933967828751" a="1.0" />
+			<color name="specular" r="1.0" g="1.0" b="1.0" />
+			<color name="emissive" r="0.0" g="0.0" b="0.0" />
+			<shininess value="127" />
+			<texture name="Tex" file="texture17.png" />
+			<texture name="Tex.001" file="texture16.png" />
+                        <texture name="EnvMap" file="envmap7.png" />
+		</material>
+		<material name="Material.002">
+			<color name="ambient"  r="0.186793550849" g="0.514336705208" b="1.0" />
+			<color name="diffuse"  r="0.186793550849" g="0.514336705208" b="1.0" a="1.0" />
+			<color name="specular" r="1.0" g="1.0" b="1.0" />
+			<color name="emissive" r="1.0" g="1.0" b="1.0" />
+			<shininess value="127" />
+			<texture name="Tex.002" file="texture15.png" />
+		</material>
+		<material name="Material.003">
+			<color name="ambient"  r="0.552825737" g="0.0" b="0.0" />
+			<color name="diffuse"  r="0.552825737" g="0.0" b="0.0" a="1.0" />
+			<color name="specular" r="0.0" g="0.0" b="0.0" />
+			<color name="emissive" r="0.0" g="0.0" b="0.0" />
+			<shininess value="110" />
+			<texture name="Tex.004" file="texture24.png" />
+		</material>
+		<material name="Material.004">
+			<color name="ambient"  r="0.0" g="0.0" b="0.0" />
+			<color name="diffuse"  r="0.0" g="0.0" b="0.0" a="1.0" />
+			<color name="specular" r="1.0" g="1.0" b="1.0" />
+			<color name="emissive" r="0.0" g="0.0" b="0.0" />
+			<shininess value="110" />
+		</material>
+	</material-group>
+</material-lib>

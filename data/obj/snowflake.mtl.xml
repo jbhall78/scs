@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+
+<!-- written by blender2xml.py -->
+<material-lib name="mtl" version="1.0">
+	<material-group name="mtl" default="1">
+		<material name="details">
+			<color name="ambient"  r="0.326141119003" g="0.326141148806" b="0.324896246195" />
+			<color name="diffuse"  r="0.326141119003" g="0.326141148806" b="0.324896246195" a="1.0" />
+			<color name="specular" r="1.0" g="1.0" b="1.0" />
+			<color name="emissive" r="0.0" g="0.0" b="0.0" />
+			<shininess value="12" />
+			<texture name="rumpf" file="skin_map.gif" />
+		</material>
+		<material name="highlights">
+			<color name="ambient"  r="0.853690981865" g="0.482008159161" b="0.216988295317" />
+			<color name="diffuse"  r="0.853690981865" g="0.482008159161" b="0.216988295317" a="1.0" />
+			<color name="specular" r="1.0" g="0.652296662331" b="0.352552384138" />
+			<color name="emissive" r="0.0" g="0.0" b="0.0" />
+			<shininess value="12" />
+		</material>
+		<material name="rumpf">
+			<color name="ambient"  r="0.326141119003" g="0.65780133009" b="0.877663135529" />
+			<color name="diffuse"  r="0.326141119003" g="0.65780133009" b="0.877663135529" a="1.0" />
+			<color name="specular" r="1.0" g="1.0" b="1.0" />
+			<color name="emissive" r="0.0" g="0.0" b="0.0" />
+			<shininess value="12" />
+			<texture name="rumpf" file="skin_map.gif" />
+                        <texture name="EnvMap" file="envmap7.png" />
+		</material>
+	</material-group>
+</material-lib>

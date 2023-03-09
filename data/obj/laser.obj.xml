@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+
+<!-- written by blender2xml.py -->
+<mesh name="mesh" version="1.0">
+	<material-lib name="laser.mtl.xml" />
+	<vertices>
+		<!-- Plane -->
+		<vertex id="0" x="0.9" y="0" z="0" />
+		<vertex id="1" x="0.9" y="0" z="-64" />
+		<vertex id="2" x="-0.9" y="0" z="-64" />
+		<vertex id="3" x="-0.9" y="0" z="0" />
+		<vertex id="4" x="0" y="0.9" z="0" />
+		<vertex id="5" x="0" y="0.9" z="-64" />
+		<vertex id="6" x="0" y="-0.9" z="-64" />
+		<vertex id="7" x="0" y="-0.9" z="0" />
+	</vertices>
+	<texture-coords>
+		<!-- Plane -->
+		<uv id="0" u="0.0" v="1.0" />
+		<uv id="1" u="0.0" v="0.0" />
+		<uv id="2" u="1.0" v="0.0" />
+		<uv id="3" u="1.0" v="1.0" />
+		<uv id="4" u="0.0" v="1.0" />
+		<uv id="5" u="0.0" v="0.0" />
+		<uv id="6" u="1.0" v="0.0" />
+		<uv id="7" u="1.0" v="1.0" />
+	</texture-coords>
+	<vertex-groups>
+	</vertex-groups>
+	<facet-normals>
+		<!-- Plane -->
+		<normal id="0" x="0.0" y="-1.91740703315e-08" z="1.0" />
+		<normal id="1" x="-1.0" y="-1.08662190357e-09" z="7.54979083695e-08" />
+	</facet-normals>
+	<vertex-normals>
+		<!-- Plane -->
+		<normal id="0" x="0.0" y="0.0" z="1.0" />
+		<normal id="1" x="0.0" y="0.0" z="1.0" />
+		<normal id="2" x="0.0" y="0.0" z="1.0" />
+		<normal id="3" x="0.0" y="0.0" z="1.0" />
+		<normal id="4" x="-1.0" y="0.0" z="0.0" />
+		<normal id="5" x="-1.0" y="0.0" z="0.0" />
+		<normal id="6" x="-1.0" y="0.0" z="0.0" />
+		<normal id="7" x="-1.0" y="0.0" z="0.0" />
+	</vertex-normals>
+	<objects>
+		<object name="Plane">
+			<face material="Material" normal="0">
+				<vertex v="0" >
+					<vt uv="0" />
+				</vertex>
+				<vertex v="3" >
+					<vt uv="1" />
+				</vertex>
+				<vertex v="2" >
+					<vt uv="2" />
+				</vertex>
+				<vertex v="1" >
+					<vt uv="3" />
+				</vertex>
+			</face>
+			<face material="Material" normal="1">
+				<vertex v="7" >
+					<vt uv="4" />
+				</vertex>
+				<vertex v="4" >
+					<vt uv="5" />
+				</vertex>
+				<vertex v="5" >
+					<vt uv="6" />
+				</vertex>
+				<vertex v="6" >
+					<vt uv="7" />
+				</vertex>
+			</face>
+		</object>
+	</objects>
+	<armatures>
+	</armatures>
+</mesh>
