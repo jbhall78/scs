@@ -18,3 +18,6 @@ This game supports recording and playback of game sessions.
 Using the engine for something else...
 <img src="scs-screenshot5.png">
 <hr>
+Game console
+<img src="scs-screenshot6.png">
+<hr>
