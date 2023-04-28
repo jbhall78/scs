@@ -13,5 +13,5 @@ Multiplayer!
 This game supports recording and playback of game sessions.
 <img src="scs-screenshot4.png">
 Using the engine for something else...
-<img src="scs-screenshot4.png">
+<img src="scs-screenshot5.png">
 <hr>
