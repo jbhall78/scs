@@ -2,7 +2,7 @@ SCS
 Space Combat Simulator
 <hr>
 Main Menu
-<img src="scs-screenshot.png">
+<img src="scs-screenshot0.png">
 <hr>
 Targeted on a bomber with the grid and earth in the background.
 <img src="scs-screenshot.png">
