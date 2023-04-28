@@ -12,4 +12,6 @@ Multiplayer!
 <hr>
 This game supports recording and playback of game sessions.
 <img src="scs-screenshot4.png">
+Using the engine for something else...
+<img src="scs-screenshot4.png">
 <hr>
