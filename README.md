@@ -17,9 +17,9 @@ Here are some additional details about the game:
 * Space Combat Simulator is a challenging and rewarding game that is sure to provide hours of entertainment.
 
 
-<hr>
 Building:
 ---------
+
 
 make<br>
 sudo make install
