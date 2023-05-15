@@ -1,9 +1,4 @@
-JOBS=16
-
 all:
-	make -j$(JOBS) -f Makefile.lib
-	make -j$(JOBS) -f Makefile.client
-
+	make -C src all
 clean:
-	make -f Makefile.lib clean
-	make -f Makefile.client clean
+	make -C src clean
