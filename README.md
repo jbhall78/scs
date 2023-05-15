@@ -18,8 +18,8 @@ Here are some additional details about the game:
 
 
 <hr>
-Compiling and Installing:
--------------------------
+Building:
+---------
 
 make<br>
 sudo make install
