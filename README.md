@@ -17,34 +17,32 @@ Here are some additional details about the game:
 * Space Combat Simulator is a challenging and rewarding game that is sure to provide hours of entertainment.
 
 
-Building:
----------
+Building and Installing:
+------------------------
 
+	make
+	sudo make install
 
-make<br>
-sudo make install
+Screenshots:
+------------
 
-<hr>
-<b>SCREENSHOTS:</b>
-
-
-Main Menu
+### Main Menu
 ![screenshot0](scs-screenshot0.png)
-<hr>
-Targeted on a bomber with the grid and earth in the background.
-<img src="scs-screenshot.png">
-<hr>
-Looking at some of the more advanced ships.
-<img src="scs-screenshot2.png">
-<hr>
-Multiplayer!
-<img src="scs-screenshot3.png">
-<hr>
-This game supports recording and playback of game sessions.
-<img src="scs-screenshot4.png">
-Using the engine for something else...
-<img src="scs-screenshot5.png">
-<hr>
-Game console
-<img src="scs-screenshot6.png">
-<hr>
+
+### Targeted on a bomber with the grid and earth in the background.
+![screenshot](scs-screenshot.png)
+
+### Looking at some of the more advanced ships.
+![screenshot2](scs-screenshot2.png)
+
+### Multiplayer!
+![screenshot3](scs-screenshot3.png)
+
+### This game supports recording and playback of game sessions.
+![screenshot4](scs-screenshot4.png)
+### Using the engine for something else...
+![screenshot5](scs-screenshot5.png)
+
+### Game console
+![screenshot6](scs-screenshot6.png)
+
