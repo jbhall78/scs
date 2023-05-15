@@ -1,6 +1,8 @@
-# SCS - Space Combat Simulator
-<hr>
-## Description:
+SCS - Space Combat Simulator
+============================
+
+Description:
+------------
 
 
 Space Combat Simulator is a multiplayer space dogfight video game that allows players to take control of a variety of spaceships and battle each other in intense dogfights. The game features a variety of maps, ships, and weapons, and players can customize their ships to their liking. Space Combat Simulator is a fast-paced and action-packed game that is sure to appeal to fans of space combat games.
@@ -16,7 +18,8 @@ Here are some additional details about the game:
 
 
 <hr>
-## Compiling and Installing:
+Compiling and Installing:
+-------------------------
 
 make<br>
 sudo make install
