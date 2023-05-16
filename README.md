@@ -20,6 +20,8 @@ Here are some additional details about the game:
 Building and Installing:
 ------------------------
 
+	git clone https://github.com/jbhall78/scs.git
+	cd scs
 	make
 	sudo make install
 
