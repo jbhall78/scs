@@ -32,6 +32,9 @@ Screenshots:
 ### Targeted on a bomber with the grid and earth in the background.
 ![screenshot](scs-screenshot.png)
 
+### Targeted on a snowflake with a test loop in the background.
+![screenshot](scs-screenshot1.png)
+
 ### Looking at some of the more advanced ships.
 ![screenshot2](scs-screenshot2.png)
 
