@@ -52,7 +52,7 @@ main(int argc, char **argv)
 {
     int i;
     gboolean dedicated = FALSE, fullscreen = FALSE;
-    uint16_t resx = 1024, resy = 768;
+    uint16_t resx = 1280, resy = 1024;
     char *host = NULL;
 
     mem_init();

@@ -18,7 +18,7 @@ typedef struct {
     uint64_t (*ticks)(void);
 } clock_driver_t;
 
-clock_driver_t *clock_driver;
+//clock_driver_t *clock_driver;
 extern clock_driver_t clock_gettimeofday_driver;
 extern clock_driver_t clock_gettime_driver;
 
