@@ -24,6 +24,10 @@ System Requirements
 * libxml-2.0 (development package)
 * SDL (development package)
 * gnet-2.0 (development package)
+* SDL\_image
+* openal
+* freealut
+
 
 Building and Installing:
 ------------------------
