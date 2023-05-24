@@ -19,11 +19,11 @@ Here are some additional details about the game:
 System Requirements
 -------------------
 
-### Linux Operating System
-### glib-2.0 (development package)
-### libxml-2.0 (development package)
-### SDL (development package)
-### gnet-2.0 (development package)
+* Linux Operating System
+* glib-2.0 (development package)
+* libxml-2.0 (development package)
+* SDL (development package)
+* gnet-2.0 (development package)
 
 Building and Installing:
 ------------------------
