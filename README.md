@@ -1,6 +1,11 @@
 SCS - Space Combat Simulator
 ============================
 
+Notice
+------
+<span style="color:red">This game is suffering from bitrot but I am working to port it to Ubuntu 22 ASAP</span>
+
+
 Description:
 ------------
 
