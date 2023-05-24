@@ -55,7 +55,7 @@ typedef struct scs {
     clock_driver_t *clock;
 } scs_t;
 
-scs_t scs;
+extern scs_t scs;
 
 #define g_abort()	g_assert(0);
 
