@@ -16,6 +16,14 @@ Here are some additional details about the game:
 * The game supports multiplayer battles with up to 16 players.
 * Space Combat Simulator is a challenging and rewarding game that is sure to provide hours of entertainment.
 
+System Requirements
+-------------------
+
+### Linux Operating System
+### glib-2.0 (development package)
+### libxml-2.0 (development package)
+### SDL (development package)
+### gnet-2.0 (development package)
 
 Building and Installing:
 ------------------------
