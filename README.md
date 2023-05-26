@@ -3,12 +3,11 @@ SCS - Space Combat Simulator
 
 Notice
 ------
-$${\color{red}⚠️ This game is suffering from bitrot but I am working to port it to Ubuntu 22 ASAP}$$
+⚠️  This game is experiencing bitrot, which is a degradation of digital data over time. Some of the libraries it uses are deprecated, which means that they are no longer supported by the software vendor. As a result, these libraries must be manually installed, which can be a time-consuming and error-prone process. I am working on reducing the number of outside dependencies this software requires, which will make it easier to maintain and update.
 
 
 Description:
 ------------
-
 
 Space Combat Simulator is a multiplayer space dogfight video game that allows players to take control of a variety of spaceships and battle each other in intense dogfights. The game features a variety of maps, ships, and weapons, and players can customize their ships to their liking. Space Combat Simulator is a fast-paced and action-packed game that is sure to appeal to fans of space combat games.
 
@@ -21,14 +20,19 @@ Here are some additional details about the game:
 * The game supports multiplayer battles with up to 16 players.
 * Space Combat Simulator is a challenging and rewarding game that is sure to provide hours of entertainment.
 
+
 System Requirements
 -------------------
 
 * Linux Operating System
+* build-essential
+* libtool
+* autoconf
+* automake
 * glib-2.0 (development package)
 * libxml-2.0 (development package)
 * SDL (development package)
-* gnet-2.0 (development package)
+* gnet-2.0 (development package) you will need 'bzr' to download this
 * SDL\_image (development package)
 * openal (development package)
 * freealut (development package)
