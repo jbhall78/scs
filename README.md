@@ -32,9 +32,9 @@ System Requirements
 * automake
 * glib-2.0 (development package)
 * libxml-2.0 (development package)
-* SDL (development package)
+* SDL-1.2 (development package)
 * gnet-2.0 (development package) you will need 'bzr' to download this
-* SDL\_image (development package)
+* SDL\_image-1.2 (development package)
 * openal (development package)
 * freealut (development package)
 
