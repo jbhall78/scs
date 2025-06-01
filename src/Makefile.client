@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -DLINUX -DUNIX -DSCS_ENGINE -DNET_VCR -D_GNU_SOURCE=1 -D_REENTRANT -Wno-unused-variable -Wno-implicit-function-declaration \
+CFLAGS = -DLINUX -DUNIX -DSCS_ENGINE -DNET_VCR -D_GNU_SOURCE=1 -D_REENTRANT -Wno-unused-variable -Wno-implicit-function-declaration -g \
 	`pkg-config glib-2.0 --cflags` \
 	`pkg-config gnet-2.0 --cflags` \
 	`pkg-config libxml-2.0 --cflags` \
@@ -34,13 +34,13 @@ O_FILES = cl_main.o cl_menu.o cl_game.o cl_hud.o \
 		sv_main.o sv_pkt.o sv_obj.o sys_unix.o tcp_unix.o clock.o
 
 
-all: scs-client
+all: scs
 
-scs-client: $(O_FILES) $(C_FILES) $(H_FILES)
-	$(CC) -o scs-client $(O_FILES) $(LDFLAGS)
+scs: $(O_FILES) $(C_FILES) $(H_FILES)
+	$(CC) -o scs $(O_FILES) $(LDFLAGS)
 
 .c.o:
 	$(CC) $(CFLAGS) -c $*.c -o $*.o
 
 clean:
-	rm -f $(O_FILES) scs-client
+	rm -f $(O_FILES) scs

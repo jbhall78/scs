@@ -8,6 +8,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include "scs.h"
 #include "clock.h"
@@ -34,16 +37,96 @@ sys_print(int level, char *str)
 	fputs(str, stderr);
 }
 
+int
+sys_mkdir(const char *path) {
+    // Use the mkdir function from sys/stat.h
+    if (mkdir(path, 0755) == 0) {
+        // Directory created successfully
+        return OK;
+    } else {
+        // Error occurred
+        return FAIL;
+    }
+}
+
+int
+sys_copy_file(const char *source_path, const char *dest_path) {
+    int source_fd = -1;
+    int dest_fd = -1;
+    ssize_t bytes_read;
+    ssize_t bytes_written;
+    char buffer[BUFSIZ];
+
+    // Open the source file for reading
+    source_fd = open(source_path, O_RDONLY);
+    if (source_fd == -1) {
+        perror("Error opening source file");
+        goto error;
+    }
+
+    // Open the destination file for writing (create if it doesn't exist, truncate if it does)
+    dest_fd = open(dest_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (dest_fd == -1) {
+        perror("Error opening destination file");
+        goto error;
+    }
+
+    // Read from source and write to destination
+    while ((bytes_read = read(source_fd, buffer, BUFSIZ)) > 0) {
+        bytes_written = write(dest_fd, buffer, bytes_read);
+        if (bytes_written == -1) {
+            perror("Error writing to destination file");
+            goto error;
+        }
+        if (bytes_written != bytes_read) {
+            fprintf(stderr, "Write error: wrote less bytes than read\n");
+            goto error;
+        }
+    }
+
+    if (bytes_read == -1) {
+        perror("Error reading from source file");
+        goto error;
+    }
+
+    // Close file descriptors
+    if (close(source_fd) == -1) {
+        perror("Error closing source file");
+    }
+    if (close(dest_fd) == -1) {
+        perror("Error closing destination file");
+    }
+
+    return OK; // Success
+
+error:
+    if (source_fd != -1) {
+        close(source_fd);
+    }
+    if (dest_fd != -1) {
+        close(dest_fd);
+    }
+    return FAIL; // Failure
+}
+
+
 char *
 sys_datadir(void)
 {
     char buf[BUFSIZ];
+    char *cfgdir = getenv("XDG_CONFIG_HOME");
     char *home = getenv("HOME");
+    char *p;
 
-    if (! home)
+    if (! cfgdir && !home)
 	return NULL;
 
-    snprintf(buf, sizeof(buf), "%s/.scs/", home);
+    if (cfgdir)
+	    p = cfgdir;
+    else
+	    p = home;
+
+    snprintf(buf, sizeof(buf), "%s/.scs/", p);
 
     return strdup(buf);
 }

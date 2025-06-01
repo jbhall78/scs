@@ -37,6 +37,7 @@ typedef enum {
     FILE_OBJ     = 0x03,
     FILE_MTL     = 0x04,
     FILE_SOUND   = 0x05,
+    FILE_CONF    = 0x06,
 } filetype_t;
 
 typedef enum {
