@@ -20,13 +20,13 @@ static char *prefix[] = {
     "obj",
     "obj",
     "sounds",
+    "conf",
 };
 static char *gamedir[] = {
     "data",
     "../data",
     "../../data",
-//    PACKAGE_DATA_DIR
-//    PACKAGE_SOURCE_DIR "/data"
+    "/app/share/scs",
 };
 
 char *
@@ -246,23 +246,50 @@ FILE *
 _opencfgfile(const char *file, const char *func, int line, char *name, GError **err)
 {
     FILE *f;
-    char buf[BUFSIZ];
+    char *source_file;
+    char dirname[BUFSIZ];
+    char dirname2[BUFSIZ];
+    char filename[BUFSIZ];
     char *cfgdir = sys_datadir();
+    GError *tmp = NULL;
 
     if (! cfgdir)
 	goto fail;
 
-    g_snprintf(buf, sizeof(buf), "%s/conf/%s", cfgdir, name);
+    g_snprintf(dirname, sizeof(dirname), "%s", cfgdir);
+    g_snprintf(dirname2, sizeof(dirname2), "%s/conf", cfgdir);
+    g_snprintf(filename, sizeof(filename), "%s/conf/%s", cfgdir, name);
+
     g_free(cfgdir);
 
-    /* make sure to open in binary mode for windows */
-    if ((f = fopen(buf, "rb+"))) {
+    // try to open the file
+    if ((f = fopen(filename, "rb+"))) {
+	_print(0, file, func, line, "parsing... \"%s\"\n", name);
+	return f;
+    }
+
+    // copy the file if it doesn't exist
+    source_file = getdatafilename(FILE_CONF, name, &tmp);
+    if (! source_file) {
+	    goto fail;
+    }
+
+    sys_mkdir(dirname);
+    sys_mkdir(dirname2);
+
+    if (sys_copy_file(source_file, filename) != OK) {
+    	g_set_error(err, SCS_ERROR, SCS_ERROR_UTIL, "cannot copy file: %s to %s", source_file, filename);
+    	return NULL;
+    }
+
+    // try opening it again
+    if ((f = fopen(filename, "rb+"))) {
 	_print(0, file, func, line, "parsing... \"%s\"\n", name);
 	return f;
     }
 
 fail:
-    g_set_error(err, SCS_ERROR, SCS_ERROR_UTIL, "%s: %s", buf, g_strerror(ENOENT));
+    g_set_error(err, SCS_ERROR, SCS_ERROR_UTIL, "%s: %s", filename, g_strerror(ENOENT));
 
     return NULL;
 }
