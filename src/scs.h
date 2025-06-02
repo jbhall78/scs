@@ -6,6 +6,7 @@
 #include <assert.h>
 
 #include <glib.h>
+#include <gio/gio.h>
 #include <gnet.h>
 
 #include "mathlib.h"
