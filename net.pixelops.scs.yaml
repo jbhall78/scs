@@ -61,6 +61,12 @@ modules:
       - install -Dm 0755 libbsd.so.0.10.0 "/app/lib/libbsd.so.0.10.0"
       - ln -s libbsd.so.0.10.0 "/app/lib/libbsd.so.0"
       - ln -s libbsd.so.0 "/app/lib/libbsd.so"
+      - install -Dm 0755 libncurses.so.6.2 "/app/lib/libncurses.so.6.2"
+      - ln -s libncurses.so.6.2 "/app/lib/libncurses.so.6"
+      - ln -s libncurses.so.6 "/app/lib/libncurses.so"
+      - install -Dm 0755 libncursesw.so.6.2 "/app/lib/libncursesw.so.6.2"
+      - ln -s libncursesw.so.6.2 "/app/lib/libncursesw.so.6"
+      - ln -s libncursesw.so.6 "/app/lib/libncursesw.so"
       - cp freealut.pc /app/share/pkgconfig
       - install -Dm 0755 libopenal.so.1 "/app/lib/libopenal.so.1"
       - ln -s libopenal.so.1 "/app/lib/libopenal.so"
@@ -125,6 +131,12 @@ modules:
       - type: file
         path: files/libbsd.so.0.10.0
         dest-filename: libbsd.so.0.10.0
+      - type: file
+        path: files/libncurses.so.6.2
+        dest-filename: libncurses.so.6.2
+      - type: file
+        path: files/libncursesw.so.6.2
+        dest-filename: libncursesw.so.6.2
       - type: file
         path: files/freealut.pc
         dest-filename: freealut.pc
