@@ -12,6 +12,11 @@
 #include "megalib.h"
 #endif
 
+#if 1
+#define GUdpSocket GDatagramSocket
+#define gnet_udp g_datagram
+#endif
+
 typedef struct {
     GInetAddress *addr;
     GUdpSocket *sock;
