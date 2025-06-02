@@ -6,11 +6,13 @@
 
 #include "scs.h"
 
+/*
 #if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR >= 1))
 #define deprecated	__attribute__((__deprecated__))
 #else
 #define deprecated
 #endif
+*/
 
 #ifdef __SUNPRO_C
 # define FUNCTION __func__
@@ -55,8 +57,10 @@ char *join(int, char **, char *);
 char *mkstr(char *fmt, ...);
 
 
-deprecated old_file_t *old_file_new(char *filename);
-deprecated void old_file_free(old_file_t *file);
+old_file_t *old_file_new(char *filename);
+void old_file_free(old_file_t *file);
+//deprecated old_file_t *old_file_new(char *filename);
+//deprecated void old_file_free(old_file_t *file);
 
 void sys_print(int, char *);
 void sys_init(void);
