@@ -1,4 +1,5 @@
 #include <gio/gio.h>
+#include <gio/ginetaddress.h>
 
 #ifdef SCS_ENGINE
 #include <string.h>
