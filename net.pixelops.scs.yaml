@@ -17,20 +17,54 @@ modules:
     buildsystem: simple
     build-commands:
       - export PKG_CONFIG_PATH="${PKG_CONFIG_PATH}:/app/share/pkgconfig"
-      - mkdir -p "$(DESTDIR)/app/include"
-      - install -Dm 0644 glu.h "$(DESTDIR)/app/include/GL/glu.h"
-      - install -Dm 0755 libgnet-2.0.so.0 "$(DESTDIR)/app/lib/libgnet-2.0.so.0"
-      - ln -s libgnet-2.0.so.0 "$(DESTDIR)/app/lib/libgnet-2.0.so"
-      - install -Dm 0644 gnet-2.0.pc "$(DESTDIR)/app/share/pkgconfig/gnet-2.0.pc"
-      - tar -xzf gnet_headers.tgz -C "$(DESTDIR)/app/include"
-      - install -Dm 0755 libSDL-1.2.so.0 "$(DESTDIR)/app/lib/libSDL-1.2.so.0"
-      - ln -s libSDL-1.2.so.0 "$(DESTDIR)/app/lib/libSDL-1.so"
-      - install -Dm 0644 sdl.pc "$(DESTDIR)/app/share/pkgconfig/sdl.pc"
-      - tar -xzf sdl_headers.tgz -C "$(DESTDIR)/app/include"
-      - install -Dm 0755 libSDL_image-1.2.so.0 "$(DESTDIR)/app/lib/libSDL_image-1.2.so.0"
-      - ln -s libSDL_image-1.2.so.0 "$(DESTDIR)/app/lib/libSDL_image-1.so"
-      - install -Dm 0755 libopenal.so.1 "$(DESTDIR)/app/lib/libopenal.so.1"
-      - ln -s libopenal.so.1 "$(DESTDIR)/app/lib/libopenal.so"
+      - mkdir -p "/app/include"
+      - mkdir -p "/app/include/GL"
+      - mkdir -p "/app/share/pkgconfig"
+      - install -Dm 0755 libGLU.so.1.3.1 "/app/lib/libGLU.so.1.3.1"
+      - ln -s libGLU.so.1.3.1 "/app/lib/libGLU.so.1"
+      - ln -s libGLU.so.1 "/app/lib/libGLU.so"
+      - cp glu.h /app/include/GL
+      - install -Dm 0755 libgnet-2.0.so.0 "/app/lib/libgnet-2.0.so.0"
+      - ln -s libgnet-2.0.so.0 "/app/lib/libgnet-2.0.so"
+      - cp gnet-2.0.pc /app/share/pkgconfig
+      - cp gnetconfig.h /app/include
+      - tar -xzf gnet_headers.tgz -C "/app/include"
+      - install -Dm 0755 libSDL-1.2.so.0 "/app/lib/libSDL-1.2.so.0"
+      - ln -s libSDL-1.2.so.0 "/app/lib/libSDL-1.so"
+      - ln -s libSDL-1.so "/app/lib/libSDL.so"
+      - cp sdl.pc /app/share/pkgconfig
+      - tar -xzf sdl_headers.tgz -C "/app/include"
+      - install -Dm 0755 libSDL_image-1.2.so.0 "/app/lib/libSDL_image-1.2.so.0"
+      - ln -s libSDL_image-1.2.so.0 "/app/lib/libSDL_image-1.so"
+      - ln -s libSDL_image-1.so "/app/lib/libSDL_image.so"
+      - install -Dm 0755 libjpeg.so.8.2.2 "/app/lib/libjpeg.so.8.2.2"
+      - ln -s libjpeg.so.8.2.2 "/app/lib/libjpeg.so.8"
+      - ln -s libjpeg.so.8 "/app/lib/libjpeg.so"
+      - install -Dm 0755 libwebp.so.6.0.2 "/app/lib/libwebp.so.6.0.2"
+      - ln -s libwebp.so.6.0.2 "/app/lib/libwebp.so.6"
+      - ln -s libwebp.so.6 "/app/lib/libwebp.so"
+      - install -Dm 0755 libtiff.so.5.5.0 "/app/lib/libtiff.so.5.5.0"
+      - ln -s libtiff.so.5.5.0 "/app/lib/libtiff.so.5"
+      - ln -s libtiff.so.5 "/app/lib/libtiff.so"
+      - install -Dm 0755 libsndio.so.7.0 "/app/lib/libsndio.so.7.0"
+      - ln -s libsndio.so.7.0 "/app/lib/libsndio.so.7"
+      - ln -s libsndio.so.7 "/app/lib/libsndio.so"
+      - cp SDL_image.pc /app/share/pkgconfig
+      - install -Dm 0755 libalut.so.0.1.0 "/app/lib/libalut.so.0.1.0"
+      - ln -s libalut.so.0.1.0 "/app/lib/libalut.so.0"
+      - ln -s libalut.so.0 "/app/lib/libalut.so"
+      - install -Dm 0755 libcaca.so.0.99.19 "/app/lib/libcaca.so.0.99.19"
+      - ln -s libcaca.so.0.99.19 "/app/lib/libcaca.so.0"
+      - ln -s libcaca.so.0 "/app/lib/libcaca.so"
+      - install -Dm 0755 libjbig.so.0 "/app/lib/libjbig.so.0"
+      - ln -s libjbig.so.0 "/app/lib/libjbig.so"
+      - install -Dm 0755 libbsd.so.0.10.0 "/app/lib/libbsd.so.0.10.0"
+      - ln -s libbsd.so.0.10.0 "/app/lib/libbsd.so.0"
+      - ln -s libbsd.so.0 "/app/lib/libbsd.so"
+      - cp freealut.pc /app/share/pkgconfig
+      - install -Dm 0755 libopenal.so.1 "/app/lib/libopenal.so.1"
+      - ln -s libopenal.so.1 "/app/lib/libopenal.so"
+      - tar -xzf openal_headers.tgz -C "/app/include"
       - make
       - make install DESTDIR=/app
     sources:
@@ -41,11 +75,17 @@ modules:
         path: files/glu.h
         dest-filename: glu.h
       - type: file
+        path: files/libGLU.so.1.3.1
+        dest-filename: libGLU.so.1.3.1
+      - type: file
         path: files/libgnet-2.0.so.0
         dest-filename: libgnet-2.0.so.0
       - type: file
         path: files/gnet-2.0.pc
         dest-filename: gnet-2.0.pc
+      - type: file
+        path: files/gnetconfig.h
+        dest-filename: gnetconfig.h
       - type: file
         path: files/libSDL-1.2.so.0
         dest-filename: libSDL-1.2.so.0
@@ -56,11 +96,44 @@ modules:
         path: files/libSDL_image-1.2.so.0
         dest-filename: libSDL_image-1.2.so.0
       - type: file
+        path: files/SDL_image.pc
+        dest-filename: SDL_image.pc
+      - type: file
         path: files/libopenal.so.1
         dest-filename: libopenal.so.1
+      - type: file
+        path: files/libalut.so.0.1.0
+        dest-filename: libalut.so.0.1.0
+      - type: file
+        path: files/libcaca.so.0.99.19
+        dest-filename: libcaca.so.0.99.19
+      - type: file
+        path: files/libjpeg.so.8.2.2
+        dest-filename: libjpeg.so.8.2.2
+      - type: file
+        path: files/libtiff.so.5.5.0
+        dest-filename: libtiff.so.5.5.0
+      - type: file
+        path: files/libwebp.so.6.0.2
+        dest-filename: libwebp.so.6.0.2
+      - type: file
+        path: files/libsndio.so.7.0
+        dest-filename: libsndio.so.7.0
+      - type: file
+        path: files/libjbig.so.0
+        dest-filename: libjbig.so.0
+      - type: file
+        path: files/libbsd.so.0.10.0
+        dest-filename: libbsd.so.0.10.0
+      - type: file
+        path: files/freealut.pc
+        dest-filename: freealut.pc
       - type: file
         path: files/sdl_headers.tgz
         dest-filename: sdl_headers.tgz
       - type: file
         path: files/gnet_headers.tgz
         dest-filename: gnet_headers.tgz
+      - type: file
+        path: files/openal_headers.tgz
+        dest-filename: openal_headers.tgz
