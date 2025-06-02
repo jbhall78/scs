@@ -30,8 +30,8 @@ modules:
       - ln -s libSDL_image-1.2.so.0 "$(DESTDIR)/app/lib/libSDL_image-1.so"
       - install -Dm 0755 libopenal.so.1 "$(DESTDIR)/app/lib/libopenal.so.1"
       - ln -s libopenal.so.1 "$(DESTDIR)/app/lib/libopenal.so"
-      - install -Dm 0755 libxml2.so.2 "$(DESTDIR)/app/lib/libxml2.so.2"
-      - ln -s libxml2.so.2 "$(DESTDIR)/app/lib/libxml2.so"
+        #- install -Dm 0755 libxml2.so.2 "$(DESTDIR)/app/lib/libxml2.so.2"
+        #- ln -s libxml2.so.2 "$(DESTDIR)/app/lib/libxml2.so"
       - mkdir -p "$(DESTDIR)/app/include"
       - tar -xzf sdl_headers.tgz -C "$(DESTDIR)/app/include"
       - make
@@ -67,9 +67,9 @@ modules:
       - type: file
         path: files/libopenal.so.1
         dest-filename: libopenal.so.1
-      - type: file
-        path: files/libxml2.so.2
-        dest-filename: libxml2.so.2
+        #      - type: file
+        #path: files/libxml2.so.2
+        #dest-filename: libxml2.so.2
       - type: file
         path: files/sdl_headers.tgz
         dest-filename: sdl_headers.tgz

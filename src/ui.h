@@ -165,7 +165,8 @@ typedef struct widget_label_s {
 typedef struct widget_root_s {
     tex_t		*cursor;		// texture for mouse cursor (needs to be moved to mouse widget)
     widget_posv_t	mpos;			// current mouse position
-    deprecated widget_t	*active;		// (deprecated) widget with mouse focus
+    //deprecated widget_t	*active;		// (deprecated) widget with mouse focus
+    widget_t	*active;		// (deprecated) widget with mouse focus
     widget_t		*focus_keyboard;	// widget with keyboard focus
     widget_t		*focus_mouse;		// widget with mouse focus
     int16_vec2_t	z;			// minimum/maximum z values
@@ -176,7 +177,8 @@ typedef struct widget_root_s {
 //#define ui_widget_button_set_visible(w,v) { w->visible = v; }
 //#define ui_widget_button_toggle_visible(w) { w->visible ^= 1; }
 typedef struct widget_button_s {
-    deprecated GHashTable  *colors;
+    //deprecated GHashTable  *colors;
+    GHashTable  *colors;
     widget_t	*label;
     uint16_t	label_padding;
     font_t	*font;
@@ -193,7 +195,8 @@ typedef struct widget_button_s {
 } widget_button_t;
 
 typedef struct widget_tooltip_s {
-    deprecated GHashTable  *colors;
+    //deprecated GHashTable  *colors;
+    GHashTable  *colors;
     widget_t	*label;
     uint16_t	label_padding;
     font_t	*font;
@@ -206,20 +209,23 @@ typedef struct widget_tooltip_s {
 } widget_tooltip_t;
 
 typedef struct widget_text_s {
-    deprecated GHashTable *colors;
+    //deprecated GHashTable *colors;
+    GHashTable *colors;
     font_t *font;
     GArray *buf;
     uint16_t pos;
 } widget_text_t;
 
 typedef struct widget_checkbox_s {
-    deprecated GHashTable *colors;
+    //deprecated GHashTable *colors;
+    GHashTable *colors;
     gboolean checked;
 } widget_checkbox_t;
 
 typedef struct widget_clist_s {
     font_t *font;
-    deprecated GHashTable *colors;
+    //deprecated GHashTable *colors;
+    GHashTable *colors;
     int16_t selected;
     uint16_t cols;
     GArray *widths;
@@ -233,7 +239,8 @@ typedef struct widget_clist_s {
 typedef struct widget_select_s {
     font_t *font;
     uint16_t font_size;
-    deprecated GHashTable *colors;
+    //deprecated GHashTable *colors;
+    GHashTable *colors;
     int32_t selected;
     uint16_t items;
     uint16_t dropdown_size;
@@ -251,7 +258,8 @@ typedef struct widget_select_s {
 #define ui_widget_scrollbar_set_visible_items(w,n) { ((widget_scrollbar_t *)(w->data))->visible_items = n; }
 #define ui_widget_scrollbar_set_item_size(w,n) { ((widget_scrollbar_t *)(w->data))->item_size = n; }
 typedef struct widget_scrollbar_s {
-    deprecated GHashTable *colors;
+    //deprecated GHashTable *colors;
+    GHashTable *colors;
     void (*callback)(void);
     gboolean verticle;
     widget_t *button1;	// top or left
@@ -302,7 +310,8 @@ widget_t *ui_widget_new(widget_t *parent, widget_type_t type, GError **err);
 void ui_widget_set_color(widget_t *w, vec3_t color);
 void ui_widget_set_pos(widget_t *w, widget_posv_t pos);
 void ui_widget_set_size(widget_t *w, widget_sizev_t size);
-deprecated void ui_widget_set_rect(widget_t *w, widget_posv_t pos, widget_sizev_t size);
+//deprecated void ui_widget_set_rect(widget_t *w, widget_posv_t pos, widget_sizev_t size);
+void ui_widget_set_rect(widget_t *w, widget_posv_t pos, widget_sizev_t size);
 void ui_widget_root_set_cursor(widget_t *w, tex_t *tex);
 widget_t *ui_widget_get_root(widget_t *w);
 gboolean ui_key(widget_t *, SDL_KeyboardEvent *, gboolean *, GError **);
@@ -358,7 +367,8 @@ void ui_widget_button_set_color(widget_t *w, char *key, vec3_t color);
 gboolean ui_widget_destroy(widget_t *w, GError **err);
 void ui_widget_button_set_edge(widget_t *w, gboolean edge);
 // resize button & children correctly
-deprecated void ui_widget_button_set_rect(widget_t *w, widget_posv_t pos, widget_sizev_t size);
+//deprecated void ui_widget_button_set_rect(widget_t *w, widget_posv_t pos, widget_sizev_t size);
+void ui_widget_button_set_rect(widget_t *w, widget_posv_t pos, widget_sizev_t size);
 // set edge visual attribute
 void ui_widget_button_set_edge(widget_t *w, gboolean edge);
 // set font attribute for attached label
