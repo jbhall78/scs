@@ -1,0 +1,75 @@
+app-id: net.pixelops.scs
+runtime: org.freedesktop.Platform
+runtime-version: '23.08'
+sdk: org.freedesktop.Sdk
+
+command: scs
+
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --device=dri
+  - --share=network
+
+modules:
+  - name: SpaceCombatSimulator
+    buildsystem: simple
+    build-commands:
+      - export PKG_CONFIG_PATH="${PKG_CONFIG_PATH}:/app/share/pkgconfig"
+      - install -Dm 0644 glu.h "$(DESTDIR)/app/include/GL/glu.h"
+      - install -Dm 0755 libgnet-2.0.so.0 "$(DESTDIR)/app/lib/libgnet-2.0.so.0"
+      - ln -s libgnet-2.0.so.0 "$(DESTDIR)/app/lib/libgnet-2.0.so"
+      - install -Dm 0644 gnet.h "$(DESTDIR)/app/include/gnet.h"
+      - install -Dm 0644 gnetconfig.h "$(DESTDIR)/app/include/gnet.h"
+      - install -Dm 0644 gnet-2.0.pc "$(DESTDIR)/app/share/pkgconfig/gnet-2.0.pc"
+      - install -Dm 0755 libSDL-1.2.so.0 "$(DESTDIR)/app/lib/libSDL-1.2.so.0"
+      - ln -s libSDL-1.2.so.0 "$(DESTDIR)/app/lib/libSDL-1.so"
+      - install -Dm 0644 sdl.pc "$(DESTDIR)/app/share/pkgconfig/sdl.pc"
+      - install -Dm 0755 libSDL_image-1.2.so.0 "$(DESTDIR)/app/lib/libSDL_image-1.2.so.0"
+      - ln -s libSDL_image-1.2.so.0 "$(DESTDIR)/app/lib/libSDL_image-1.so"
+      - install -Dm 0755 libopenal.so.1 "$(DESTDIR)/app/lib/libopenal.so.1"
+      - ln -s libopenal.so.1 "$(DESTDIR)/app/lib/libopenal.so"
+      - install -Dm 0755 libxml2.so.2 "$(DESTDIR)/app/lib/libxml2.so.2"
+      - ln -s libxml2.so.2 "$(DESTDIR)/app/lib/libxml2.so"
+      - mkdir -p "$(DESTDIR)/app/include"
+      - tar -xzf sdl_headers.tgz -C "$(DESTDIR)/app/include"
+      - make
+      - make install DESTDIR=/app
+    sources:
+      - type: git
+        url: https://github.com/jbhall78/scs.git
+        branch: main
+      - type: file
+        path: files/glu.h
+        dest-filename: glu.h
+      - type: file
+        path: files/libgnet-2.0.so.0
+        dest-filename: libgnet-2.0.so.0
+      - type: file
+        path: files/gnet.h
+        dest-filename: gnet.h
+      - type: file
+        path: files/gnetconfig.h
+        dest-filename: gnetconfig.h
+      - type: file
+        path: files/gnet-2.0.pc
+        dest-filename: gnet-2.0.pc
+      - type: file
+        path: files/libSDL-1.2.so.0
+        dest-filename: libSDL-1.2.so.0
+      - type: file
+        path: files/sdl.pc
+        dest-filename: sdl.pc
+      - type: file
+        path: files/libSDL_image-1.2.so.0
+        dest-filename: libSDL_image-1.2.so.0
+      - type: file
+        path: files/libopenal.so.1
+        dest-filename: libopenal.so.1
+      - type: file
+        path: files/libxml2.so.2
+        dest-filename: libxml2.so.2
+      - type: file
+        path: files/sdl_headers.tgz
+        dest-filename: sdl_headers.tgz
