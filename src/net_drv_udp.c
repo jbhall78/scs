@@ -4,6 +4,8 @@
 #include "shared.h"
 #include "net.h"
 #else
+#include <glib.h>
+#include <gio/gio.h>
 #include <gnet.h>
 #include "megalib.h"
 #endif
