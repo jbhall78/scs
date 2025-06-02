@@ -179,7 +179,8 @@ _getdatafilename(const char *file, const char *func, int line, filetype_t t, cha
     return NULL;
 }
 
-deprecated old_file_t *
+//deprecated old_file_t *
+old_file_t *
 old_file_new(char *name)
 {
     old_file_t *file = g_new0(old_file_t, 1);
@@ -187,7 +188,8 @@ old_file_new(char *name)
     return file;
 }
 
-deprecated void
+//deprecated void
+void
 old_file_free(old_file_t *file)
 {
     g_free(file->name);
