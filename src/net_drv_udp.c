@@ -1,3 +1,5 @@
+#include <gio/gio.h>
+
 #ifdef SCS_ENGINE
 #include <string.h>
 #include "scs.h"
@@ -5,7 +7,6 @@
 #include "net.h"
 #else
 #include <glib.h>
-#include <gio/gio.h>
 #include <gnet.h>
 #include "megalib.h"
 #endif
