@@ -3,7 +3,7 @@ runtime: org.freedesktop.Platform
 runtime-version: '23.08'
 sdk: org.freedesktop.Sdk
 
-command: scs
+command: bin/scs
 
 finish-args:
   - --share=ipc
@@ -67,12 +67,16 @@ modules:
       - install -Dm 0755 libncursesw.so.6.2 "/app/lib/libncursesw.so.6.2"
       - ln -s libncursesw.so.6.2 "/app/lib/libncursesw.so.6"
       - ln -s libncursesw.so.6 "/app/lib/libncursesw.so"
+      - install -Dm 0755 libtinfo.so.6.2 "/app/lib/libtinfo.so.6.2"
+      - ln -s libtinfo.so.6.2 "/app/lib/libtinfo.so.6"
+      - ln -s libtinfo.so.6 "/app/lib/libtinfo.so"
       - cp freealut.pc /app/share/pkgconfig
       - install -Dm 0755 libopenal.so.1 "/app/lib/libopenal.so.1"
       - ln -s libopenal.so.1 "/app/lib/libopenal.so"
       - tar -xzf openal_headers.tgz -C "/app/include"
       - make
       - make install DESTDIR=/app
+      - ls -l /app/bin/scs
     sources:
       - type: git
         url: https://github.com/jbhall78/scs.git
@@ -137,6 +141,9 @@ modules:
       - type: file
         path: files/libncursesw.so.6.2
         dest-filename: libncursesw.so.6.2
+      - type: file
+        path: files/libtinfo.so.6.2
+        dest-filename: libtinfo.so.6.2
       - type: file
         path: files/freealut.pc
         dest-filename: freealut.pc
