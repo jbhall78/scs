@@ -1,0 +1,10 @@
+prefix=/app
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Gnet
+Description: A network compatibility layer library
+Version: 2.0.8.1
+Libs: -L${libdir} -lgnet-2.0 -lglib-2.0 -lgthread-2.0 -pthread -lglib-2.0
+Cflags: -I${includedir}/gnet-2.0 -I${libdir}/gnet-2.0/include/ -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -pthread -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include

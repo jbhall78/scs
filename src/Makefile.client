@@ -1,5 +1,6 @@
 CC = gcc
 CFLAGS = -DLINUX -DUNIX -DSCS_ENGINE -DNET_VCR -D_GNU_SOURCE=1 -D_REENTRANT -Wno-unused-variable -Wno-implicit-function-declaration -g \
+	 -Wdeprecated-declarations \
 	`pkg-config glib-2.0 --cflags` \
 	`pkg-config gnet-2.0 --cflags` \
 	`pkg-config libxml-2.0 --cflags` \
