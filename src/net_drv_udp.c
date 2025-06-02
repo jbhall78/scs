@@ -13,12 +13,12 @@
 #endif
 
 typedef struct {
-    GInetAddr *addr;
+    GInetAddress *addr;
     GUdpSocket *sock;
 } sock_data_t;
 
 typedef struct {
-    GInetAddr *addr;
+    GInetAddress *addr;
 } addr_data_t;
 
 static void
@@ -178,7 +178,7 @@ net_drv_udp_recv(net_state_t *net, sock_t *sock)
     int32_t len;
     pkt_t *pkt;
     addr_data_t *addr_data;
-    GInetAddr *addr;
+    GInetAddress *addr;
 
     if (gnet_udp_socket_has_packet(sock_data->sock)) {
 	addr_data = g_new0(addr_data_t, 1);
