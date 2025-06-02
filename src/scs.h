@@ -5,6 +5,7 @@
 #include <time.h>
 #include <assert.h>
 
+#include <glib.h>
 #include <gnet.h>
 
 #include "mathlib.h"
