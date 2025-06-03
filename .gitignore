@@ -4,3 +4,4 @@
 build
 src/scs
 *.swp
+*.flatpak
