@@ -12,3 +12,5 @@ install:
 flatpak:
 	rm -rf build
 	flatpak-builder --disable-cache build net.pixelops.scs.yaml build
+	flatpak build-export /tmp/local-build-repo build
+	flatpak build-bundle /tmp/local-build-repo net.pixelops.scs.flatpak net.pixelops.scs
