@@ -196,8 +196,8 @@ vid_init(GError **err)
 
 
     if (! vid_init_sdl(&err2)) {
-	g_propagate_error(err, err2);
-	return FALSE;
+    	g_propagate_error(err, err2);
+	    return FALSE;
     }
 
     vid_init_gl();
@@ -222,10 +222,10 @@ vid_toggle_fullscreen(void)
 
     // make sure we only go into fullscreen with a valid fullscreen mode
     if (client.fullscreen) {
-	vec2_cp(client.prev_res, client.res);
+	    vec2_cp(client.prev_res, client.res);
     } else {
-	vec2_cp(client.res, client.prev_res);
-	vec2_cp(client.fullscreen_res, client.res);
+	    vec2_cp(client.res, client.prev_res);
+    	vec2_cp(client.fullscreen_res, client.res);
     }
 
     vid_set(client.fullscreen ^ 1, client.res[X], client.res[Y]);
@@ -263,18 +263,18 @@ vid_screenshot(void)
 
     len = strlen(name);
     for (i = 0; i <= 99; i++) {
-	name[len-6] = i / 10 + '0';
-	name[len-5] = i % 10 + '0';
+    	name[len-6] = i / 10 + '0';
+    	name[len-5] = i % 10 + '0';
 
-	/* remember: always open in binary, we run in win32 too! */
-	f = fopen(name, "rb");
-	if (! f)
-	    break;  // file doesn't exist
-	fclose (f);
+    	/* remember: always open in binary, we run in win32 too! */
+    	f = fopen(name, "rb");
+    	if (! f)
+    	    break;  // file doesn't exist
+    	fclose (f);
     }
     if (i == 100) {
-	print("couldn't create a file\n");
-	return;
+    	print("couldn't create a file\n");
+    	return;
     }
 
     w = client.res[WIDTH];
@@ -294,9 +294,9 @@ vid_screenshot(void)
     // swap rgb to bgr
     c = 18 + w * h * 3;
     for (i = 18 ; i<c ; i+=3) {
-	swap = buf[i];
-	buf[i] = buf[i+2];
-	buf[i+2] = swap;
+    	swap = buf[i];
+    	buf[i] = buf[i+2];
+    	buf[i+2] = swap;
     }
 
     f = fopen(name, "wb");
