@@ -52,7 +52,7 @@ main(int argc, char **argv)
 {
     int i;
     gboolean dedicated = FALSE, fullscreen = FALSE;
-    uint16_t resx = 1280, resy = 1024;
+    uint16_t resx = 1920, resy = 1080;
     char *host = NULL;
 
     mem_init();
@@ -75,6 +75,9 @@ main(int argc, char **argv)
 	} else if (strcmp(argv[i], "-2560x1024") == 0) {
 	    resx = 2560;
 	    resy = 1024;
+	} else if (strcmp(argv[i], "-1920x1080") == 0) {
+	    resx = 1920;
+	    resy = 1080;
 	} else if (strcmp(argv[i], "-1600x1200") == 0) {
 	    resx = 1600;
 	    resy = 1200;

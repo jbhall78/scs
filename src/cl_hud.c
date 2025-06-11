@@ -75,7 +75,8 @@ cl_radar_get_coords(object_t *obj, real *x, real *y)
 {
     vec2_t front, back;
     real *ptr;
-    real radius = 56;
+    real radius = 120;
+    //real radius = 56;
     vec3_t tmpPlane[3];
     vec3_t loc, upVec, rightVec, fwdVec;
     quat_t orient;
@@ -230,7 +231,7 @@ cl_radar_draw_objs(gpointer key, gpointer val, gpointer data)
     object_t *obj1 = val;
     object_t *obj2;
     real rx = 0, ry = 0;
-    real size = 4;
+    real size = 8;
 
     if (obj1->id == client.obj_id)
 	return;
@@ -243,7 +244,7 @@ cl_radar_draw_objs(gpointer key, gpointer val, gpointer data)
 //    glDisable(GL_LIGHTING);
 //    glEnable(GL_COLOR_MATERIAL);
     glPointSize(size);
-    glColor3f(0,0,1);
+    glColor3f(0,1,1);
     
     glBegin(GL_POINTS);
     glVertex2(rx, ry);
@@ -292,7 +293,8 @@ cl_radar_draw(void)
     real rx = 0, ry = 0;
     real radius;
 
-    radius = 56;
+    radius = 120;
+    //radius = 56;
 
     rx = radius;
     ry = client.ortho[HEIGHT] - radius;
@@ -630,7 +632,8 @@ cl_target_computer3d_draw(void)
 
     glColor4f(1,1,1,1);
     
-    glTranslatef(0.0, -75, -100);
+    glTranslatef(0.0, -55, -100);
+    //glTranslatef(0.0, -75, -100);
     //glTranslatef(0.0, -25, -100);
     //glTranslatef(0.0, -37.5, -150);
     quat_to_mat(cam->orient, mat);

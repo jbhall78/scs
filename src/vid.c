@@ -47,6 +47,7 @@ fail:
     return FALSE;
 }
 
+/*
 void
 vid_perspective(float fov, float aspect, float zNear, float zFar)
 {
@@ -63,12 +64,29 @@ vid_perspective(float fov, float aspect, float zNear, float zFar)
     glMatrixMode(GL_MODELVIEW);
 
 } 
+*/
+
+void vid_perspective(float horizontal_fov, float aspect, float zNear, float zFar)
+{
+    // Calculate vertical FOV from desired horizontal FOV and aspect ratio
+    float vertical_fov_rad = 2.0f * atan(tan(horizontal_fov * M_PI / 360.0f) / aspect);
+    float vertical_fov_deg = vertical_fov_rad * 180.0f / M_PI;
+
+    float y = tan((vertical_fov_deg * M_PI) / 360) * zNear;
+    float x = y * aspect;
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glFrustum(-x, x, -y, y, zNear, zFar);
+    glGetv(GL_PROJECTION_MATRIX, client.proj_mat);
+    glMatrixMode(GL_MODELVIEW);
+}
 
 static void
 vid_init_gl(void)
 {
     vid_perspective(client.fov,
-	            client.res[X] / client.res[Y],
+	            (real)client.res[X] / (real)client.res[Y],
 		    client.znear, client.zfar);
 
 #if 1
@@ -103,7 +121,7 @@ vid_set(gboolean fullscreen, uint16_t resx, uint16_t resy)
     client.ortho[WIDTH]		= resx; //800;
     client.ortho[HEIGHT]	= resy; //600;
     //client.fov			= 45.0;
-    client.fov			= 90.0;
+    client.fov			= 100.0;
     client.znear		= 1.0; //3.0;
     client.zfar			= 256000.0;
 

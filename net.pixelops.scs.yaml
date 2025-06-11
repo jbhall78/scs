@@ -15,6 +15,9 @@ finish-args:
   - --device=dri
   - --share=network
 
+cleanup:
+  - '/include' # This will remove the /app/include directory
+
 modules:
   - name: SpaceCombatSimulator
     buildsystem: simple
