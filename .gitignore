@@ -5,3 +5,4 @@ build
 src/scs
 *.swp
 *.flatpak
+.vscode
