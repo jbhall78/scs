@@ -20,12 +20,16 @@ vid_init_sdl(GError **err)
 #else
     flags = (SDL_INIT_VIDEO);
 #endif
+    // Check if the operating system is Linux using preprocessor directives
+    #ifdef __linux__
+        setenv("SDL_VIDEO_FULLSCREEN_HEAD", "0", 1);
+    #endif
 
     if (SDL_InitSubSystem(flags) < 0)
-	goto fail;
+    	goto fail;
 
     if (! vid_set_mode())
-	goto fail;
+    	goto fail;
 
     print("Vendor    : %s\n", glGetString(GL_VENDOR));
     print("Renderer  : %s\n", glGetString(GL_RENDERER));
