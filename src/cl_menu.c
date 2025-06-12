@@ -334,7 +334,7 @@ menu_load_main(void)
 
     /* create buttons */
     size[HEIGHT] = button_height;
-    size[WIDTH]  = 280;
+    size[WIDTH]  = 320;
     pos[X] = 10;
     pos[Y] = -1 * ((size[HEIGHT] + button_padding) * 1) - 20;
     b = ui_widget_button_new(w, "Single Player", pos, size, menu_single_player);

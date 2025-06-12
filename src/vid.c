@@ -20,10 +20,10 @@ vid_init_sdl(GError **err)
 #else
     flags = (SDL_INIT_VIDEO);
 #endif
-    // Check if the operating system is Linux using preprocessor directives
-    #ifdef __linux__
-        setenv("SDL_VIDEO_FULLSCREEN_HEAD", "0", 1);
-    #endif
+    
+#ifdef __linux__
+    setenv("SDL_VIDEO_FULLSCREEN_HEAD", "0", 1);
+#endif
 
     if (SDL_InitSubSystem(flags) < 0)
     	goto fail;
@@ -95,21 +95,21 @@ vid_init_gl(void)
 
 #if 1
     {
-	int32_t lights, size;
+    	int32_t lights, size;
 
-	glGetIntegerv(GL_MAX_LIGHTS, &lights);
-	print("OpenGL: max lights: %d\n", lights);
+	    glGetIntegerv(GL_MAX_LIGHTS, &lights);
+	    print("OpenGL: max lights: %d\n", lights);
 
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size);
-	print("OpenGL: max texture size: %dx%d\n", size, size);
+	    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size);
+	    print("OpenGL: max texture size: %dx%d\n", size, size);
     }
 #endif
 
     // check for framebuffer-object extension
     {
-	GLenum status;
-	status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-	assert(status == GL_FRAMEBUFFER_COMPLETE_EXT);
+	    GLenum status;
+	    status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+	    assert(status == GL_FRAMEBUFFER_COMPLETE_EXT);
     }
 }
 
@@ -177,11 +177,11 @@ vid_set_mode(void)
     if (client.fullscreen)
         flags |= SDL_FULLSCREEN;
     else
-	flags |= SDL_RESIZABLE;
+	    flags |= SDL_RESIZABLE;
 
     client.surface = SDL_SetVideoMode(client.res[X], client.res[Y], bpp, flags);
     if (! client.surface)
-	return FAIL;
+	    return FAIL;
 
     print("Initialized %dx%d@%d%sdisplay.\n", client.res[X], client.res[Y],
 	    bpp, client.fullscreen ? " fullscreen " : " ");
