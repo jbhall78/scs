@@ -619,6 +619,8 @@ cl_target_computer3d_draw(void)
 {
     mat4x4_t mat;
     object_t *cam, *obj;
+        GLenum err; // Add error variable here
+
 
     cam = g_hash_table_lookup(client.objects, &client.obj_id);
     if (client.targets->len == 0 || cam == NULL)
@@ -628,25 +630,67 @@ cl_target_computer3d_draw(void)
     if (! obj)
 	return;
 
-    lighting_enable();
+//    lighting_enable();
+
+    while (glGetError() != GL_NO_ERROR) {}
+
+
+
 
     glColor4f(1,1,1,1);
     
-    glTranslatef(0.0, -55, -100);
+        err = glGetError();
+    if (err != GL_NO_ERROR) {
+        printf("DEBUG: cl_target_computer3d_draw: ERROR after glColor4f: 0x%x\n", err);
+        return;
+    }
+
+    //glTranslatef(0.0, -55, -100);
     //glTranslatef(0.0, -75, -100);
     //glTranslatef(0.0, -25, -100);
     //glTranslatef(0.0, -37.5, -150);
     quat_to_mat(cam->orient, mat);
     glMultMatrix(mat);
+    err = glGetError();
+    if (err != GL_NO_ERROR) {
+        printf("DEBUG: cl_target_computer3d_draw: ERROR after first glMultMatrix (cam orient): 0x%x\n", err);
+        // Potentially print current matrix mode here for diagnosis
+        GLint matrix_mode;
+        glGetIntegerv(GL_MATRIX_MODE, &matrix_mode);
+        printf("  Current GL_MATRIX_MODE: 0x%x\n", matrix_mode);
+        return;
+    }
+
+
 
     quat_to_mat_transpose(obj->orient, mat);
     glMultMatrix(mat);
-    
+        err = glGetError();
+    if (err != GL_NO_ERROR) {
+        printf("DEBUG: cl_target_computer3d_draw: ERROR after second glMultMatrix (obj orient): 0x%x\n", err);
+        GLint matrix_mode;
+        glGetIntegerv(GL_MATRIX_MODE, &matrix_mode);
+        printf("  Current GL_MATRIX_MODE: 0x%x\n", matrix_mode);
+        return;
+    }
+
 //    glEnable(GL_LIGHTING);
 
     glPushMatrix();
+        err = glGetError();
+    if (err != GL_NO_ERROR) {
+        printf("DEBUG: cl_target_computer3d_draw: ERROR after glPushMatrix: 0x%x\n", err);
+        return;
+    }
+
     mesh_draw(obj->mesh);
     glPopMatrix();
+        err = glGetError();
+    if (err != GL_NO_ERROR) {
+        printf("DEBUG: cl_target_computer3d_draw: ERROR after mesh_draw/glPopMatrix: 0x%x\n", err);
+        return;
+    }
+
 }
 
 void

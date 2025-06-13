@@ -63,6 +63,8 @@ mesh_draw_tri(m_mesh_t *m, m_tri_t *tri)
     glMaterialfv(GL_FRONT, GL_EMISSION, mat->emissive);
     glMaterialf(GL_FRONT, GL_SHININESS, mat->shininess);
 
+		GLint original_matrix_mode;
+
     if (r_textures == 1 && mat->textures->len > 0) {
 	for (i = 0; i < mat->textures->len; i++) {
 	    tex = g_ptr_array_index(mat->textures, i);
@@ -88,9 +90,13 @@ mesh_draw_tri(m_mesh_t *m, m_tri_t *tri)
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
+
+                glGetIntegerv(GL_MATRIX_MODE, &original_matrix_mode); // <-- ADD THIS LINE
+
+	//	glPushAttrib(GL_TRANSFORM_BIT); //
 		glMatrixMode(GL_TEXTURE);
 		glLoadIdentity();
-		glMatrixMode(GL_MODELVIEW);
+		
 	    }
 
 
@@ -113,6 +119,12 @@ mesh_draw_tri(m_mesh_t *m, m_tri_t *tri)
 	    if (strncmp(tex->name, "envmap", 6) == 0) {
 		glDisable(GL_TEXTURE_GEN_S);
 	  	glDisable(GL_TEXTURE_GEN_T);
+                glDisable(GL_BLEND);
+	    } else {
+	//	glPopAttrib();
+	        glDisable(GL_BLEND);
+		                glMatrixMode(original_matrix_mode); // <-- ADD THIS LINE
+
 	    }
 	}
     } else {
@@ -191,6 +203,7 @@ mesh_draw_tri(m_mesh_t *m, m_tri_t *tri)
  * draw a mesh
  * @param mesh object
  */
+#if 0
 void
 mesh_draw(m_mesh_t *m)
 {
@@ -226,6 +239,58 @@ mesh_draw(m_mesh_t *m)
     }
 }
 #endif
+#endif
+
+void
+mesh_draw(m_mesh_t *m)
+{
+    GLenum err; // Declare error variable
+
+    // --- CHECK 1: Before any operations in mesh_draw itself ---
+    err = glGetError();
+    if (err != GL_NO_ERROR) {
+        printf("DEBUG: mesh_draw: ERROR at START (before glDisable): 0x%x\n", err);
+    }
+
+    glDisable(GL_COLOR_MATERIAL); // This is your reported line (202)
+    // --- CHECK 2: Immediately after the reported problematic line ---
+    err = glGetError();
+    if (err != GL_NO_ERROR) {
+        printf("DEBUG: mesh_draw: ERROR after glDisable(GL_COLOR_MATERIAL): 0x%x\n", err);
+    }
+
+    glColor3f(1.0, 1.0, 1.0);
+    // --- CHECK 3: After glColor3f ---
+    err = glGetError();
+    if (err != GL_NO_ERROR) {
+        printf("DEBUG: mesh_draw: ERROR after glColor3f: 0x%x\n", err);
+    }
+
+    // ... (skipped #if 0 block) ...
+
+    for (int i = 0; i < m->objects->len; i++) {
+        m_obj_t *obj = g_ptr_array_index(m->objects, i);
+
+        for (int j = 0; j < obj->tris->len; j++) {
+            uint32_t t   = g_array_index(obj->tris, uint32_t, j);
+            m_tri_t *tri = g_ptr_array_index(m->triangles, t);
+
+            // --- CHECK 4: Before calling mesh_draw_tri ---
+            err = glGetError();
+            if (err != GL_NO_ERROR) {
+                printf("DEBUG: mesh_draw: ERROR before mesh_draw_tri for obj %d tri %d: 0x%x\n", i, j, err);
+            }
+
+            mesh_draw_tri(m, tri);
+
+            // --- CHECK 5: After calling mesh_draw_tri ---
+            err = glGetError();
+            if (err != GL_NO_ERROR) {
+                printf("DEBUG: mesh_draw: ERROR after mesh_draw_tri for obj %d tri %d: 0x%x\n", i, j, err);
+            }
+        }
+    }
+}
 
 
 /***************************************************************************
