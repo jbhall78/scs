@@ -568,7 +568,7 @@ game_update(GError **err)
 void
 game_draw_objs(gpointer key, gpointer val, gpointer data)
 {
-    mat4x4_t m;
+/*    mat4x4_t m;
     object_t *obj = val;
     vec3_t zero;
 
@@ -583,7 +583,24 @@ game_draw_objs(gpointer key, gpointer val, gpointer data)
 	glMultMatrix(m);
     	mesh_draw(obj->mesh);
 //	ui_draw_axis(zero, obj->mesh->radius * 2);
-    glPopMatrix();
+    glPopMatrix();*/
+    mat4x4_t m;
+    object_t *obj = val;
+    vec3_t zero;
+
+    vec3_zero(zero);
+
+    if (obj->id != client.obj_id) { // Only draw if it's NOT the client's object
+        glPushMatrix();
+            glTranslatef(obj->pos[X], obj->pos[Y], obj->pos[Z]);
+            quat_to_mat_transpose(obj->orient, m);
+            glMultMatrix(m);
+            mesh_draw(obj->mesh);
+        //  ui_draw_axis(zero, obj->mesh->radius * 2);
+        glPopMatrix();
+    }
+    // If obj->id == client.obj_id, the if block is skipped, no push/pop occurs,
+    // and stack balance is maintained.
 }
 
 void
@@ -598,6 +615,288 @@ game_print_objects(gpointer key, gpointer val, gpointer data)
 /**
  * Draws the 3D universe and the HUD
  */
+static gboolean game_draw(GError **err)
+{
+    object_t *cam;
+    mat4x4_t m;
+
+    if (client.obj_id == 0) {
+	    printf("camera not initialized\n");
+	    return OK;
+    }
+
+    // try to obtain the camera object
+    cam = g_hash_table_lookup(client.objects, &client.obj_id);
+
+    if (cam == NULL) {
+	    g_hash_table_foreach(client.objects, game_print_objects, NULL);
+	    printf("no camera! [0x%08x]\n", client.obj_id);
+	    exit(1);
+	    return OK;
+    }
+
+    // --- VERY FIRST THING IN YOUR FRAME RENDERING FUNCTION ---
+#if 0    
+    GLenum initial_err;
+    while ((initial_err = glGetError()) != GL_NO_ERROR) {
+//            printf("DEBUG: Clearing initial OpenGL error at frame start: 0x%x\n", initial_err);
+    }
+    // --- END CLEARING ---
+#endif
+
+    glViewport(0, 0, client.res[WIDTH], client.res[HEIGHT]);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear all buffers
+
+    // --- Phase 1: Render Starfield (Always around Camera) ---
+    // The starfield needs its own projection because the main scene's might be changed later.
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(45.0, (real)client.res[WIDTH] / (real)client.res[HEIGHT], 0.1, 10000000.0); // Use same perspective as main scene
+    glGetFloatv(GL_PROJECTION_MATRIX, client.proj_mat); // Assuming proj_mat is a mat4x4_t (GLfloat[16] or GLdouble[16])
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity(); // Start with an identity modelview for the starfield
+
+    // Apply ONLY camera's orientation (rotation) to the starfield's modelview.
+    // This makes the starfield rotate with the camera's view direction.
+    quat_to_mat(cam->orient, m);
+    glMultMatrix(m);
+
+    // Now, translate the starfield geometry *by the camera's world position*.
+    // This makes the starfield appear centered on the camera's actual location,
+    // effectively cancelling out the camera's movement for the starfield's visuals.
+    glTranslatef(cam->pos[X], cam->pos[Y], cam->pos[Z]);
+
+    lighting_disable();
+
+    glDisable(GL_DEPTH_TEST);  // Ensure starfield is drawn behind everything
+    glDepthMask(GL_FALSE);     // Ensure starfield doesn't write to depth buffer
+
+    glCallList(starfield); // Draw your starfield (assumed to be defined around origin)
+
+    glEnable(GL_DEPTH_TEST);   // Re-enable for subsequent 3D objects
+    glDepthFunc(GL_LEQUAL);    // Standard depth function
+    glDepthMask(GL_TRUE);      // Re-enable depth writing
+
+    /* --- Phase 2: Render Main 3D Game Scene --- */
+
+    // Set 3D Modelview (Main Camera)
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity(); // Start with identity
+
+    // Apply camera's full transform (rotation and inverse translation)
+    quat_to_mat(cam->orient, m);
+    mat4x4_translate(m, -cam->pos[X], -cam->pos[Y], -cam->pos[Z]); // Apply inverse position
+    glMultMatrix(m); // Apply the full camera matrix
+
+    // --- Draw your main 3D scene elements ---
+    lighting_disable();
+
+    ui_draw_3d_grid(10.0, 50, 50);
+
+    // Debug axis - ensure it uses the main depth settings unless you specifically want GL_ALWAYS
+    //glDepthFunc(GL_ALWAYS); // Use GL_ALWAYS to ensure it's always on top of scene
+    vec3_t zero;
+    vec3_zero(zero);
+    ui_draw_axis(zero, 500);
+    //glDepthFunc(GL_LEQUAL); // Restore depth func
+
+    ui_draw_spiral_wireframe(32.0, 500.0);
+    lighting_enable();
+
+    g_hash_table_foreach(client.objects, game_draw_objs, NULL); // Your main objects
+
+#if 1
+    // Earth
+    vec3_t clong, clat;
+    vec3_set(clong, 0.25, 0, 0.0);
+    vec3_set(clat, 0.25, 0, 0.0);
+    glPushMatrix();
+        glTranslatef(128000,-60000,0);
+        ui_draw_earth(0,0,0, 60000.0, 2, 5.0, 5.0, clong, clat);
+    glPopMatrix();
+    // --- End Main 3D Scene ---
+#endif
+
+    // --- 2D HUD Drawing Setup ---
+#if 1
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    // Use client.ortho for your virtual resolution here
+    glOrtho(0.0, client.ortho[WIDTH], 0.0, client.ortho[HEIGHT], -1.0, 1.0); // Simple Z-range for 2D
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity(); // Identity for 2D HUD modelview
+
+    // Disable depth testing and writing for 2D HUD elements
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+
+    // --- Draw your 2D HUD components ---
+    lighting_disable(); // HUD is typically unlit
+
+    if (client.hud_enabled) {
+        cl_target_draw();
+    }
+    {
+        struct tm date_time;
+        time_t t;
+        char buf[BUFSIZ];
+        t = time(NULL);
+        localtime_r(&t, &date_time);
+        snprintf(buf, BUFSIZ, "%02d:%02d:%02d", date_time.tm_hour, date_time.tm_min, date_time.tm_sec);
+        ui_draw_digital_text(buf, client.ortho[WIDTH] - 16 * 12, 0 + 26, 16, 26);
+    }
+    if (client.hud_enabled) {
+        cl_radar_draw();
+        cl_crosshair_draw();
+        cl_target_computer_draw(); // Assuming this is a 2D component
+    }
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+
+
+    // --- End 2D HUD ---
+#endif
+
+#if 1
+    // BEFORE drawing the 3D HUD object:
+    // 1. Temporarily disable writing to the main depth buffer.
+    // 2. Set depth function to GL_ALWAYS so it draws over everything.
+    glDisable(GL_DEPTH_TEST);   // Temporarily disable depth testing for the entire HUD setup (safety)
+    glDepthFunc(GL_ALWAYS); // <-- Re-introduce this here
+    glDepthMask(GL_FALSE);      // Do NOT write to the depth buffer for the HUD
+    // (We will enable depth test and change depth func *within* the HUD object's drawing if needed for internal occlusion)
+
+    // --- 3D HUD Object Drawing Setup ---
+    // Outer 2D Orthographic Projection (defines screen space for the 3D HUD object)
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, client.ortho[WIDTH], 0, client.ortho[HEIGHT], -1.0, 100.0); // Sufficient Z-range
+
+    // Outer 2D Modelview (for positioning the 3D object on the 2D screen)
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    // Enable depth testing for the 3D HUD object
+    //glEnable(GL_DEPTH_TEST);
+    //glDepthFunc(GL_ALWAYS);
+    //glDepthMask(GL_TRUE); // Ensure its internal depth works
+
+    lighting_enable(); // Enable if your 3D HUD object is lit
+
+    // Position the "origin" for this 3D HUD object on the 2D screen
+    glPushMatrix(); // Push outer 2D modelview
+        glTranslatef(client.ortho[WIDTH] / 2.0f, client.ortho[HEIGHT] / 16.0f, 0.0f); // Example position
+        glScalef(50.0f, 50.0f, 50.0f); // Scale the miniature 3D scene
+
+        // Set up the INNER 3D Perspective for the miniature object
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix(); // Push outer 2D projection
+            glLoadIdentity();
+            gluPerspective(15.0, 1.0, 0.1, 1000.0); // Small FOV, 1:1 aspect ratio
+
+            // Set up the INNER 3D Modelview for the miniature object's camera
+            glMatrixMode(GL_MODELVIEW);
+            glPushMatrix(); // Push translated/scaled modelview
+                glLoadIdentity();
+                glTranslatef(0.0f, -55.0f, -500.0f); // "Camera" for the miniature object
+
+                glDisable(GL_DEPTH_TEST);
+                glDepthFunc(GL_LESS); // Or GL_LEQUAL, typical for internal 3D occlusion
+
+                // Draw the actual 3D HUD object
+                if (client.hud_enabled) {
+                    cl_target_computer3d_draw();
+                }
+
+                glDepthFunc(GL_ALWAYS); // Or whatever was appropriate for the outer HUD context
+                glDisable(GL_DEPTH_TEST); // Disable depth test again before popping matrices
+
+            glPopMatrix(); // Pop inner 3D Modelview
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix(); // Pop inner 3D Projection
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix(); // Pop outer 2D Modelview
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL); // Restore to standard for next frame
+    glDepthMask(GL_TRUE);   // Re-enable depth writing for main scene next frame
+
+    // --- End 3D HUD Object ---
+#endif
+
+    glFlush();
+    return OK;
+}
+#if 0
+ static gboolean game_draw(GError **err)
+{
+    object_t *cam;
+    mat4x4_t m;
+
+    if (client.obj_id == 0) {
+	    printf("camera not initialized\n");
+	    return OK;
+    }
+
+    /* try to obtain the camera object */
+    cam = g_hash_table_lookup(client.objects, &client.obj_id);
+
+    if (cam == NULL) {
+	    g_hash_table_foreach(client.objects, game_print_objects, NULL);
+	    printf("no camera! [0x%08x]\n", client.obj_id);
+	    exit(1);
+	    return OK;
+    }
+ 
+    glViewport(0, 0, client.res[WIDTH], client.res[HEIGHT]);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear all buffers
+
+    // --- 2D HUD Drawing Setup ---
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    // Use client.ortho for your virtual resolution here
+    glOrtho(0.0, client.ortho[WIDTH], 0.0, client.ortho[HEIGHT], -1.0, 1.0); // Simple Z-range for 2D
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity(); // Identity for 2D HUD modelview
+
+    // Disable depth testing and writing for 2D HUD elements
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+
+    // --- Draw your 2D HUD components ---
+    lighting_disable(); // HUD is typically unlit
+
+    if (client.hud_enabled) {
+        cl_target_draw();
+    }
+    {
+        struct tm date_time;
+        time_t t;
+        char buf[BUFSIZ];
+        t = time(NULL);
+        localtime_r(&t, &date_time);
+        snprintf(buf, BUFSIZ, "%02d:%02d:%02d", date_time.tm_hour, date_time.tm_min, date_time.tm_sec);
+        ui_draw_digital_text(buf, client.ortho[WIDTH] - 16 * 12, 0 + 26, 16, 26);
+    }
+    if (client.hud_enabled) {
+        cl_radar_draw();
+        cl_crosshair_draw();
+        cl_target_computer_draw(); // Assuming this is a 2D component
+    }
+
+    // --- End 2D HUD ---
+
+    glFlush();
+    return OK;
+}
+#endif
+#if 0
 static gboolean
 game_draw(GError **err)
 {
@@ -605,18 +904,18 @@ game_draw(GError **err)
     mat4x4_t m;
 
     if (client.obj_id == 0) {
-	printf("camera not initialized\n");
-	return OK;
+	    printf("camera not initialized\n");
+	    return OK;
     }
 
     /* try to obtain the camera object */
     cam = g_hash_table_lookup(client.objects, &client.obj_id);
 
     if (cam == NULL) {
-	g_hash_table_foreach(client.objects, game_print_objects, NULL);
-	printf("no camera! [0x%08x]\n", client.obj_id);
-	exit(1);
-	return OK;
+	    g_hash_table_foreach(client.objects, game_print_objects, NULL);
+	    printf("no camera! [0x%08x]\n", client.obj_id);
+	    exit(1);
+	    return OK;
     }
 
 
@@ -705,9 +1004,9 @@ game_draw(GError **err)
     glPopMatrix();
 #endif
     glPushMatrix();
-    vec3_set(clong, 0.25, 0, 0.0);
-    vec3_set(clat, 0.25, 0, 0.0);
-    glTranslatef(128000,-60000,0);
+        vec3_set(clong, 0.25, 0, 0.0);
+        vec3_set(clat, 0.25, 0, 0.0);
+        glTranslatef(128000,-60000,0);
         ui_draw_earth(0,0,0, 60000.0, 2, 5.0, 5.0, clong, clat);
 //    glTranslatef(000,0,000);
 //        ui_draw_earth(0,0,0, 100.0, 2, 5.0, 5.0, clong, clat);
@@ -759,24 +1058,40 @@ game_draw(GError **err)
 
 	    glMatrixMode(GL_PROJECTION);
         glPopMatrix();
+        
 
-       	/* draw 3d components of the hud */
-	glClear(GL_DEPTH_BUFFER_BIT);	// we dont want stuff in the world
-					// to mess with the 3d overlays
+    #define VIRTUAL_HUD_WIDTH 1920.0f
+    #define VIRTUAL_HUD_HEIGHT 1080.0f
+
+    /* draw 3d components of the hud */
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+    //glMatrixMode(GL_PROJECTION);
+    //glPushMatrix();
+    //glLoadIdentity();
+    //glOrtho(0, VIRTUAL_HUD_WIDTH, VIRTUAL_HUD_HEIGHT, 0, -1, 1);
+    //glTranslatef(VIRTUAL_HUD_WIDTH - 200.0f, VIRTALL_HUD_HEIGHT - 100.0f, 0.0f); // Example: bottom-right corner
+    //glScale(50.0f, 50.0f, 50.0f);
 
 	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	    glLoadIdentity();
-	    if (client.hud_enabled) {
-    		cl_target_computer3d_draw();
-	    }
-	glPopMatrix();
+    glPushMatrix();
+    glLoadIdentity();
+	if (client.hud_enabled) {
+        cl_target_computer3d_draw();
+	}
+    glPopMatrix();
 
+    //glMatrixMode(GL_PROJECTION);
+    //glPopMatrix();
+
+    glMatrixMode(GL_MODELVIEW);
+	
     /* so input doesn't lag behind graphics too much */
     glFlush();
 
     return OK;
 }
+#endif
 
 /**
  * callback for processing SDL keyboard events

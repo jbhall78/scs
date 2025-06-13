@@ -800,7 +800,7 @@ ui_draw_earth(real x, real y, real z, real radius, int mode, real long_ang, real
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
-    /* object lighting parameters */
+    // object lighting parameters 
     if (mat == NULL)
 	mat = g_new0(m_mat_t, 1);
     assert(mat != NULL);
@@ -862,7 +862,7 @@ ui_draw_earth(real x, real y, real z, real radius, int mode, real long_ang, real
 	rotation = 0;
     }
 
-    /* earth */
+    // earth 
     glPushMatrix();
         // rotate sphere
         glRotatef(180.0, 0, 0, 1);			// Z
@@ -884,7 +884,7 @@ ui_draw_earth(real x, real y, real z, real radius, int mode, real long_ang, real
     if (mode == 2)
 	glDisable(GL_TEXTURE_2D);
 
-    /* longitude / latitude lines */
+    // longitude / latitude lines 
     glPushMatrix();
 	glRotatef(axis_rotation, 1.0, 0, 0);		// X
 
@@ -931,7 +931,7 @@ ui_draw_earth(real x, real y, real z, real radius, int mode, real long_ang, real
     glMaterialfv(GL_FRONT, GL_EMISSION, mat->emissive);
     glMaterialf(GL_FRONT, GL_SHININESS, mat->shininess);
 
-    /* atmosphere */
+    // atmosphere 
     glDisable(GL_TEXTURE_2D);
     glPushMatrix();
         // draw sphere
