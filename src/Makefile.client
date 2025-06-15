@@ -8,7 +8,7 @@ CFLAGS = -DLINUX -DUNIX -DSCS_ENGINE -DDEBUG -DNET_VCR -D_GNU_SOURCE=1 -D_REENTR
 	`pkg-config SDL_image --cflags` \
 	`pkg-config openal --cflags` \
         `pkg-config freealut --cflags`	
-LDFLAGS = -lm -lscs -L. -lGL -lGLU \
+LDFLAGS = -lm -lscs -L. -L/app/lib -lGL -lGLU \
 	`pkg-config glib-2.0 --libs` \
 	`pkg-config gio-2.0 --libs` \
 	`pkg-config libxml-2.0 --libs` \
