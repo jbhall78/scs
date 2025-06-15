@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #include <glib.h>
-#include <gnet.h>
+#include <gio/gio.h>
 #include <libxml/parser.h>
 
 #include "mem.h"
@@ -27,12 +27,8 @@ init(void)
     SDL_Init(0);
 
     /* initialize glib */
-    g_thread_init(NULL);
+    //g_thread_init(NULL);
     SCS_ERROR = g_quark_from_static_string("SCS");
-
-    /* initialize gnet */
-    gnet_init();
-    gnet_ipv6_set_policy(GIPV6_POLICY_IPV4_ONLY);
 
     /* initialize libxml */
     LIBXML_TEST_VERSION

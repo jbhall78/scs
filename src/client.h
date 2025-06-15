@@ -4,7 +4,7 @@
 #ifndef DEDICATED
 
 #include <SDL.h>
-#include <gnet.h>
+#include <gio/gio.h>
 
 #include "ui.h"
 #include "shell.h"
