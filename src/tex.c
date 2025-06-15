@@ -1,9 +1,9 @@
 #include <string.h>
 
 #include <glib.h>
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_opengl.h>
 
 #include "scs.h"
 #include "shared.h"
@@ -64,7 +64,7 @@ tex_putpixel(SDL_Surface *surface, uint16_t x, uint16_t y, uint32_t color)
     if (SDL_MUSTLOCK(surface)) {
         SDL_UnlockSurface(surface);
     }
-    SDL_UpdateRect(surface, x, y, 1, 1);
+    //SDL_UpdateRect(surface, x, y, 1, 1);
 }
 
 static uint32_t
@@ -144,8 +144,7 @@ tex_convert_surf(SDL_Surface *s, int want_alpha, GError **err)
 	&& s->format->Rmask == rmask
 	&& s->format->Gmask == gmask
 	&& s->format->Bmask == bmask
-	&& s->format->Amask == amask
-	&& !(s->flags & SDL_SRCCOLORKEY)) {
+	&& s->format->Amask == amask) {
 	/* no conversion needed */
 	return s;
     }
@@ -157,12 +156,11 @@ tex_convert_surf(SDL_Surface *s, int want_alpha, GError **err)
 				rmask, gmask, bmask, amask)))
 	goto tex_convert_surf_fail;
 
+    /*
     if (want_alpha) {
-	/* SDL sets the SDL_SRCALPHA flag on all surfaces with an
-	   alpha channel. We need to clear that flag for the copy,
-	   since SDL would attempt to alpha-blend our image otherwise */
 	SDL_SetAlpha(s, 0, 255);
     }
+    */
 
     /*
      * Do the conversion. If the source surface has a colourkey, then it
@@ -282,7 +280,7 @@ tex_load_surf(tex_t *tex, char *filename, GError **err)
     }
 
     /* convert the surface to the format OpenGL wants. */
-    want_alpha = s->format->Amask || (s->flags & SDL_SRCCOLORKEY); 
+    want_alpha = s->format->Amask;
     if (! (s = tex_convert_surf(s, want_alpha, &tmp)))
 	goto tex_load_surf_fail;
 

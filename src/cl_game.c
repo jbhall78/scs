@@ -4,8 +4,8 @@
 
 #include <time.h>
 
-#include <SDL.h>
-#include <SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 
 #include "scs.h"
 #include "shared.h"
@@ -321,7 +321,7 @@ game_load(GError **err)
 	sh_var_add(client.shell, "r_normals", NULL);
     sh_var_set_num(client.shell, "r_normals", 0, NULL);
 
-    SDL_WarpMouse(client.center[X], client.center[Y]);
+    SDL_WarpMouseInWindow(client.window, client.center[X], client.center[Y]);
 
 #ifndef DEBUG
     SDL_WM_GrabInput(SDL_GRAB_ON);
@@ -481,7 +481,7 @@ game_update_mouse(void)
     vec2_zero(angles);
 
     if (! client.mouse_glide) {
-	SDL_WarpMouse(client.center[X], client.center[Y]);
+	SDL_WarpMouseInWindow(client.window, client.center[X], client.center[Y]);
 	sens = client.mouse_sensitivity;
     } else {
 	int32_t max = 192;
@@ -496,7 +496,7 @@ game_update_mouse(void)
 	else if (pos[Y] <= client.center[Y] - max/2)
 	    pos[Y] = client.center[Y] - max/2;
 
-	SDL_WarpMouse(pos[X], pos[Y]);
+	SDL_WarpMouseInWindow(client.window, pos[X], pos[Y]);
 	sens = client.mouse_glide_sensitivity;
     }
 

@@ -286,14 +286,14 @@ ui_widget_scrollbar_mbutton(widget_t *w, SDL_MouseButtonEvent *ev, widget_t **ha
     widget_posv_t mpos;
 
 
-
-    if (ev->type == SDL_MOUSEBUTTONUP) {
-	if (ev->button == SDL_BUTTON_WHEELUP) {
+/*
+    if (ev->type == SDL_MOUSEWHEEL) {
+	if (ev->wheel.y > 0) {
 	    ui_widget_scrollbar_scroll_up(w);
-	} else if (ev->button == SDL_BUTTON_WHEELDOWN) {
+	} else if (ev->wheel.y < 0) {
 	    ui_widget_scrollbar_scroll_down(w);
 	} 
-    } else if (ev->type == SDL_MOUSEBUTTONDOWN) {
+    } else*/ if (ev->type == SDL_MOUSEBUTTONDOWN) {
 	mpos[X] = ev->x;
 	mpos[Y] = root->size[HEIGHT] - ev->y;
 

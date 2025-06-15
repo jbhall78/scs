@@ -3,8 +3,8 @@
 #include <time.h>
 
 #include <glib.h>
-#include <SDL.h>
-#include <SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 
 #include "scs.h"
 #include "shared.h"
@@ -793,10 +793,6 @@ menu_load(GError **err)
     if (! root)
 	root = main_menu;
 
-    // make SDL happy
-    SDL_EnableKeyRepeat(250, 30);
-    SDL_WarpMouse(0, 0);
-
     // make OpenGL happy
     glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
@@ -816,8 +812,6 @@ menu_unload(GError **err)
 
     root = NULL;
 #endif
-
-    SDL_EnableKeyRepeat(0,0);
 
     client.initialized = FALSE;
 

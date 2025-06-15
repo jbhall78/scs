@@ -76,19 +76,19 @@ xml_mesh_mtl_parse_color(m_mesh_t *m, m_mat_t *mat, xmlNode *node, GError **err)
     vec4_zero(c);
     
     if ((prop = xxmlGetProp(node, "r"))) {
-	c[R] = xatof(prop);
+	c[RED] = xatof(prop);
 	xmlFree(prop);
     } 
     if ((prop = xxmlGetProp(node, "g"))) {
-	c[G] = xatof(prop);
+	c[GREEN] = xatof(prop);
 	xmlFree(prop);
     } 
     if ((prop = xxmlGetProp(node, "b"))) {
-	c[B] = xatof(prop);
+	c[BLUE] = xatof(prop);
 	xmlFree(prop);
     }
     if ((prop = xxmlGetProp(node, "a"))) {
-	c[A] = xatof(prop);
+	c[ALPHA] = xatof(prop);
 	xmlFree(prop);
     }
     if (! (prop = xxmlGetProp(node, "name"))) {

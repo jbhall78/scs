@@ -213,6 +213,7 @@ ui_widget_select_mbutton(widget_t *w, SDL_MouseButtonEvent *ev, widget_t **handl
     widget_select_t *ws = w->data;
     assert(ws != NULL);
 
+    /*
     if (ev->type != SDL_MOUSEBUTTONUP)
         return OK;
 
@@ -234,6 +235,7 @@ ui_widget_select_mbutton(widget_t *w, SDL_MouseButtonEvent *ev, widget_t **handl
 
 	*handled_by = w;
     }   
+    */
 
     return OK;
 }

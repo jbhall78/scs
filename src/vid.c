@@ -2,8 +2,8 @@
 #include <math.h>
 
 #include <glib.h>
-#include <SDL.h>
-#include <SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 
 #include "scs.h"
 #include "shared.h"
@@ -38,8 +38,8 @@ vid_init_sdl(GError **err)
     print("Extensions: %s\n", glGetString(GL_EXTENSIONS));
 #endif
 
-    SDL_WM_SetCaption("[SCS] - Space Combat Simulator", NULL);
-    SDL_EnableUNICODE(SDL_ENABLE);
+    //SDL_WM_SetCaption("[SCS] - Space Combat Simulator", NULL);
+    //SDL_EnableUNICODE(SDL_ENABLE);
 
     /* FIXME - move this to mouse init code */
     SDL_ShowCursor(SDL_DISABLE);
@@ -135,53 +135,64 @@ vid_set(gboolean fullscreen, uint16_t resx, uint16_t resy)
 gboolean
 vid_set_mode(void)
 {
-    const SDL_VideoInfo *vinfo;
     int rgb_size[3];
     int bpp;
     int flags;
 
-    vinfo = SDL_GetVideoInfo();
-    bpp = vinfo->vfmt->BitsPerPixel;
+    bpp = 32;
 
     client.bpp = bpp;
 
-    switch (bpp) {
-        case 8:
-            rgb_size[0] = 3;
-            rgb_size[1] = 3;
-            rgb_size[2] = 2;
-            break;
-        case 15:
-        case 16:
-            rgb_size[0] = 5;
-            rgb_size[1] = 5;
-            rgb_size[2] = 5;
-            break;
-        default:
-            rgb_size[0] = 8;
-            rgb_size[1] = 8;
-            rgb_size[2] = 8;
-            break;
-    }
-
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE,     rgb_size[0]);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,   rgb_size[1]);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,    rgb_size[2]);
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE,     8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,   8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,    8);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,   16);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    /* XXX - We may want to move this out into its own function if we want to
-     * allow for on the fly video mode switching. */
-    flags = SDL_OPENGL;
+    Uint32 window_flags = SDL_WINDOW_OPENGL; // Essential for OpenGL rendering
+    // Translate SDL 1.x flags to SDL 2.0 flags
+    if (client.fullscreen) { // This was the old SDL 1.x flag
+        // Decide which fullscreen mode you want:
+        // For true exclusive fullscreen (changes display resolution):
+        window_flags |= SDL_WINDOW_FULLSCREEN;
+        // OR for borderless windowed fullscreen (fills desktop, no resolution change, preferred by many):
+        // window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    }
+        // Add other common flags if needed, e.g., for resizable window in windowed mode
+    else { // Only add if not fullscreen, as fullscreen implies these
+        //window_flags |= SDL_WINDOW_RESIZABLE;
+        ;
+    }
 
-    if (client.fullscreen)
-        flags |= SDL_FULLSCREEN;
-    else
-	    flags |= SDL_RESIZABLE;
+    // 1. Create the window
+    client.window = SDL_CreateWindow(
+        "[SCS] Space Combat Simulator", // Window title
+        SDL_WINDOWPOS_UNDEFINED, // X position (centered if UNDEFINED)
+        SDL_WINDOWPOS_UNDEFINED, // Y position (centered if UNDEFINED)
+        client.res[WIDTH],                   // Width
+        client.res[HEIGHT],                  // Height
+        window_flags             // Flags for the window
+    );
 
-    client.surface = SDL_SetVideoMode(client.res[X], client.res[Y], bpp, flags);
-    if (! client.surface)
-	    return FAIL;
+    if (client.window == NULL) {
+        fprintf(stderr, "Window could not be created! SDL Error: %s\n", SDL_GetError());
+        // Handle error, e.g., exit or return an error code
+        exit(1);
+    }
+
+    // 2. Create the OpenGL context
+    client.gl_context = SDL_GL_CreateContext(client.window);
+    if (client.gl_context == NULL) {
+        fprintf(stderr, "OpenGL context could not be created! SDL Error: %s\n", SDL_GetError());
+        SDL_DestroyWindow(client.window); // Clean up the window
+        client.window = NULL;
+        exit(1);
+    }
+
+    // Optional: Set VSync (recommended for games)
+    if (SDL_GL_SetSwapInterval(1) < 0) { // Set to 1 for VSync, 0 for no VSync
+        fprintf(stderr, "Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+    }
 
     print("Initialized %dx%d@%d%sdisplay.\n", client.res[X], client.res[Y],
 	    bpp, client.fullscreen ? " fullscreen " : " ");

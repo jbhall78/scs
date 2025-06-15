@@ -177,7 +177,7 @@ ui_widget_text_key(widget_t *w, SDL_KeyboardEvent *k, gboolean *handled, GError 
     if (k->type == SDL_KEYUP)
 	return OK;
 
-    ui_text_proc_key(w, k->keysym.sym, k->keysym.mod, k->keysym.unicode);
+    //ui_text_proc_key(w, k->keysym.sym, k->keysym.mod, k->keysym.unicode);
 
     *handled = TRUE;
 
