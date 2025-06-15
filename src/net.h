@@ -106,6 +106,7 @@ typedef struct {
 
 typedef struct {
     char *addr;
+    uint16_t port;
     void *drv_data;
 } addr_t;
 

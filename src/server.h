@@ -4,7 +4,7 @@
 #include <time.h>
 
 #include <glib.h>
-#include <gnet.h>
+#include <gio/gio.h>
 
 #include "scs.h"
 #include "shell.h"

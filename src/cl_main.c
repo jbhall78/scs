@@ -4,7 +4,7 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <glib.h>
-#include <gnet.h>
+#include <gio/gio.h>
 
 #include "scs.h"
 #include "shared.h"
