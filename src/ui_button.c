@@ -202,7 +202,7 @@ ui_widget_button_mbutton(widget_t *w, SDL_MouseButtonEvent *ev, widget_t **handl
     widget_button_t *wb = w->data;
     assert(wb != NULL);
 
-    if (ev->button == SDL_BUTTON_WHEELUP || ev->button == SDL_BUTTON_WHEELDOWN) {
+/*    if (ev->button == SDL_BUTTON_WHEELUP || ev->button == SDL_BUTTON_WHEELDOWN) {
 	if (ev->type == SDL_MOUSEBUTTONUP) {
 	    // buttons can't scroll so send the event up the chain until someone processes it
 	    // or we can no longer propagate the event
@@ -210,7 +210,7 @@ ui_widget_button_mbutton(widget_t *w, SDL_MouseButtonEvent *ev, widget_t **handl
 		return CALL(w->parent->mbutton)(w->parent, ev, handled_by, err);
 	}
 	return OK;
-    }
+    }*/
 
     if (ev->type == SDL_MOUSEBUTTONDOWN) {
        	// trigger the user defined event handler

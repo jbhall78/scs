@@ -26,6 +26,8 @@ init(void)
     /* initialize SDL library */
     SDL_Init(0);
 
+    SDL_StartTextInput();
+
     /* initialize glib */
     //g_thread_init(NULL);
     SCS_ERROR = g_quark_from_static_string("SCS");

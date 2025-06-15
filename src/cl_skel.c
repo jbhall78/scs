@@ -3,8 +3,8 @@
 #include <time.h>
 
 #include <glib.h>
-#include <SDL.h>
-#include <SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 
 #include "scs.h"
 #include "shared.h"
@@ -79,7 +79,6 @@ menu_draw(void)
 static gboolean
 menu_load(GError **err)
 {
-    // make SDL happy
     SDL_EnableKeyRepeat(250, 30);
     SDL_WarpMouse(0, 0);
 

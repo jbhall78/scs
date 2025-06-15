@@ -14,8 +14,8 @@
 #include <math.h>
 
 #include <glib.h>
-#include <SDL.h>
-#include <SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 
 #include "scs.h"
 #include "shared.h"
@@ -462,22 +462,22 @@ glEnd();
 	    mat = g_new0(m_mat_t, 1);
 	    assert(mat != NULL);
 	    mat->lit = TRUE;
-	    mat->ambient[R] = 0;
-	    mat->ambient[G] = 0;
-	    mat->ambient[B] = 0;
-	    mat->ambient[A] = 1;
-	    mat->diffuse[R] = 1;
-	    mat->diffuse[G] = 1;
-	    mat->diffuse[B] = 1;
-	    mat->diffuse[A] = 1;
-	    mat->specular[R] = 1.0;
-	    mat->specular[G] = 1.0;
-	    mat->specular[B] = 1.0;
-	    mat->specular[A] = 1.0;
-	    mat->emissive[R] = 1.0;
-	    mat->emissive[G] = 1.0;
-	    mat->emissive[B] = 1.0;
-	    mat->emissive[A] = 1.0;
+	    mat->ambient[RED] = 0;
+	    mat->ambient[GREEN] = 0;
+	    mat->ambient[BLUE] = 0;
+	    mat->ambient[ALPHA] = 1;
+	    mat->diffuse[RED] = 1;
+	    mat->diffuse[GREEN] = 1;
+	    mat->diffuse[BLUE] = 1;
+	    mat->diffuse[ALPHA] = 1;
+	    mat->specular[RED] = 1.0;
+	    mat->specular[GREEN] = 1.0;
+	    mat->specular[BLUE] = 1.0;
+	    mat->specular[ALPHA] = 1.0;
+	    mat->emissive[RED] = 1.0;
+	    mat->emissive[GREEN] = 1.0;
+	    mat->emissive[BLUE] = 1.0;
+	    mat->emissive[ALPHA] = 1.0;
 	    mat->shininess = 16.1;
 	}
 	glMaterialfv(GL_FRONT, GL_AMBIENT, mat->ambient);
@@ -676,7 +676,6 @@ demo_load(GError **err)
     largest_mass = 0.0;
     largest_particle = NULL;
 
-    // make SDL happy
     SDL_EnableKeyRepeat(250, 30);
     SDL_WarpMouse(0, 0);
 
@@ -763,12 +762,12 @@ demo_load(GError **err)
 
     // since we are double buffered and want to put something on the screen immediately, do this:
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-    SDL_GL_SwapBuffers();
+    SDL_GL_SwapWindow(client.window);
     if (! demo_draw(&tmp)) {
 	g_propagate_error(err, tmp);
 	return FAIL;
     }
-    SDL_GL_SwapBuffers();
+    SDL_GL_SwapWindow(client.window);
 
     tg = thread_group_new();
     thread_group_spawn_workers(tg);

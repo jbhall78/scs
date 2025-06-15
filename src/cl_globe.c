@@ -13,8 +13,8 @@
 #include <math.h>
 
 #include <glib.h>
-#include <SDL.h>
-#include <SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 
 #include "scs.h"
 #include "shared.h"
@@ -88,9 +88,9 @@ demo_draw_grid(void)
 {
     vec3_t color;
 
-    color[R] = 0.4;
-    color[G] = 0.4;
-    color[B] = 0.4;
+    color[RED] = 0.4;
+    color[GREEN] = 0.4;
+    color[BLUE] = 0.4;
 
     glDisable(GL_POINT_SMOOTH);
     glLineWidth(1.0);
@@ -253,10 +253,6 @@ demo_load(GError **err)
 {
     GError *tmp = NULL;
 
-    // make SDL happy
-    SDL_EnableKeyRepeat(250, 30);
-    SDL_WarpMouse(0, 0);
-
     // set our screen size
     vec2_cp(client.res, ScreenSize);
 
@@ -279,8 +275,6 @@ demo_load(GError **err)
 static gboolean
 demo_unload(GError **err)
 {
-    SDL_EnableKeyRepeat(0,0);
-
     client.initialized = FALSE;
 
     return OK;

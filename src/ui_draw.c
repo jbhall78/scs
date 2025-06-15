@@ -1,8 +1,8 @@
 #include <math.h>
 
 #include <glib.h>
-#include <SDL.h>
-#include <SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 
 #include "scs.h"
 #include "shared.h"
@@ -64,25 +64,25 @@ ui_draw_axis(vec3_t pos, double len)
 
     glLineWidth(3.0);
 
-    color[R] = 1.0;
-    color[G] = 0.0;
-    color[B] = 0.0;
+    color[RED] = 1.0;
+    color[GREEN] = 0.0;
+    color[BLUE] = 0.0;
     glColor3v(color);
     glBegin(GL_LINES);
         glVertex3f(pos[X], pos[Y], pos[Z]);
         glVertex3f(pos[X] + len, pos[Y], pos[Z]);
     glEnd();
-    color[R] = 0.0;
-    color[G] = 1.0;
-    color[B] = 0.0;
+    color[RED] = 0.0;
+    color[GREEN] = 1.0;
+    color[BLUE] = 0.0;
     glColor3v(color);
     glBegin(GL_LINES);
         glVertex3f(pos[X], pos[Y], pos[Z]);
         glVertex3f(pos[X], pos[Y] + len, pos[Z]);
     glEnd();
-    color[R] = 0.0;
-    color[G] = 0.0;
-    color[B] = 1.0;
+    color[RED] = 0.0;
+    color[GREEN] = 0.0;
+    color[BLUE] = 1.0;
     glColor3v(color);
     glBegin(GL_LINES);
         glVertex3f(pos[X], pos[Y], pos[Z]);
@@ -823,22 +823,22 @@ ui_draw_earth(real x, real y, real z, real radius, int mode, real long_ang, real
 
     // texture material
     mat->lit = TRUE;
-    mat->ambient[R] = 0;
-    mat->ambient[G] = 0;
-    mat->ambient[B] = 0;
-    mat->ambient[A] = 1;
-    mat->diffuse[R] = 1;
-    mat->diffuse[G] = 0.9;
-    mat->diffuse[B] = 0.8;
-    mat->diffuse[A] = 1;
-    mat->specular[R] = 1.0;
-    mat->specular[G] = 1.0;
-    mat->specular[B] = 1.0;
-    mat->specular[A] = 1.0;
-    mat->emissive[R] = 0.0;
-    mat->emissive[G] = 0.0;
-    mat->emissive[B] = 0.0;
-    mat->emissive[A] = 1.0;
+    mat->ambient[RED] = 0;
+    mat->ambient[GREEN] = 0;
+    mat->ambient[BLUE] = 0;
+    mat->ambient[ALPHA] = 1;
+    mat->diffuse[RED] = 1;
+    mat->diffuse[GREEN] = 0.9;
+    mat->diffuse[BLUE] = 0.8;
+    mat->diffuse[ALPHA] = 1;
+    mat->specular[RED] = 1.0;
+    mat->specular[GREEN] = 1.0;
+    mat->specular[BLUE] = 1.0;
+    mat->specular[ALPHA] = 1.0;
+    mat->emissive[RED] = 0.0;
+    mat->emissive[GREEN] = 0.0;
+    mat->emissive[BLUE] = 0.0;
+    mat->emissive[ALPHA] = 1.0;
     mat->shininess = 16.1;
     glMaterialfv(GL_FRONT, GL_AMBIENT, mat->ambient);
     glMaterialfv(GL_FRONT, GL_DIFFUSE, mat->diffuse);
@@ -908,22 +908,22 @@ ui_draw_earth(real x, real y, real z, real radius, int mode, real long_ang, real
 
     // atmosphere material
     mat->lit = TRUE;
-    mat->ambient[R] = 0;
-    mat->ambient[G] = 0;
-    mat->ambient[B] = 0;
-    mat->ambient[A] = 0;
-    mat->diffuse[R] = 0;
-    mat->diffuse[G] = 0.8;
-    mat->diffuse[B] = 1;
-    mat->diffuse[A] = 0.2;
-    mat->specular[R] = 0.0;
-    mat->specular[G] = 0.0;
-    mat->specular[B] = 0.0;
-    mat->specular[A] = 0.0;
-    mat->emissive[R] = 0.0;
-    mat->emissive[G] = 0.0;
-    mat->emissive[B] = 0.0;
-    mat->emissive[A] = 0.0;
+    mat->ambient[RED] = 0;
+    mat->ambient[GREEN] = 0;
+    mat->ambient[BLUE] = 0;
+    mat->ambient[ALPHA] = 0;
+    mat->diffuse[RED] = 0;
+    mat->diffuse[GREEN] = 0.8;
+    mat->diffuse[BLUE] = 1;
+    mat->diffuse[ALPHA] = 0.2;
+    mat->specular[RED] = 0.0;
+    mat->specular[GREEN] = 0.0;
+    mat->specular[BLUE] = 0.0;
+    mat->specular[ALPHA] = 0.0;
+    mat->emissive[RED] = 0.0;
+    mat->emissive[GREEN] = 0.0;
+    mat->emissive[BLUE] = 0.0;
+    mat->emissive[ALPHA] = 0.0;
     mat->shininess = 16.1;
     glMaterialfv(GL_FRONT, GL_AMBIENT, mat->ambient);
     glMaterialfv(GL_FRONT, GL_DIFFUSE, mat->diffuse);

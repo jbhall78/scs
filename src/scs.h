@@ -59,7 +59,4 @@ typedef struct scs {
 
 extern scs_t scs;
 
-#define g_abort()	g_assert(0);
-
-
 #endif

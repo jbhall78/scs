@@ -32,10 +32,10 @@
 #define U	0
 #define V	1
 
-#define R	0
-#define G	1
-#define B	2
-#define A	3
+#define RED	0
+#define GREEN	1
+#define BLUE	2
+#define ALPHA	3
 
 #define LEFT	0
 #define RIGHT	1

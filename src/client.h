@@ -3,7 +3,7 @@
 
 #ifndef DEDICATED
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <gio/gio.h>
 
 #include "ui.h"
@@ -18,6 +18,7 @@
 #define	FPS		30
 
 /* extend SDL keycodes with mouse/joystick buttons */
+#define SDLK_LAST 100000
 #define SDLK_EX_MOUSE_FIRST (SDLK_LAST+100)
 #define SDLK_EX_MOUSE1	(SDLK_LAST+101)
 #define SDLK_EX_MOUSE2	(SDLK_LAST+102)
@@ -122,7 +123,9 @@ typedef struct client_s {
     gboolean initialized;
 
     /* video stuff */
-    SDL_Surface *surface;
+    //SDL_Surface *surface;
+    SDL_Window *window; // This replaces the concept of the main surface for display
+    SDL_GLContext gl_context; // Your OpenGL rendering context
     gboolean fullscreen;
     gboolean video;
     uint16_vec2_t res;

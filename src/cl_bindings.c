@@ -1,6 +1,6 @@
 #include <glib.h>
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #include "scs.h"
 #include "shared.h"
@@ -156,12 +156,12 @@ bind_do_update(gpointer key, gpointer val, gpointer data)
 {
     int32_t *key_id = key;
     binding_t *bind = val;
-    uint8_t *keys;
+    const uint8_t *keys;
     int modifiers;
     int sdl_modifiers;
     GError *err = NULL;
 
-    keys = SDL_GetKeyState(NULL);
+    keys = SDL_GetKeyboardState(NULL);
     sdl_modifiers = SDL_GetModState();
 
     if (*key_id > SDLK_LAST)

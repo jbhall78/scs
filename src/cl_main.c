@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL.h>
-#include <SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 #include <glib.h>
 #include <gio/gio.h>
 
@@ -148,12 +148,12 @@ cl_events(GError **err)
     // Parse global events, then send them off to their proper handlers.
     while (SDL_PollEvent(&event)) {
 	switch (event.type) {
-	    case SDL_VIDEORESIZE:
+/*	    case SDL_VIDEORESIZE:
 		if ((ret = cl_resize(client.fullscreen, event.resize.w, event.resize.h, &tmp)) != OK) {
 		    g_propagate_error(err, tmp);
 		    return ret;
 		}
-		break;
+		break;*/
 
 	    case SDL_QUIT:
 		cl_shutdown(0);
@@ -217,6 +217,11 @@ cl_events(GError **err)
 		    }
 		}
 		break;
+	    case SDL_TEXTINPUT:
+	    	// event->text.text is a char array (UTF-8 encoded string)
+		if (client.console.enabled)
+	    	    con_text(event.text.text[0]); // UTF-8 -> ASCII
+		break;
 	}
     }
     return OK;
@@ -276,7 +281,7 @@ cl_draw(gpointer data)
     if (client.console.enabled)
 	con_draw();
 
-    SDL_GL_SwapBuffers();
+    SDL_GL_SwapWindow(client.window);
 
     return TRUE;
 }

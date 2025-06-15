@@ -83,7 +83,7 @@ con_exec(char *str)
 }
 
 void
-con_proc_key(int keysym, int mod, Uint16 unicode)
+con_proc_key(int keysym, int mod)
 {
     cl_console_t *con = &client.console;
     uint32_t key;
@@ -172,6 +172,7 @@ con_proc_key(int keysym, int mod, Uint16 unicode)
 		printf("no history item\n");
 	    }
 	    break;
+	    /*
 	case SDLK_SPACE:
 	default:
 	    // map unicode to ascii
@@ -188,6 +189,7 @@ con_proc_key(int keysym, int mod, Uint16 unicode)
 		}
 	    }
 	    break;
+	    */
     }
 }
 
@@ -197,7 +199,21 @@ con_key(SDL_KeyboardEvent *k)
     if (k->type == SDL_KEYUP)
 	return;
 
-    con_proc_key(k->keysym.sym, k->keysym.mod, k->keysym.unicode);
+    con_proc_key(k->keysym.sym, k->keysym.mod);
+}
+
+void
+con_text(char c)
+{
+
+    cl_console_t *con = &client.console;
+    if (c >= con->fnt->range[LO] && c <= con->fnt->range[HI]) {
+	if (con->pos == con->inbuf->len)
+	    g_array_append_val(con->inbuf, c);
+	else
+	    g_array_insert_val(con->inbuf, con->pos, c);
+	con->pos++;
+    }
 }
 
 void
