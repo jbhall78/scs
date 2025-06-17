@@ -765,9 +765,9 @@ static gboolean game_draw(GError **err)
     // BEFORE drawing the 3D HUD object:
     // 1. Temporarily disable writing to the main depth buffer.
     // 2. Set depth function to GL_ALWAYS so it draws over everything.
-    glDisable(GL_DEPTH_TEST);   // Temporarily disable depth testing for the entire HUD setup (safety)
-    glDepthFunc(GL_ALWAYS); // <-- Re-introduce this here
-    glDepthMask(GL_FALSE);      // Do NOT write to the depth buffer for the HUD
+    //glDisable(GL_DEPTH_TEST);   // Temporarily disable depth testing for the entire HUD setup (safety)
+    //glDepthFunc(GL_ALWAYS); // <-- Re-introduce this here
+    //glDepthMask(GL_FALSE);      // Do NOT write to the depth buffer for the HUD
     // (We will enable depth test and change depth func *within* the HUD object's drawing if needed for internal occlusion)
 
     // --- 3D HUD Object Drawing Setup ---
@@ -806,16 +806,16 @@ static gboolean game_draw(GError **err)
                 glLoadIdentity();
                 glTranslatef(0.0f, -55.0f, -500.0f); // "Camera" for the miniature object
 
-                glEnable(GL_DEPTH_TEST);
-                glDepthFunc(GL_LEQUAL); // Or GL_LEQUAL, typical for internal 3D occlusion
+                //glEnable(GL_DEPTH_TEST);
+                //glDepthFunc(GL_LEQUAL); // Or GL_LEQUAL, typical for internal 3D occlusion
 
                 // Draw the actual 3D HUD object
                 if (client.hud_enabled) {
                     cl_target_computer3d_draw();
                 }
 
-                glDepthFunc(GL_ALWAYS); // Or whatever was appropriate for the outer HUD context
-                glDisable(GL_DEPTH_TEST); // Disable depth test again before popping matrices
+                //glDepthFunc(GL_ALWAYS); // Or whatever was appropriate for the outer HUD context
+                //glDisable(GL_DEPTH_TEST); // Disable depth test again before popping matrices
 
             glPopMatrix(); // Pop inner 3D Modelview
         glMatrixMode(GL_PROJECTION);
@@ -823,9 +823,9 @@ static gboolean game_draw(GError **err)
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix(); // Pop outer 2D Modelview
 
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL); // Restore to standard for next frame
-    glDepthMask(GL_TRUE);   // Re-enable depth writing for main scene next frame
+    //glEnable(GL_DEPTH_TEST);
+    //glDepthFunc(GL_LEQUAL); // Restore to standard for next frame
+    //glDepthMask(GL_TRUE);   // Re-enable depth writing for main scene next frame
 
     // --- End 3D HUD Object ---
 #endif
