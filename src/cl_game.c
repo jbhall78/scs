@@ -615,7 +615,8 @@ game_print_objects(gpointer key, gpointer val, gpointer data)
 /**
  * Draws the 3D universe and the HUD
  */
-static gboolean game_draw(GError **err)
+static gboolean 
+game_draw(GError **err)
 {
     object_t *cam;
     mat4x4_t m;
@@ -798,7 +799,7 @@ static gboolean game_draw(GError **err)
         glMatrixMode(GL_PROJECTION);
         glPushMatrix(); // Push outer 2D projection
             glLoadIdentity();
-            gluPerspective(15.0, 1.0, 0.1, 1000.0); // Small FOV, 1:1 aspect ratio
+            gluPerspective(15.0, (real)client.ortho[WIDTH]/(real)client.ortho[HEIGHT], 0.1, 1000.0); // Small FOV, 1:1 aspect ratio
 
             // Set up the INNER 3D Modelview for the miniature object's camera
             glMatrixMode(GL_MODELVIEW);
