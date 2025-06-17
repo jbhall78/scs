@@ -787,6 +787,8 @@ static gboolean game_draw(GError **err)
 
     lighting_enable(); // Enable if your 3D HUD object is lit
 
+    glClear(GL_DEPTH_BUFFER_BIT);
+
     // Position the "origin" for this 3D HUD object on the 2D screen
     glPushMatrix(); // Push outer 2D modelview
         glTranslatef(client.ortho[WIDTH] / 2.0f, client.ortho[HEIGHT] / 16.0f, 0.0f); // Example position
@@ -804,8 +806,8 @@ static gboolean game_draw(GError **err)
                 glLoadIdentity();
                 glTranslatef(0.0f, -55.0f, -500.0f); // "Camera" for the miniature object
 
-                glDisable(GL_DEPTH_TEST);
-                glDepthFunc(GL_LESS); // Or GL_LEQUAL, typical for internal 3D occlusion
+                glEnable(GL_DEPTH_TEST);
+                glDepthFunc(GL_LEQUAL); // Or GL_LEQUAL, typical for internal 3D occlusion
 
                 // Draw the actual 3D HUD object
                 if (client.hud_enabled) {
