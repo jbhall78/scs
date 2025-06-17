@@ -151,6 +151,7 @@ bind_shutdown(GError **err)
     return OK;
 }
 
+#if 0
 void
 bind_do_update(gpointer key, gpointer val, gpointer data)
 {
@@ -188,6 +189,64 @@ bind_do_update(gpointer key, gpointer val, gpointer data)
     
     if (! sh_exec(client.shell, bind->action, &err))
 	print("binding error: %s\n", err->message);
+}
+#endif
+
+void
+bind_do_update(gpointer key, gpointer val, gpointer data)
+{
+    int32_t *key_id = key; // This is an SDL_Keycode
+    binding_t *bind = val;
+    const uint8_t *keys;
+    int modifiers;
+    int sdl_modifiers;
+    GError *err = NULL;
+
+    // Get the keyboard state array. It's indexed by SDL_Scancode.
+    keys = SDL_GetKeyboardState(NULL);
+    sdl_modifiers = SDL_GetModState();
+
+    // --- CRITICAL CHANGE HERE ---
+    // Convert the SDL_Keycode (*key_id) to an SDL_Scancode
+    SDL_Scancode scancode = SDL_GetScancodeFromKey(*key_id);
+
+    // If SDL_GetScancodeFromKey returns SDL_SCANCODE_UNKNOWN, it means
+    // the SDL_Keycode provided doesn't map to a known scancode.
+    // This can happen for things that aren't typical physical keys, or invalid values.
+    if (scancode == SDL_SCANCODE_UNKNOWN) {
+        // Optionally print a warning or handle this case
+        // fprintf(stderr, "Warning: Invalid SDL_Keycode %d encountered in bind_do_update\n", *key_id);
+        return; // Skip if the key is unknown
+    }
+
+    // Now, use the scancode to index the 'keys' array
+    // This check is valid if 'scancode' is a proper index.
+    if (! keys[scancode])
+        return; // Key is not pressed
+
+    // Check if the binding is in the update state
+    if (bind->state != BIND_UPDATE)
+        return;
+
+    // check modifiers
+    modifiers = 0;
+    if (sdl_modifiers & KMOD_CTRL)
+        modifiers |= BIND_MOD_CTRL;
+    if (sdl_modifiers & KMOD_ALT)
+        modifiers |= BIND_MOD_ALT;
+    if (sdl_modifiers & KMOD_SHIFT)
+        modifiers |= BIND_MOD_SHIFT;
+
+    if (modifiers != bind->modifiers)
+        return;
+
+    // Execute the bound action
+    if (! sh_exec(client.shell, bind->action, &err)) {
+        print("binding error: %s\n", err->message);
+        if (err) { // Always free GError if it was set
+            g_error_free(err);
+        }
+    }
 }
 
 void
