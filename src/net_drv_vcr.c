@@ -39,7 +39,7 @@ net_vcr_open(net_state_t *net, gboolean record, char *filename, GError **err)
 	/* fill in header */
 	strcpy(hdr.magic, "SCSd");	/* scs demo */
 	hdr.version = SCS_NET_VER;
-	strcpy(hdr.player, "hyena");
+	strcpy(hdr.player, "player");
 	strcpy(hdr.desc, "SCS Demo Recording");
 	hdr.creation = GUINT32_TO_LE(time(NULL));
 	hdr.start_ticks = GUINT32_TO_LE(scs.clock->ticks());
