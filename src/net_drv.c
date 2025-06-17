@@ -351,7 +351,7 @@ net_cl_handle_accept_packet(net_state_t *net, pkt_t *pkt)
     
     /* send our registration packet */
     reg = net_pkt_new(PKT_CONN_REGISTER, TRUE);
-    net_pkt_pack_str(reg, strlen("hyena")+1, "hyena");
+    net_pkt_pack_str(reg, strlen("player")+1, "player");
     net_send(net, conn, reg);
 }
 
