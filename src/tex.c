@@ -12,205 +12,77 @@
 
 static GCache *TextureCache;
 
-static void
-tex_putpixel(SDL_Surface *surface, uint16_t x, uint16_t y, uint32_t color)
-{
-    if (SDL_MUSTLOCK(surface)) {
-        if (SDL_LockSurface(surface) < 0) {
-            return;
-        }
-    }
-    switch (surface->format->BytesPerPixel) {
-        case 1: { /* Assuming 8-bpp */
-                uint8_t *bufp;
+// --- tex_putpixel and tex_getpixel remain removed ---
 
-                bufp = (uint8_t *)surface->pixels + y*surface->pitch + x;
-                *bufp = color;
-            }
-            break;
-
-        case 2: { /* Probably 15-bpp or 16-bpp */
-                uint16_t *bufp;
-
-                bufp = (uint16_t *)surface->pixels + y*surface->pitch/2 + x;
-                *bufp = color;
-            }
-            break;
-
-        case 3: { /* Slow 24-bpp mode, usually not used */
-                uint8_t *bufp;
-
-                bufp = (uint8_t *)surface->pixels + y*surface->pitch + x * 3;
-                if (SDL_BYTEORDER == SDL_LIL_ENDIAN) {
-                    bufp[0] = color;
-                    bufp[1] = color >> 8;
-                    bufp[2] = color >> 16;
-                } else {
-                    bufp[2] = color;
-                    bufp[1] = color >> 8;
-                    bufp[0] = color >> 16;
-                }
-            }
-            break;
-
-        case 4: { /* Probably 32-bpp */
-                uint32_t *bufp;
-
-                bufp = (uint32_t *)surface->pixels + y*surface->pitch/4 + x;
-                *bufp = color;
-            }
-            break;
-    }
-    if (SDL_MUSTLOCK(surface)) {
-        SDL_UnlockSurface(surface);
-    }
-    //SDL_UpdateRect(surface, x, y, 1, 1);
-}
-
-static uint32_t
-tex_getpixel(SDL_Surface *surface, uint16_t x, uint16_t y)
-{
-    uint8_t bpp;
-    uint8_t *p;
-    uint32_t retval;
-
-    if (SDL_MUSTLOCK(surface)) {
-        if (SDL_LockSurface(surface) < 0) {
-            return 0;
-        }
-    }
-
-    bpp = surface->format->BytesPerPixel;
-    p = (uint8_t *)surface->pixels + y * surface->pitch + x * bpp;
-
-    switch(bpp) {
-        case 1:
-            retval = *p;
-            break;
-
-        case 2:
-            retval = *(uint16_t *)p;
-            break;
-
-        case 3:
-            if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-                retval = p[0] << 16 | p[1] << 8 | p[2];
-            else
-                retval = p[0] | p[1] << 8 | p[2] << 16;
-            break;
-
-        case 4:
-            retval = *(uint32_t *)p;
-            break;
-
-        default:
-            retval = 0;
-            break;       /* shouldn't happen, but avoids warnings */
-    }
-
-    if (SDL_MUSTLOCK(surface)) {
-        SDL_UnlockSurface(surface);
-    }
-
-    return retval;
-}
-
-
-/* Convert an SDL Surface to one suitable as on OpenGL texture */
+/* Convert an SDL Surface to one suitable as an OpenGL texture */
 static SDL_Surface *
-tex_convert_surf(SDL_Surface *s, int want_alpha, GError **err)
+tex_convert_surf(SDL_Surface *s, GError **err)
 {
-    uint32_t rmask, gmask, bmask, amask;
-    SDL_Surface *conv;
-    uint8_t bpp = want_alpha ? 32 : 24;
+    SDL_Surface *conv = NULL;
+    Uint32 desired_format;
 
-    /* SDL interprets each pixel as a 24 or 32-bit number, so our
-       masks must depend on the endianness (byte order) of the
-       machine. */
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-    rmask = 0xff000000 >> (32 - bpp);
-    gmask = 0x00ff0000 >> (32 - bpp);
-    bmask = 0x0000ff00 >> (32 - bpp);
-    amask = 0x000000ff >> (32 - bpp);
-#else
-    rmask = 0x000000ff;
-    gmask = 0x0000ff00;
-    bmask = 0x00ff0000;
-    amask = want_alpha ? 0xff000000 : 0;
-#endif
-
-    /* check if the surface happens to be in the right format */
-    if (s->format->BitsPerPixel == bpp
-	&& s->format->Rmask == rmask
-	&& s->format->Gmask == gmask
-	&& s->format->Bmask == bmask
-	&& s->format->Amask == amask) {
-	/* no conversion needed */
-	return s;
+    // --- CRITICAL CORRECTION HERE ---
+    // Correctly check for transparency in SDL 2.0:
+    // 1. Does the surface format natively have an alpha channel?
+    // 2. Has a color key been explicitly set on this surface?
+    if ((s->format->Amask != 0) || SDL_HasColorKey(s)) {
+        desired_format = SDL_PIXELFORMAT_RGBA32; // Use RGBA for transparent surfaces
+    } else {
+        desired_format = SDL_PIXELFORMAT_RGB24; // Use RGB for opaque surfaces
     }
 
-    /* SDL surfaces are created with lines padded to start at 32-bit boundaries
-       which suits OpenGL well (as long as GL_UNPACK_ALIGNMENT remains
-       unchanged from its initial value of 4) */
-    if (! (conv = SDL_CreateRGBSurface(SDL_SWSURFACE, s->w, s->h, bpp,
-				rmask, gmask, bmask, amask)))
-	goto tex_convert_surf_fail;
-
-    /*
-    if (want_alpha) {
-	SDL_SetAlpha(s, 0, 255);
+    /* Convert the surface to the desired format.
+       SDL_ConvertSurfaceFormat handles endianness, byte order, and applies
+       color keys into the alpha channel if SDL_SetColorKey was called on 's'. */
+    conv = SDL_ConvertSurfaceFormat(s, desired_format, 0); // 0 for default flags
+    if (!conv) {
+        g_set_error(err, SCS_ERROR, SCS_ERROR_TEX, "Failed to convert surface format: %s", SDL_GetError());
+        return NULL;
     }
-    */
 
-    /*
-     * Do the conversion. If the source surface has a colourkey, then it
-     * will be used in the blit. We use the fact that newly created software
-     * surfaces are zero-filled, so the pixels not blitted will remain
-     * transparent.
-     */
-    if (SDL_BlitSurface(s, NULL, conv, NULL) < 0)
-	goto tex_convert_surf_fail;
-
-    SDL_FreeSurface(s);
+    SDL_FreeSurface(s); // Free the original surface after conversion
 
     return conv;
-
-tex_convert_surf_fail:
-    SDL_FreeSurface(conv);
-    g_set_error(err, SCS_ERROR, SCS_ERROR_TEX, "%s", SDL_GetError());
-    return NULL;
 }
 
+// Optimized SDL 2.0 way to flip a surface vertically (in-place or to a new surface)
 static SDL_Surface *
 tex_flip_surf(SDL_Surface *surface)
 {
-    SDL_Surface *new_surf;
-    int x, y;
-    Uint32 color;
+    SDL_Surface *new_surf = NULL;
+    int row_bytes = surface->w * surface->format->BytesPerPixel;
+    int y;
+    uint8_t *src_row, *dst_row;
 
-    new_surf = SDL_CreateRGBSurface(surface->flags, surface->w, surface->h,
-				    surface->format->BitsPerPixel,
-				    surface->format->Rmask,
-				    surface->format->Gmask,
-				    surface->format->Bmask,
-				    surface->format->Amask);
-    assert(new_surf != NULL);
-
-    SDL_LockSurface(surface);
-    SDL_LockSurface(new_surf);
-    for (x = 0; x < surface->w; x++) {
-	for (y = 0; y < surface->h; y++) {
-	    int dx = x;
-	    int dy = surface->h - y - 1;
-	    color = tex_getpixel(surface, x, y);
-	    tex_putpixel(new_surf, dx, dy, color);
-	}
+    // Create a new surface with the same format. SDL_SWSURFACE indicates software surface.
+    new_surf = SDL_CreateRGBSurfaceWithFormat(SDL_SWSURFACE, surface->w, surface->h,
+                                               surface->format->BitsPerPixel,
+                                               surface->format->format);
+    if (!new_surf) {
+        fprintf(stderr, "Failed to create new surface for flipping: %s\n", SDL_GetError());
+        return NULL;
     }
-    SDL_UnlockSurface(surface);
-    SDL_UnlockSurface(new_surf);
+
+    // Ensure surfaces are locked for direct pixel access
+    if (SDL_MUSTLOCK(surface)) { SDL_LockSurface(surface); }
+    if (SDL_MUSTLOCK(new_surf)) { SDL_LockSurface(new_surf); }
+
+    // Copy rows from bottom of source to top of destination, effectively flipping
+    for (y = 0; y < surface->h; y++) {
+        src_row = (uint8_t *)surface->pixels + (surface->h - 1 - y) * surface->pitch; // Read from bottom up
+        dst_row = (uint8_t *)new_surf->pixels + y * new_surf->pitch;                   // Write from top down
+        memcpy(dst_row, src_row, row_bytes);
+    }
+
+    // Unlock surfaces
+    if (SDL_MUSTLOCK(new_surf)) { SDL_UnlockSurface(new_surf); }
+    if (SDL_MUSTLOCK(surface)) { SDL_UnlockSurface(surface); }
+
+    SDL_FreeSurface(surface); // Free the original surface as it's no longer needed
 
     return new_surf;
 }
+
 
 static SDL_Surface *
 tex_load_sdl_surf(char *filename, GError **err)
@@ -218,19 +90,19 @@ tex_load_sdl_surf(char *filename, GError **err)
     SDL_Surface *surf;
     FILE *f;
     GError *tmp = NULL;
-    
+
     f = opendatafile(FILE_TEXTURE, filename, &tmp);
-    if (! f) {
-	g_propagate_error(err, tmp);
-	return NULL;
+    if (!f) {
+        g_propagate_error(err, tmp);
+        return NULL;
     }
 
-    surf = IMG_Load_RW(SDL_RWFromFP(f, TRUE), TRUE);
+    surf = IMG_Load_RW(SDL_RWFromFP(f, TRUE), TRUE); // SDL_RWFromFP takes ownership of FILE* f
     if (surf) {
-	return surf;
+        return surf;
     } else {
-	g_set_error(err, SCS_ERROR, SCS_ERROR_TEX, "%s", SDL_GetError());
-	return NULL;
+        g_set_error(err, SCS_ERROR, SCS_ERROR_TEX, "Failed to load image '%s': %s", filename, IMG_GetError());
+        return NULL;
     }
 }
 
@@ -240,77 +112,96 @@ tex_load_gl_surf(tex_t *tex)
     glGenTextures(1, &tex->id);
     glBindTexture(GL_TEXTURE_2D, tex->id);
 
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4); // SDL surfaces are typically 4-byte aligned for speed
 
-    /* I wish this function would do something besides crash when you give
-     * it data in a bad format =|
-     */
+    GLint internalFormat;
+    GLenum format;
 
-#if 1
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-	    tex->size[WIDTH], tex->size[HEIGHT], 0,
-     	    tex->format, GL_UNSIGNED_BYTE, tex->surf);
-#else
-    gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA,
-	    tex->size[WIDTH], tex->size[HEIGHT],
-	    tex->format, GL_UNSIGNED_BYTE, tex->surf);
-#endif
+    if (tex->format == GL_RGBA) {
+        internalFormat = GL_RGBA;
+        format = GL_RGBA; // Assuming the converted SDL surface is now RGBA byte order
+    } else {
+        internalFormat = GL_RGB;
+        format = GL_RGB;
+    }
 
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat,
+        tex->size[WIDTH], tex->size[HEIGHT], 0,
+        format, GL_UNSIGNED_BYTE, tex->surf);
 
-    // set some defaults
+    // Set some defaults for texture filtering and wrapping
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    // Use mipmaps for minification for better quality when scaled down
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_2D); // Generate mipmaps after uploading data
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
 }
 
 static tex_t *
 tex_load_surf(tex_t *tex, char *filename, GError **err)
 {
-    int32_t want_alpha;
     GError *tmp = NULL;
-    SDL_Surface *s;
+    SDL_Surface *s = NULL;
     int32_t size;
 
-    /* load the texture surface from the file */
-    if (! (s = tex_load_sdl_surf(filename, &tmp))) {
-	goto tex_load_surf_fail;
+    /* Load the texture surface from the file */
+    s = tex_load_sdl_surf(filename, &tmp);
+    if (!s) {
+        goto tex_load_surf_fail;
     }
 
-    /* convert the surface to the format OpenGL wants. */
-    want_alpha = s->format->Amask;
-    if (! (s = tex_convert_surf(s, want_alpha, &tmp)))
-	goto tex_load_surf_fail;
+    // --- Font Color Key Handling ---
+    // If this is a font texture (using a simple filename heuristic),
+    // apply a color key for transparency. This MUST happen before conversion.
+    if (strstr(filename, "font") != NULL) {
+        Uint32 colorkey = SDL_MapRGB(s->format, 255, 0, 255); // Example: pure magenta background
+        if (SDL_SetColorKey(s, SDL_TRUE, colorkey) < 0) {
+            fprintf(stderr, "Warning: Failed to set color key for font '%s': %s\n", filename, SDL_GetError());
+            // This is a warning; the process can continue, but transparency might be off.
+        }
+    }
 
-    /* flip the surface the way OpenGL wants. */
-    if (! (s = tex_flip_surf(s)))
-	goto tex_load_surf_fail;
+    /* Convert the surface to the format OpenGL wants (RGB24 or RGBA32).
+       This step will incorporate the color key into the alpha channel. */
+    if (!(s = tex_convert_surf(s, &tmp))) {
+        goto tex_load_surf_fail;
+    }
 
+    /* Flip the surface vertically to match OpenGL's texture coordinate system (origin bottom-left). */
+    if (!(s = tex_flip_surf(s))) {
+        goto tex_load_surf_fail;
+    }
+
+    // Determine final properties after conversion and flipping
     tex->size[WIDTH]  = s->w;
     tex->size[HEIGHT] = s->h;
-    tex->bpp          = want_alpha ? 32 : 24;
-    tex->alpha        = want_alpha ? TRUE : FALSE;
-    if (want_alpha)
-	tex->format = GL_RGBA;
-    else 
-	tex->format = GL_RGB;
+    // Check if the *converted and flipped* surface has an alpha mask
+    tex->alpha        = (s->format->Amask != 0) ? TRUE : FALSE;
+    tex->bpp          = s->format->BytesPerPixel * 8; // Get actual BPP of converted surface
 
-    /* save the pixel data and get rid of the SDL surface */
+    if (tex->alpha) {
+        tex->format = GL_RGBA;
+    } else {
+        tex->format = GL_RGB;
+    }
+
+    /* Save the pixel data and get rid of the SDL surface */
     size = tex->size[WIDTH] * tex->size[HEIGHT] * (tex->bpp / 8);
     tex->surf = g_malloc0(size);
-    memcpy(tex->surf, s->pixels, size); 
-    SDL_FreeSurface(s);
+    memcpy(tex->surf, s->pixels, size);
+    SDL_FreeSurface(s); // Free the final processed SDL surface
 
-    // NOTE: this prints the bpp after the conversion
     print("loaded texture: %dx%d@%dbpp %s\n", tex->size[WIDTH], tex->size[HEIGHT], tex->bpp, (tex->format == GL_RGB) ? "RGB" : "RGBA");
 
-    tex_load_gl_surf(tex);
+    tex_load_gl_surf(tex); // Upload to OpenGL
 
     return tex;
 
 tex_load_surf_fail:
+    // Ensure any partially loaded surface is freed on failure
+    if (s) SDL_FreeSurface(s);
     g_propagate_error(err, tmp);
     return NULL;
 }
@@ -327,10 +218,10 @@ tex_gen_fake_surf(tex_t *tex)
 
     size = tex->size[WIDTH] * tex->size[HEIGHT] * (tex->bpp / 8);
     tex->surf = g_malloc0(size);
-    memset(tex->surf, 1, size); 
+    memset(tex->surf, 1, size);
 }
 
-static gpointer    
+static gpointer
 tex_cache_val_new(gpointer key)
 {
     char *name = key;
@@ -340,9 +231,10 @@ tex_cache_val_new(gpointer key)
     tex = g_malloc0(sizeof(tex_t));
     tex->name = strdup(name);
 
-    if (! tex_load_surf(tex, name, &err)) {
-	tex_gen_fake_surf(tex);
-	printerr("Couldnt load texture: %s: %s\n", name, err->message);
+    if (!tex_load_surf(tex, name, &err)) {
+        tex_gen_fake_surf(tex);
+        printerr("Couldn't load texture: %s: %s\n", name, err->message);
+        if (err) g_error_free(err); // Free the error
     }
 
     return tex;
@@ -353,6 +245,9 @@ tex_cache_val_destroy(gpointer val)
 {
     tex_t *tex = val;
 
+    if (tex->id != 0) { // Only delete if a GL texture was actually generated
+        glDeleteTextures(1, &tex->id);
+    }
     g_free(tex->surf);
     g_free(tex->name);
     g_free(tex);
@@ -366,16 +261,16 @@ gboolean
 tex_init(GError **err)
 {
     TextureCache = g_cache_new(tex_cache_val_new,
-			       tex_cache_val_destroy,
-			       tex_cache_key_dup,
-			       tex_cache_key_destroy,
-			       g_str_hash,
-			       g_direct_hash,
-			       g_str_equal);
+                   tex_cache_val_destroy,
+                   tex_cache_key_dup,
+                   tex_cache_key_destroy,
+                   g_str_hash,
+                   g_direct_hash,
+                   g_str_equal);
 
     print("texture system initialized\n");
 
-    return OK;
+    return TRUE; // Changed from OK to TRUE for standard boolean return.
 }
 
 tex_t *
@@ -395,7 +290,10 @@ tex_refresh_unload_func(gpointer key, gpointer value, gpointer data)
 {
     tex_t *tex = key;
 
-    glDeleteTextures(1, &tex->id);
+    if (tex->id != 0) { // Only delete if it's a valid ID
+        glDeleteTextures(1, &tex->id);
+        tex->id = 0; // Reset ID after deletion
+    }
 }
 
 void
@@ -409,6 +307,7 @@ tex_refresh_load_func(gpointer key, gpointer value, gpointer data)
 {
     tex_t *tex = key;
 
+    // Re-upload to GL. `tex->surf` is assumed to still hold the pixel data.
     tex_load_gl_surf(tex);
 }
 
