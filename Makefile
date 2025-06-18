@@ -1,3 +1,9 @@
+ifdef DESTDIR
+# DESTDIR is already defined, do nothing
+else
+DESTDIR = /usr
+endif
+
 all:
 	make -C src all
 clean:

@@ -26,6 +26,7 @@ static char *gamedir[] = {
     "data",
     "../data",
     "../../data",
+    "/usr/share/scs",
     "/app/share/scs",
 };
 
