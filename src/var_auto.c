@@ -248,7 +248,7 @@ int32h(int32_t val)
 static void
 int64_to_str(var_t *v, char *buf, int len)
 {
-    snprintf(buf, len, "%lld", v->i64);
+    snprintf(buf, len, "%ld", v->i64);
 }
 
 static void
@@ -473,7 +473,7 @@ uint32h(uint32_t val)
 static void
 uint64_to_str(var_t *v, char *buf, int len)
 {
-    snprintf(buf, len, "%llu", v->i64);
+    snprintf(buf, len, "%lu", v->i64);
 }
 
 static void

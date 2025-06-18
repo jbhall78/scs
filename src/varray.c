@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #include <assert.h>
 #include <unistd.h>
@@ -259,7 +260,7 @@ varray_print(varray_t *va)
     int i;
 
     for (i = 0; i < va->len; i++) {
-	printf("[%d] 0x%08x (%s)\n", i, (unsigned int)va->data[i], (char *)va->data[i]);
+	printf("[%d] 0x%08lx (%s)\n", i, (uint64_t)va->data[i], (char *)va->data[i]);
 	//printf("[%d] 0x%08x\n", i, va->data[i]);
     }
 }

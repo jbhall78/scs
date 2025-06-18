@@ -114,7 +114,7 @@ array_alloc(array_t *array, int count)
 	array->alloc += MAX(100,count - array->alloc) + 1;	// allocate at least 100 items
 #endif
 	save = array->data;
-	printf("allocating: 0x%08x %d\n", array->alloc * array->dsize, array->alloc * array->dsize);
+	printf("allocating: 0x%08lx %ld\n", array->alloc * array->dsize, array->alloc * array->dsize);
 	array->data = mem_malloc(array->alloc * array->dsize);
 	memcpy(array->data, save, array->len * array->dsize);
 	array_terminate(array);
