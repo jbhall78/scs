@@ -79,17 +79,17 @@ CMD_rotate(sh_state_t *st, int argc, char **argv, GError **err)
     static real step = 3.00;
 
     if (argc != 2) {
-	g_set_error(err, SCS_ERROR, SCS_ERROR_SH,
-		"usage: %s <left|right>", argv[0]);
-	return FAIL;
+	    g_set_error(err, SCS_ERROR, SCS_ERROR_SH,
+		    "usage: %s <left|right>", argv[0]);
+	    return FAIL;
     }
 
     if (strcmp(argv[1], "left") == 0)
-	mod = -1;
+	    mod = -1;
     else if (strcmp(argv[1], "right") == 0)
-	mod = 1;
+	    mod = 1;
     else
-	g_abort();
+	    g_abort();
 
     vec3_set(angles, 0, 0, mod * step);
 
@@ -104,23 +104,23 @@ CMD_move(sh_state_t *st, int argc, char **argv, GError **err)
     static real step = 0.20;
 
     if (argc != 2) {
-	g_set_error(err, SCS_ERROR, SCS_ERROR_SH,
-		"usage: %s <fwd|back|left|right|up|down>", argv[0]);
-	return FAIL;
+	    g_set_error(err, SCS_ERROR, SCS_ERROR_SH,
+		    "usage: %s <fwd|back|left|right|up|down>", argv[0]);
+	    return FAIL;
     }
 
     if (strcmp(argv[1], "fwd") == 0)
-	client.posv[Z] = -step;
+	    client.posv[Z] = -step;
     else if (strcmp(argv[1], "back") == 0)
-	client.posv[Z] = step;
+	    client.posv[Z] = step;
     else if (strcmp(argv[1], "left") == 0)
-	client.posv[X] = -step;
+	    client.posv[X] = -step;
     else if (strcmp(argv[1], "right") == 0)
-	client.posv[X] = step;
+	    client.posv[X] = step;
     else if (strcmp(argv[1], "up") == 0)
-	client.posv[Y] = step;
+	    client.posv[Y] = step;
     else if (strcmp(argv[1], "down") == 0)
-	client.posv[Y] = -step;
+	    client.posv[Y] = -step;
 
     return OK;
 }
@@ -138,8 +138,8 @@ CMD_fov(sh_state_t *st, int argc, char **argv, GError **err)
     real fov;
 
     if (argc != 2) {
-	g_set_error(err, SCS_ERROR, SCS_ERROR_SH, "usage: %s <value>", argv[0]);
-	return FAIL;
+	    g_set_error(err, SCS_ERROR, SCS_ERROR_SH, "usage: %s <value>", argv[0]);
+	    return FAIL;
     }
 
     fov = atof(argv[1]);
@@ -163,24 +163,24 @@ CMD_warp(sh_state_t *st, int argc, char **argv, GError **err)
     object_t *cam;
 
     if (argc != 5) {
-	g_set_error(err, SCS_ERROR, SCS_ERROR_SH, "usage: %s <abs|rel> <X> <Y> <Z>", argv[0]);
-	return FAIL;
+	    g_set_error(err, SCS_ERROR, SCS_ERROR_SH, "usage: %s <abs|rel> <X> <Y> <Z>", argv[0]);
+	    return FAIL;
     }
 
     // convert arguments
     for (i = 0; i < 3; i++) {
 	// convert to strtod and check for errors (make lib/wrapper function)
 	//if ((v[i] = atof(argv[2 + i])) == NAN) {
-	v[i] = atof(argv[2 + i]);
+	    v[i] = atof(argv[2 + i]);
 /*	    g_set_error(err, SCS_ERROR, SCS_ERROR_SH, "Invalid numeric argument: %s", argv[2 + i]);
 	    return FAIL;
 	} */
     }
 
     if (strcmp(argv[1], "abs") == 0) {
-	vec3_cp(v, loc);
+	    vec3_cp(v, loc);
     } else if (strcmp(argv[1], "rel") == 0) {
-	vec3_t up, right, fwd;
+	    vec3_t up, right, fwd;
 
 	/* relative positioning means we need to obtain the direction vectors
 	 * from the camera and add (or subtract) the relative position to the 
@@ -204,8 +204,8 @@ CMD_warp(sh_state_t *st, int argc, char **argv, GError **err)
 	vec3_add(loc, right, loc);
 //	print("currently at: [%f,%f,%f] warping to [%f,%f,%f]\n", cam->pos[X], cam->pos[Y], cam->pos[Z], loc[X], loc[Y], loc[Z]);
     } else {
-	g_set_error(err, SCS_ERROR, SCS_ERROR_SH, "Invalid Argument: %s, expected abs or rel", argv[0]);
-	return FAIL;
+	    g_set_error(err, SCS_ERROR, SCS_ERROR_SH, "Invalid Argument: %s, expected abs or rel", argv[0]);
+	    return FAIL;
     }
 
     // create warp packet
@@ -226,46 +226,46 @@ CMD_target(sh_state_t *st, int argc, char **argv, GError **err)
     snd_t *snd = NULL;
 
     if (argc != 2) {
-	g_set_error(err, SCS_ERROR, SCS_ERROR_SH,
-		"usage: %s <next|prev>", argv[0]);
-	return FAIL;
+	    g_set_error(err, SCS_ERROR, SCS_ERROR_SH,
+		    "usage: %s <next|prev>", argv[0]);
+	    return FAIL;
     }
 
     obj = g_hash_table_lookup(client.objects, &client.obj_id);
     assert(obj != NULL);
 
     if (client.targets->len == 0)
-	return OK;
+	    return OK;
 
     for (i = 0; i < client.targets->len; i++) {
-	if (g_array_index(client.targets, uint32_t, i) == obj->target_id) 
-	    break;
+	    if (g_array_index(client.targets, uint32_t, i) == obj->target_id) 
+	        break;
     }
 
     if (i == client.targets->len)
-	i = 0;
+	    i = 0;
 
     if (strcmp(argv[1], "next") == 0) {
-	if (++i > client.targets->len-1)
-	    obj->target_id = g_array_index(client.targets, uint32_t, 0);
-	else
-	    obj->target_id = g_array_index(client.targets, uint32_t, i);
+	    if (++i > client.targets->len-1)
+	        obj->target_id = g_array_index(client.targets, uint32_t, 0);
+	    else
+	        obj->target_id = g_array_index(client.targets, uint32_t, i);
 
-	if (! snd_computer_next)
-		snd_computer_next = snd_load(SND_COMPUTER_NEXT);
+	    if (! snd_computer_next)
+		    snd_computer_next = snd_load(SND_COMPUTER_NEXT);
 
-	snd = snd_computer_next;
+	    snd = snd_computer_next;
     } else if (strcmp(argv[1], "prev") == 0) {
-	if (--i < 0)
-	    obj->target_id = g_array_index(client.targets, uint32_t,
-		    client.targets->len-1);
-	else
-	    obj->target_id = g_array_index(client.targets, uint32_t, i);
+	    if (--i < 0)
+    	    obj->target_id = g_array_index(client.targets, uint32_t,
+	    	    client.targets->len-1);
+    	else
+    	    obj->target_id = g_array_index(client.targets, uint32_t, i);
 
-	if (! snd_computer_prev)
-		snd_computer_prev = snd_load(SND_COMPUTER_PREV);
+    	if (! snd_computer_prev)
+    		snd_computer_prev = snd_load(SND_COMPUTER_PREV);
 
-	snd = snd_computer_prev;
+    	snd = snd_computer_prev;
     }
     src = snd_src_spawn(snd, g_random_int(), obj, FALSE);
     snd_src_update(src);
@@ -313,12 +313,12 @@ game_load(GError **err)
 
     // texture rendering
     if (! sh_var_exists(client.shell, "r_textures"))
-	sh_var_add(client.shell, "r_textures", NULL);
+	    sh_var_add(client.shell, "r_textures", NULL);
     sh_var_set_num(client.shell, "r_textures", 1, NULL);
 
     // normal rendering
     if (! sh_var_exists(client.shell, "r_normals"))
-	sh_var_add(client.shell, "r_normals", NULL);
+	    sh_var_add(client.shell, "r_normals", NULL);
     sh_var_set_num(client.shell, "r_normals", 0, NULL);
 
     SDL_WarpMouseInWindow(client.window, client.center[X], client.center[Y]);
@@ -339,64 +339,64 @@ game_load(GError **err)
 
     /* launch server if needed */
     if (client.game_type == GAME_SINGLE) {
-	if (sv_launch(FALSE, client.game_type) != 0)
-	    return FAIL;
-    } else if (client.game_type == GAME_SERVER) {
-	if (sv_launch(FALSE, client.game_type) != 0)
-	    return FAIL;
+	    if (sv_launch(FALSE, client.game_type) != 0)
+    	    return FAIL;
+        } else if (client.game_type == GAME_SERVER) {
+            if (sv_launch(FALSE, client.game_type) != 0)
+    	        return FAIL;
 
-	/* add server/port variables if they dont exist */
-	if (! sh_var_exists(client.shell, "server"))
-	    sh_var_add(client.shell, "server", NULL);
-	sh_var_set_str(client.shell, "server", "127.0.0.1", NULL);
+         	/* add server/port variables if they dont exist */
+    	    if (! sh_var_exists(client.shell, "server"))
+	            sh_var_add(client.shell, "server", NULL);
+    	    sh_var_set_str(client.shell, "server", "127.0.0.1", NULL);
 
-	if (! sh_var_exists(client.shell, "port"))
-	    sh_var_add(client.shell, "port", NULL);
-	sh_var_set_num(client.shell, "port", SCS_NET_PORT, NULL);
-    } 
+        	if (! sh_var_exists(client.shell, "port"))
+    	        sh_var_add(client.shell, "port", NULL);
+    	    sh_var_set_num(client.shell, "port", SCS_NET_PORT, NULL);
+        } 
 
-    /* initialize network stack */
-    if (client.game_type == GAME_SINGLE)
-	client.net = net_init(&net_drv_async, scs.clock, cl_proc_pkt);
-    else if (client.game_type == GAME_PLAYBACK) {
-	char *demo;
+        /* initialize network stack */
+        if (client.game_type == GAME_SINGLE)
+	        client.net = net_init(&net_drv_async, scs.clock, cl_proc_pkt);
+        else if (client.game_type == GAME_PLAYBACK) {
+	        char *demo;
 
-	/* grab demo variable */
-	demo = sh_var_get_str(client.shell, "demo");
-	if (! demo) {
-	    print("demo selected!\n");
-	    return FAIL;
-	}
+	    /* grab demo variable */
+	    demo = sh_var_get_str(client.shell, "demo");
+	    if (! demo) {
+	        print("demo selected!\n");
+	        return FAIL;
+	    }
 
-	client.net = net_init(&net_drv_vcr, scs.clock, cl_proc_pkt);
-	client.net->filename = demo;
+	    client.net = net_init(&net_drv_vcr, scs.clock, cl_proc_pkt);
+	    client.net->filename = demo;
     } else {
-	/* grab internet variables */
-	host = sh_var_get_str(client.shell, "server");
-	if (! host) {
-	    print("no hostname to connect to!\n");
-	    return FAIL;
-	}
-	port = (uint16_t)sh_var_get_num(client.shell, "port");
-	if (! (port > 0))
-	    port = SCS_NET_PORT;	
+	    /* grab internet variables */
+	    host = sh_var_get_str(client.shell, "server");
+	    if (! host) {
+	        print("no hostname to connect to!\n");
+	        return FAIL;
+	    }
+	    port = (uint16_t)sh_var_get_num(client.shell, "port");
+	    if (! (port > 0))
+	        port = SCS_NET_PORT;	
 
-	print("connecting to: %s:%d\n", host, port);
+	    print("connecting to: %s:%d\n", host, port);
 
-	client.net = net_init(&net_drv_udp, scs.clock, cl_proc_pkt);
+	    client.net = net_init(&net_drv_udp, scs.clock, cl_proc_pkt);
     }
 
     /* decide if we want to record the session */
     if (client.game_type != GAME_PLAYBACK) {
-	record = sh_var_get_num(client.shell, "record");
-	if (record)
-	    client.net->recording = TRUE;
+	    record = sh_var_get_num(client.shell, "record");
+	    if (record)
+	        client.net->recording = TRUE;
     }
 
     /* connect to server */
     if (! (client.conn = net_connect(client.net, host, port, &tmp))) {
-	printerr("connect: %s\n", tmp->message);
-	return FAIL;
+	    printerr("connect: %s\n", tmp->message);
+	    return FAIL;
     }
 
     // initialize lighting
@@ -411,7 +411,7 @@ game_load(GError **err)
     starfield = glGenLists(1);
     glNewList(starfield, GL_COMPILE);
     //game_build_starfield(16000, 15000);
-    game_build_starfield(8000, 15000);
+        game_build_starfield(8000, 15000);
     glEndList();
 
     client.initialized = TRUE;
@@ -439,15 +439,15 @@ game_unload(GError **err)
     g_hash_table_foreach_remove(client.objects, game_unload_objs, NULL);
 
     if (client.targets->len)
-	g_array_remove_range(client.targets, 0, client.targets->len);
+	    g_array_remove_range(client.targets, 0, client.targets->len);
 
     if (client.game_type == GAME_SINGLE || client.game_type == GAME_SERVER)
-	sv_shutdown(NULL);
+	    sv_shutdown(NULL);
 
     if (snd_computer_next)
-	snd_unload(snd_computer_next);
+	    snd_unload(snd_computer_next);
     if (snd_computer_prev)
-	snd_unload(snd_computer_prev);
+	    snd_unload(snd_computer_prev);
 
 #ifndef DEBUG
     SDL_WM_GrabInput(SDL_GRAB_OFF);
@@ -468,7 +468,7 @@ game_update_mouse(void)
         return;
 
     if (client.conn->sock->state != STATE_ESTABLISHED)
-	return;
+	    return;
 
     vec2_zero(pos);
     SDL_GetMouseState((int *)&pos[X], (int *)&pos[Y]);
@@ -481,30 +481,30 @@ game_update_mouse(void)
     vec2_zero(angles);
 
     if (! client.mouse_glide) {
-	SDL_WarpMouseInWindow(client.window, client.center[X], client.center[Y]);
-	sens = client.mouse_sensitivity;
+	    SDL_WarpMouseInWindow(client.window, client.center[X], client.center[Y]);
+	    sens = client.mouse_sensitivity;
     } else {
-	int32_t max = 192;
+	    int32_t max = 192;
 
-	if (pos[X] >= client.center[X] + max/2)
-	    pos[X] = client.center[X] + max/2;
-	else if (pos[X] <= client.center[X] - max/2)
-	    pos[X] = client.center[X] - max/2;
+	    if (pos[X] >= client.center[X] + max/2)
+	        pos[X] = client.center[X] + max/2;
+	    else if (pos[X] <= client.center[X] - max/2)
+	        pos[X] = client.center[X] - max/2;
 
-	if (pos[Y] >= client.center[Y] + max/2)
-	    pos[Y] = client.center[Y] + max/2;
-	else if (pos[Y] <= client.center[Y] - max/2)
-	    pos[Y] = client.center[Y] - max/2;
+	    if (pos[Y] >= client.center[Y] + max/2)
+	        pos[Y] = client.center[Y] + max/2;
+	    else if (pos[Y] <= client.center[Y] - max/2)
+	        pos[Y] = client.center[Y] - max/2;
 
-	SDL_WarpMouseInWindow(client.window, pos[X], pos[Y]);
-	sens = client.mouse_glide_sensitivity;
+	    SDL_WarpMouseInWindow(client.window, pos[X], pos[Y]);
+	    sens = client.mouse_glide_sensitivity;
     }
 
     if (! REAL_EQ(delta[X], 0))
-	angles[X] = sens * delta[X];
+	    angles[X] = sens * delta[X];
 
     if (! REAL_EQ(delta[Y], 0))
-	angles[Y] = sens * delta[Y] * (client.mouse_invert ? -1.0 : 1.0);
+	    angles[Y] = sens * delta[Y] * (client.mouse_invert ? -1.0 : 1.0);
 
     angles[Z] = 0;
 //    angles[Z] = client.mouse_sensitivity * delta[X];
@@ -520,36 +520,36 @@ static gboolean
 game_update(GError **err)
 {
     if (! client.console.enabled) {
-	game_update_mouse();
+	    game_update_mouse();
 
-	if (! REAL_EQ(client.posv[X], 0) ||
-	    ! REAL_EQ(client.posv[Y], 0) ||
-	    ! REAL_EQ(client.posv[Z], 0) ||
-	    ! REAL_EQ(client.rotv[X], 0) ||
-	    ! REAL_EQ(client.rotv[Y], 0) ||
-	    ! REAL_EQ(client.rotv[Z], 0)) {
+	    if (! REAL_EQ(client.posv[X], 0) ||
+	        ! REAL_EQ(client.posv[Y], 0) ||
+	        ! REAL_EQ(client.posv[Z], 0) ||
+	        ! REAL_EQ(client.rotv[X], 0) ||
+	        ! REAL_EQ(client.rotv[Y], 0) ||
+	        ! REAL_EQ(client.rotv[Z], 0)) {
 
-	    game_send_player_velocities(client.conn, client.posv, client.rotv);
+	        game_send_player_velocities(client.conn, client.posv, client.rotv);
 
-	    vec3_zero(client.posv);
-	    vec3_zero(client.rotv);
-	}
-	bind_update();
+	        vec3_zero(client.posv);
+	        vec3_zero(client.rotv);
+	    }
+	    bind_update();
     }
 
     if (client.snd_initialized) {
-	object_t *obj = g_hash_table_lookup(client.objects, &client.obj_id);
+	    object_t *obj = g_hash_table_lookup(client.objects, &client.obj_id);
 
-	/* update the sound listener position */
-	if (obj) {
-	    vec3_cp(obj->pos, client.snd_listener.pos);
-	    vec3_cp(obj->orient, client.snd_listener.orient);
-	    vec3_cp(obj->posv, client.snd_listener.posv);
+	    /* update the sound listener position */
+	    if (obj) {
+	        vec3_cp(obj->pos, client.snd_listener.pos);
+	        vec3_cp(obj->orient, client.snd_listener.orient);
+	        vec3_cp(obj->posv, client.snd_listener.posv);
 
-	    snd_update(&client.snd_listener);
-	    snd_update_srcs();
-	    snd_src_reap();
-	}
+	        snd_update(&client.snd_listener);
+	        snd_update_srcs();
+	        snd_src_reap();
+	    }
     }
 
     return OK;
@@ -834,267 +834,6 @@ game_draw(GError **err)
     glFlush();
     return OK;
 }
-#if 0
- static gboolean game_draw(GError **err)
-{
-    object_t *cam;
-    mat4x4_t m;
-
-    if (client.obj_id == 0) {
-	    printf("camera not initialized\n");
-	    return OK;
-    }
-
-    /* try to obtain the camera object */
-    cam = g_hash_table_lookup(client.objects, &client.obj_id);
-
-    if (cam == NULL) {
-	    g_hash_table_foreach(client.objects, game_print_objects, NULL);
-	    printf("no camera! [0x%08x]\n", client.obj_id);
-	    exit(1);
-	    return OK;
-    }
- 
-    glViewport(0, 0, client.res[WIDTH], client.res[HEIGHT]);
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear all buffers
-
-    // --- 2D HUD Drawing Setup ---
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    // Use client.ortho for your virtual resolution here
-    glOrtho(0.0, client.ortho[WIDTH], 0.0, client.ortho[HEIGHT], -1.0, 1.0); // Simple Z-range for 2D
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity(); // Identity for 2D HUD modelview
-
-    // Disable depth testing and writing for 2D HUD elements
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
-
-    // --- Draw your 2D HUD components ---
-    lighting_disable(); // HUD is typically unlit
-
-    if (client.hud_enabled) {
-        cl_target_draw();
-    }
-    {
-        struct tm date_time;
-        time_t t;
-        char buf[BUFSIZ];
-        t = time(NULL);
-        localtime_r(&t, &date_time);
-        snprintf(buf, BUFSIZ, "%02d:%02d:%02d", date_time.tm_hour, date_time.tm_min, date_time.tm_sec);
-        ui_draw_digital_text(buf, client.ortho[WIDTH] - 16 * 12, 0 + 26, 16, 26);
-    }
-    if (client.hud_enabled) {
-        cl_radar_draw();
-        cl_crosshair_draw();
-        cl_target_computer_draw(); // Assuming this is a 2D component
-    }
-
-    // --- End 2D HUD ---
-
-    glFlush();
-    return OK;
-}
-#endif
-#if 0
-static gboolean
-game_draw(GError **err)
-{
-    object_t *cam;
-    mat4x4_t m;
-
-    if (client.obj_id == 0) {
-	    printf("camera not initialized\n");
-	    return OK;
-    }
-
-    /* try to obtain the camera object */
-    cam = g_hash_table_lookup(client.objects, &client.obj_id);
-
-    if (cam == NULL) {
-	    g_hash_table_foreach(client.objects, game_print_objects, NULL);
-	    printf("no camera! [0x%08x]\n", client.obj_id);
-	    exit(1);
-	    return OK;
-    }
-
-
-    /* reset opengl options */
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    glDepthFunc(GL_LEQUAL);
-    glEnable(GL_DEPTH_TEST);
-
-    /* apply camera rotations */
-    quat_to_mat(cam->orient, m);
-//    printf("position: %f/%f/%f\n", cam->pos[X], cam->pos[Y], cam->pos[Z]);
-    mat4x4_translate(m, -cam->pos[X], -cam->pos[Y], -cam->pos[Z]);
-    glMultMatrix(m);
-
-    /*
-     * Draw unlit objects
-     */
-    lighting_disable();
-
-    /* draw the starfield */
-    glDisable(GL_DEPTH_TEST);
-    glPushMatrix();
-    	glTranslatef(cam->pos[X], cam->pos[Y], cam->pos[Z]);
-    	glCallList(starfield);
-    glPopMatrix();
-    glEnable(GL_DEPTH_TEST);
-
-    ui_draw_3d_grid(10.0, 50, 50);
-
-    glDepthFunc(GL_ALWAYS);
-    vec3_t zero;
-    vec3_zero(zero);
-    ui_draw_axis(zero, 500);
-    glDepthFunc(GL_LEQUAL);
-
-    ui_draw_spiral_wireframe(32.0, 500.0);
-    /*
-     * END unlit objects
-     */
-
-    /*
-     * Draw Lit Objects
-     */
-    lighting_enable();
-
-#if 0 /* draw some test objects bypassing the network code */
-    glPushMatrix();
-        glTranslatef(0, 3, 0);
-    	mesh_draw(cube);
-    glPopMatrix();
-    glPushMatrix();
-        glTranslatef(-20, 10, 0);
-    	mesh_draw(fighter);
-    glPopMatrix();
-    glPushMatrix();
-        glTranslatef(20, 10, 0);
-    	mesh_draw(bomber);
-    glPopMatrix();
-    glPushMatrix();
-        glTranslatef(0, 10, 20);
-    	mesh_draw(saucer);
-    glPopMatrix();
-    glPushMatrix();
-        glTranslatef(0, 10, -20);
-    	mesh_draw(snowflake);
-    glPopMatrix();
-#endif
-
-#if 1 /* draw all of the objects in the universe */
-    g_hash_table_foreach(client.objects, game_draw_objs, NULL);
-#endif
-
-    vec3_t clong, clat;
-    vec3_set(clong, 0.7, 0, 0.7);
-    vec3_set(clat, 0, 0, 0.7);
-#if 0
-    glPushMatrix();
-        glTranslatef(100,100,-100);
-        ui_draw_uv_sphere_wireframe(32.0, 15.0, 15.0, clong, clat);
-    glPopMatrix();
-    glPushMatrix();
-        glTranslatef(2000,0,-2000);
-        ui_draw_uv_sphere_wireframe(1024.0, 15.0, 15.0, clong, clat);
-    glPopMatrix();
-#endif
-    glPushMatrix();
-        vec3_set(clong, 0.25, 0, 0.0);
-        vec3_set(clat, 0.25, 0, 0.0);
-        glTranslatef(128000,-60000,0);
-        ui_draw_earth(0,0,0, 60000.0, 2, 5.0, 5.0, clong, clat);
-//    glTranslatef(000,0,000);
-//        ui_draw_earth(0,0,0, 100.0, 2, 5.0, 5.0, clong, clat);
-    glPopMatrix();
-
-
-    /* draw the hud */
-	/* 2d components */
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	    glLoadIdentity();
-
-	    /* we want everything to appear the same size in all resolutions 
-	       so we dont use our screen size here. */
-	    glOrtho(0.0, client.ortho[WIDTH],
-		    0.0, client.ortho[HEIGHT],
-		    -1.0, 100.0);
-
-	    glMatrixMode(GL_MODELVIEW);
-
-	    glPushMatrix();
-	        glLoadIdentity();
-
-		lighting_disable();
-
-		if (client.hud_enabled) {
-    		    cl_target_draw();
-		}
-		{
-		    struct tm date_time;
-		    time_t t;
-		    char buf[BUFSIZ];
-		    t = time(NULL);
-		    localtime_r(&t, &date_time);
-		    snprintf(buf, BUFSIZ, "%02d:%02d:%02d", date_time.tm_hour, date_time.tm_min, date_time.tm_sec);
-		    //		ui_draw_digital_text(buf, 50, 250, 50, 76);
-
-		    //		ui_draw_digital_text(buf, 550, 250, 16, 26);
-		    ui_draw_digital_text(buf, client.ortho[WIDTH] - 16 * 12, 0 + 26, 16, 26);
-		}
-		if (client.hud_enabled) {
-		    cl_radar_draw();
-		    cl_crosshair_draw();
-		    cl_target_computer_draw();
-		}
-
-		lighting_enable();
-	    glPopMatrix();
-
-	    glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
-        
-
-    #define VIRTUAL_HUD_WIDTH 1920.0f
-    #define VIRTUAL_HUD_HEIGHT 1080.0f
-
-    /* draw 3d components of the hud */
-	glClear(GL_DEPTH_BUFFER_BIT);
-
-    //glMatrixMode(GL_PROJECTION);
-    //glPushMatrix();
-    //glLoadIdentity();
-    //glOrtho(0, VIRTUAL_HUD_WIDTH, VIRTUAL_HUD_HEIGHT, 0, -1, 1);
-    //glTranslatef(VIRTUAL_HUD_WIDTH - 200.0f, VIRTALL_HUD_HEIGHT - 100.0f, 0.0f); // Example: bottom-right corner
-    //glScale(50.0f, 50.0f, 50.0f);
-
-	glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-	if (client.hud_enabled) {
-        cl_target_computer3d_draw();
-	}
-    glPopMatrix();
-
-    //glMatrixMode(GL_PROJECTION);
-    //glPopMatrix();
-
-    glMatrixMode(GL_MODELVIEW);
-	
-    /* so input doesn't lag behind graphics too much */
-    glFlush();
-
-    return OK;
-}
-#endif
 
 /**
  * callback for processing SDL keyboard events
@@ -1105,19 +844,19 @@ static gboolean
 game_key(SDL_KeyboardEvent *k, GError **err)
 {
     if (k->type == SDL_KEYDOWN) {
-	switch (k->keysym.sym) {
-	    case SDLK_ESCAPE:
-		cl_mode(&menu_callbacks, NULL);
-		break;
-	    case SDLK_F1:
-		client.mouse_drag_enabled ^= 1;
-		break;
-	    default:
-		bind_key(k);
-		break;
-	}
+	    switch (k->keysym.sym) {
+	        case SDLK_ESCAPE:
+		        cl_mode(&menu_callbacks, NULL);
+		        break;
+	        case SDLK_F1:
+		        client.mouse_drag_enabled ^= 1;
+		        break;
+	        default:
+		        bind_key(k);
+		        break;
+	    }
     } else {
-	bind_key(k);
+	    bind_key(k);
     }
 
     return OK;
