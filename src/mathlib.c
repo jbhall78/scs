@@ -481,6 +481,7 @@ mat4x4_id(mat4x4_t m)
     m[12] = 0.0; m[13] = 0.0; m[14] = 0.0; m[15] = 1.0;
 }
 
+#if 0 // someone didn't like this function
 #define M1(row,col)  m1[(col<<2)+row]
 #define M2(row,col)  m2[(col<<2)+row]
 #define M3(row,col)  dest[(col<<2)+row]
@@ -500,6 +501,35 @@ mat4x4_mult(mat4x4_t m1, mat4x4_t m2, mat4x4_t dest)
 #undef M1
 #undef M2
 #undef M3
+#endif
+
+void
+mat4x4_mult(mat4x4_t m1, mat4x4_t m2, mat4x4_t dest)
+{
+    // Matrix multiplication: C[r][c] = sum(A[r][k] * B[k][c])
+    // Using column-major storage: Index = col * 4 + row
+
+    for (int i = 0; i < 4; i++) { // Loop over rows of the destination matrix (and m1)
+
+        // Pre-fetch the elements of row 'i' from m1.
+        // These correspond to m1[col_0_idx + row_i], m1[col_1_idx + row_i], etc.
+        const real m1_row_i_col_0 = m1[0 * 4 + i]; // m1[i]
+        const real m1_row_i_col_1 = m1[1 * 4 + i]; // m1[4 + i]
+        const real m1_row_i_col_2 = m1[2 * 4 + i]; // m1[8 + i]
+        const real m1_row_i_col_3 = m1[3 * 4 + i]; // m1[12 + i]
+
+        // Calculate each element in the current row 'i' of the destination matrix
+        // The inner loop iterates over columns 'j' of the destination matrix (and m2)
+        for (int j = 0; j < 4; j++) {
+            // dest[j*4 + i] is the element at row 'i', column 'j' of the destination matrix.
+            // Each term involves a row 'i' element from m1 and a column 'j' element from m2.
+            dest[j * 4 + i] = m1_row_i_col_0 * m2[j * 4 + 0] + // m1(i,0) * m2(0,j)
+                              m1_row_i_col_1 * m2[j * 4 + 1] + // m1(i,1) * m2(1,j)
+                              m1_row_i_col_2 * m2[j * 4 + 2] + // m1(i,2) * m2(2,j)
+                              m1_row_i_col_3 * m2[j * 4 + 3];  // m1(i,3) * m2(3,j)
+        }
+    }
+}
 
 void
 mat4x4_translate(mat4x4_t m, real x, real y, real z)
