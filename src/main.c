@@ -39,10 +39,13 @@ init(void)
 }
 
 static void
-usage(char *prog)
-{
-    printerr("%s [-d] [-f] [-s server] [-(resx)x(resy)]\n", prog);
-    exit(1);
+usage(const char *progname) {
+    fprintf(stderr, "Usage: %s [options]\n", progname);
+    fprintf(stderr, "  --dedicated | -d       Run as a dedicated server\n");
+    fprintf(stderr, "  --fullscreen | -f      Run in fullscreen mode\n");
+    fprintf(stderr, "  --server <host> | -s <host> Connect to a game server\n");
+    fprintf(stderr, "  -<width>x<height>      Set screen resolution (e.g., -1920x1080, -800x600)\n");
+    exit(1); // Exit after showing usage
 }
 
 int
@@ -57,15 +60,18 @@ main(int argc, char **argv)
 
     init();
 
+#if 0
     /* read command line options */
     for (i = 1; i < argc; i++) {
-	if (strcmp(argv[i], "--dedicated") == 0 || strcmp(argv[i], "-d") == 0)
+	if (strcmp(argv[i], "--dedicated") == 0 || strcmp(argv[i], "-d") == 0 || strcmp(argv[i], "-dedicated"))
 	    dedicated = TRUE;
 	else if (strcmp(argv[i], "--fullscreen") == 0 ||
-		 strcmp(argv[i], "-f") == 0)
+		 strcmp(argv[i], "-f") == 0 ||
+		 strcmp(argv[i], "-fullscreen"))
 	    fullscreen = TRUE;
 	else if (strcmp(argv[i], "--server") == 0 ||
 		 strcmp(argv[i], "-s") == 0) {
+		 strcmp(argv[i], "-server")
 	    if (i+1 < argc) 
 		host = strdup(argv[++i]);
 	    else
@@ -96,6 +102,41 @@ main(int argc, char **argv)
 	    resy = 480;
 	} else
 	    usage(argv[0]);
+    }
+#endif
+
+    /* read command line options */
+    for (i = 1; i < argc; i++) {
+        // Corrected strcmp checks for dedicated and fullscreen
+        if (strcmp(argv[i], "--dedicated") == 0 || strcmp(argv[i], "-d") == 0) {
+            dedicated = TRUE;
+        } else if (strcmp(argv[i], "--fullscreen") == 0 ||
+                   strcmp(argv[i], "-f") == 0) {
+            fullscreen = TRUE;
+        } else if (strcmp(argv[i], "--server") == 0 ||
+                   strcmp(argv[i], "-s") == 0) {
+            if (i + 1 < argc) {
+                host = strdup(argv[++i]); // Increment i to consume the host argument
+            } else {
+                fprintf(stderr, "Error: --server requires a host argument.\n");
+                usage(argv[0]);
+            }
+        }
+        // --- NEW RESOLUTION PARSING LOGIC ---
+        else if (sscanf(argv[i], "-%hux%hu", &resx, &resy) == 2) {
+            // sscanf returns the number of items successfully matched and assigned.
+            // If it returns 2, both width and height were parsed.
+            if (resx == 0 || resy == 0) {
+                fprintf(stderr, "Error: Invalid resolution value: %s. Width and height must be positive integers.\n", argv[i]);
+                usage(argv[0]);
+            }
+        }
+        // --- END NEW RESOLUTION PARSING LOGIC ---
+        else {
+            // If the argument doesn't match any known option
+            fprintf(stderr, "Error: Unrecognized option '%s'.\n", argv[i]);
+            usage(argv[0]);
+        }
     }
 
     if (dedicated)
