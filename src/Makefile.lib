@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -g -DLINUX -DUNIX -D_GNU_SOURCE=1 -D_REENTRANT -Wno-unused-variable -Wno-implicit-function-declaration \
-        -Wno-deprecated-declarations \
+        -Wno-deprecated-declarations -Wno-attributes \
 	`pkg-config glib-2.0 --cflags` \
 	`pkg-config gio-2.0 --cflags` \
 	`pkg-config libxml-2.0 --cflags` \

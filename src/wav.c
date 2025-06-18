@@ -212,7 +212,7 @@ wav_new(char *filename)
 		break;
 
 	    default:
-		fprintf(stderr, "WARNING: unknown WAV data %d in file %s at position: %d\n", n32, filename, p - data);
+		fprintf(stderr, "WARNING: unknown WAV data %d in file %s at position: %ld\n", n32, filename, p - data);
 		dprintf("id: %d\n", n32);
 		break;
 	}

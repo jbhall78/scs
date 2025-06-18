@@ -113,9 +113,9 @@ con_proc_key(int keysym, int mod)
 	    item->data = strdup(con->inbuf->data);
 
 	    con->history = dlist_append(con->history, item);
-	    printf("added: 0x%08x (%s)\n", item, item->data);
+	    printf("added: 0x%08lx (%s)\n", (uint64_t)item, (char *)item->data);
 	    con->history_item = item;
-	    printf("links: 0x%08x 0x%08x\n", item->prev, item->next);
+	    printf("links: 0x%08lx 0x%08lx\n", (uint64_t)item->prev, (uint64_t)item->next);
 
 	    // clear buffer
 	    g_array_remove_range(con->inbuf, 0, con->inbuf->len);
@@ -146,7 +146,7 @@ con_proc_key(int keysym, int mod)
 		char *str;
 		con->history_item = con->history_item->next;
 		str = con->history_item->data;
-		printf("current: 0x%08x\n", con->history_item);
+		printf("current: 0x%08lx\n", (uint64_t)con->history_item);
 
 		if (con->inbuf->len > 0)
 		    g_array_remove_range(con->inbuf, 0, con->inbuf->len);
@@ -167,7 +167,7 @@ con_proc_key(int keysym, int mod)
 
 		if (con->history_item->prev)
 		    con->history_item = con->history_item->prev;
-		printf("current: 0x%08x\n", con->history_item);
+		printf("current: 0x%08lx\n", (uint64_t)con->history_item);
 	    } else {
 		printf("no history item\n");
 	    }

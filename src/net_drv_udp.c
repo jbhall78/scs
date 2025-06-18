@@ -9,6 +9,8 @@
 #include "megalib.h"
 #endif
 
+void net_drv_udp_addr_delete(net_state_t *net, addr_t **dup);
+
 typedef struct {
     GSocket *sock;
     GInetAddress *addr; // For local bound address, if needed

@@ -172,7 +172,7 @@ parser_remainder(parser_t *psr)
 void
 parser_print(parser_t *psr)
 {
-    printf("got: idx:[%d] c:'%c' res:\"%s\" eof:[%s]\n", psr->idx, psr->c,
+    printf("got: idx:[%ld] c:'%c' res:\"%s\" eof:[%s]\n", psr->idx, psr->c,
 	    (psr->empty) ? "NULL" : psr->res->data,
 	    (psr->eof ? "yes" : "no")
 	  );

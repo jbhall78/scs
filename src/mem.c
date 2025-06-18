@@ -55,7 +55,7 @@ mem_alloc(size_t sz)
 //	printf("got: [%d] 0x%016X\n", i, (allocation_t)ptr);
 #endif
 	if (sz > 10000)
-	    printf("allocated %d bytes: 0x%08x to 0x%08x\n", sz, (uint32_t)ptr, (uint32_t)ptr + sz);
+	    printf("allocated %ld bytes: 0x%08lx to 0x%08lx\n", sz, (uint64_t)ptr, (uint64_t)ptr + sz);
 
 	return ptr;
 }
