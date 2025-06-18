@@ -15,8 +15,7 @@ LDFLAGS = -lm -lscs -L. -L/app/lib -lGL -lGLU \
 	`pkg-config sdl2 --libs` \
 	`pkg-config SDL2_image --libs` \
 	`pkg-config openal --libs` \
-        `pkg-config freealut --libs` \
-	-lncurses -lncursesw
+        `pkg-config freealut --libs`
 H_FILES = client.h cl_bind_map.h cl_light.h tex.h ui.h sys_gl.h sys_gl_auto.h \
 		snd.h wav.h server.h
 # cl_newton.c
