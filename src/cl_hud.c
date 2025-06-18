@@ -44,13 +44,13 @@ cl_radar_draw_circle(double radius, double rx, double ry)
     glColor3d(0.6, 0.0, 0.0);
     glBegin (GL_LINE_LOOP);
     for (theta=0.0; theta<6.29; theta+=0.314/2) {
-	y = sin (theta);
-	x = cos (theta);
+	    y = sin (theta);
+	    x = cos (theta);
 
-	x = rx + x * radius;
-	y = ry + y * radius;
+	    x = rx + x * radius;
+	    y = ry + y * radius;
 
-	glVertex2(x, y);
+	    glVertex2(x, y);
     }
     glEnd();
 }
@@ -70,6 +70,127 @@ cl_radar_draw_circle(double radius, double rx, double ry)
  * @param x coordinate
  * @param y coordinate
  */
+void
+cl_radar_get_coords(object_t *obj, real *out_x, real *out_y)
+{
+    // Define radar properties
+    real RADAR_RADIUS = 120.0; // This is the screen radius of the radar circle
+    real RADAR_MAX_DISTANCE = 500.0; // Max distance for objects to appear on radar in world units
+
+    // Radar screen centers (upper-left and upper-right)
+    vec2_t FRONT_RADAR_CENTER;
+    vec2_t BACK_RADAR_CENTER;
+
+    vec2_set(FRONT_RADAR_CENTER, RADAR_RADIUS, client.ortho[HEIGHT] - RADAR_RADIUS);
+    vec2_set(BACK_RADAR_CENTER, client.ortho[WIDTH] - RADAR_RADIUS, client.ortho[HEIGHT] - RADAR_RADIUS);
+
+    object_t *cam;
+    vec3_t cam_pos, cam_fwd, cam_up, cam_right; // Camera's position and orientation vectors
+    quat_t cam_orient;
+
+    // Get camera information
+    if ((cam = g_hash_table_lookup(client.objects, &client.obj_id)) == NULL) {
+        // Handle error: camera object not found.
+        // Maybe set object off-screen or return a status code.
+        *out_x = -1.0; // Indicate error or off-screen
+        *out_y = -1.0;
+        printerr("Error: Camera object not found for radar.\n");
+        return;
+    }
+
+    vec3_cp(cam->pos, cam_pos);
+    quat_cp(cam->orient, cam_orient);
+    quat_to_vecs(cam_orient, cam_fwd, cam_up, cam_right);
+
+    vec3_norm(cam_fwd);   // Ensure these are normalized
+    vec3_norm(cam_up);
+    vec3_norm(cam_right);
+
+    // 1. Calculate relative position of the object to the camera
+    vec3_t relative_obj_pos;
+    vec3_sub(obj->pos, cam_pos, relative_obj_pos); // obj.pos - cam.pos
+
+    // Get the distance to the object
+    real distance_to_obj = vec3_len(relative_obj_pos);
+
+    // If object is too far, don't display it on the radar
+    if (distance_to_obj > RADAR_MAX_DISTANCE) {
+        *out_x = -1.0; // Indicate off-screen
+        *out_y = -1.0;
+        return;
+    }
+
+    // 2. Determine which radar to use (front or back)
+    // The dot product of the relative position with the camera's forward vector tells us if it's in front or behind.
+    real dot_fwd = vec3_dot(relative_obj_pos, cam_fwd);
+
+    real *radar_center_ptr;
+    // We want objects *in front* of the camera to appear on the front radar.
+    // If an object is behind, it should appear on the "back" radar.
+    // Using a small epsilon to avoid issues exactly on the plane
+    if (dot_fwd >= 0.0) { // Object is in front of the camera's forward plane
+        radar_center_ptr = FRONT_RADAR_CENTER;
+        // Optionally, if you want objects *directly behind* to show on the back radar.
+        // If your "front" and "back" radars are literally about the camera's forward direction.
+        // If your "back" radar is actually "everything else", then no need for this check
+    } else { // Object is behind the camera's forward plane
+        radar_center_ptr = BACK_RADAR_CENTER;
+        // For the back radar, we want to mirror the object's position
+        // This makes objects that are directly behind appear at the "top" of the back radar.
+        vec3_inv(relative_obj_pos); // Invert relative position for back radar display
+    }
+
+
+    // 3. Project the relative position onto the camera's local XZ plane for radar coordinates
+    // We want the object's right-left component (X) and forward-back component (Z)
+    // relative_obj_pos = (x_relative * cam_right) + (y_relative * cam_up) + (z_relative * cam_fwd)
+    // We care about x_relative and z_relative (or a "projected_fwd" and "projected_right")
+
+    // Project onto the plane defined by cam_right and cam_fwd (relative to cam_pos)
+    // This gives the coordinates in the camera's local 2D space.
+    real radar_local_x = vec3_dot(relative_obj_pos, cam_right);
+    real radar_local_y = vec3_dot(relative_obj_pos, cam_fwd); // Using fwd as Y-axis on radar for 'up' direction
+
+    // Handle objects directly on the camera plane, they might appear as 0,0 on radar.
+    // A small epsilon check might be useful here, or rely on atan2 behavior.
+    if (radar_local_x == 0 && radar_local_y == 0) {
+        // Object is at camera's exact position.
+        // Place at center of radar or off-screen.
+        *out_x = radar_center_ptr[0];
+        *out_y = radar_center_ptr[1];
+        return;
+    }
+
+    // 4. Convert to polar coordinates and map to radar circle
+    // atan2(y, x) gives angle in radians from -PI to PI
+    real angle_rad = atan2(radar_local_x, radar_local_y); // atan2(X,Y) for angle relative to Y-axis (forward)
+                                                          // If you want angle relative to X-axis (right), use atan2(Y,X)
+                                                          // OpenGL Y is usually up, X is right, Z is forward/backward.
+                                                          // So (right, forward) maps to (x, y) on a radar where y is forward.
+
+    // Map distance to a normalized radius (0 to 1) based on RADAR_MAX_DISTANCE
+    real normalized_dist = distance_to_obj / RADAR_MAX_DISTANCE;
+    if (normalized_dist > 1.0f) {
+        normalized_dist = 1.0f; // Clamp to max radius if it somehow exceeded
+    }
+
+    // Calculate screen coordinates within the radar circle
+    // X = RadarCenter.x + RadarRadius * sin(angle) * normalized_distance
+    // Y = RadarCenter.y - RadarRadius * cos(angle) * normalized_distance (subtract because screen Y increases downwards)
+    // Or if radar_local_x is X-axis, radar_local_y is Y-axis:
+    // x = RadarCenter.x + RadarRadius * normalized_distance * cos(angle_rad)
+    // y = RadarCenter.y + RadarRadius * normalized_distance * sin(angle_rad)
+    // The previous atan2(radar_local_x, radar_local_y) gives angle relative to Y (forward).
+    // So X on radar is related to sin(angle), Y on radar is related to cos(angle).
+
+    *out_x = radar_center_ptr[0] + RADAR_RADIUS * sin(angle_rad) * normalized_dist;
+    *out_y = radar_center_ptr[1] - RADAR_RADIUS * cos(angle_rad) * normalized_dist; // Invert Y for screen coords
+
+    // Final check for floating point issues that might push points just outside circle.
+    // Can clamp to radius if desired, or let OpenGL handle clipping.
+}
+
+#if 0
 void
 cl_radar_get_coords(object_t *obj, real *x, real *y)
 {
@@ -224,6 +345,7 @@ cl_radar_get_coords(object_t *obj, real *x, real *y)
 	}
     }
 }
+#endif
 
 void
 cl_radar_draw_objs(gpointer key, gpointer val, gpointer data)
@@ -247,43 +369,43 @@ cl_radar_draw_objs(gpointer key, gpointer val, gpointer data)
     glColor3f(0,1,1);
     
     glBegin(GL_POINTS);
-    glVertex2(rx, ry);
+        glVertex2(rx, ry);
     glEnd();
 
     obj2 = g_hash_table_lookup(client.objects, &client.obj_id);
     assert(obj2 != NULL);
 
     if (obj1->id == obj2->target_id) {
-	size -= 1;
-	glColor3f(1,1,0);
-	glLineWidth(1.0);
-	glBegin(GL_LINES);
+	    size -= 1;
+	    glColor3f(1,1,0);
+	    glLineWidth(1.0);
+	    glBegin(GL_LINES);
 
-	glVertex2(rx-size, ry+size);
-	glVertex2(rx-size, ry+size-size/2);
+	        glVertex2(rx-size, ry+size);
+	        glVertex2(rx-size, ry+size-size/2);
 
-	glVertex2(rx-size, ry+size);
-	glVertex2(rx-size+size/2, ry+size);
+	        glVertex2(rx-size, ry+size);
+	        glVertex2(rx-size+size/2, ry+size);
 
-	glVertex2(rx+size, ry+size);
-	glVertex2(rx+size-size/2, ry+size);
+	        glVertex2(rx+size, ry+size);
+	        glVertex2(rx+size-size/2, ry+size);
 
-	glVertex2(rx+size, ry+size);
-	glVertex2(rx+size, ry+size-size/2);
+	        glVertex2(rx+size, ry+size);
+	        glVertex2(rx+size, ry+size-size/2);
 
 
-	glVertex2(rx-size, ry-size);
-	glVertex2(rx-size, ry-size+size/2);
+	        glVertex2(rx-size, ry-size);
+	        glVertex2(rx-size, ry-size+size/2);
 
-	glVertex2(rx-size, ry-size);
-	glVertex2(rx-size+size/2, ry-size);
+	        glVertex2(rx-size, ry-size);
+	        glVertex2(rx-size+size/2, ry-size);
 
-	glVertex2(rx+size, ry-size);
-	glVertex2(rx+size-size/2, ry-size);
+	        glVertex2(rx+size, ry-size);
+	        glVertex2(rx+size-size/2, ry-size);
 
-	glVertex2(rx+size, ry-size);
-	glVertex2(rx+size, ry-size+size/2);
-	glEnd();
+	        glVertex2(rx+size, ry-size);
+	        glVertex2(rx+size, ry-size+size/2);
+	    glEnd();
     }
 }
 
@@ -335,55 +457,55 @@ cl_crosshair_draw(void)
     bot   = client.ortho[HEIGHT]/2 - height/2;
 
     glBegin(GL_QUADS);
-	glTexCoord2f(0, 0);
-	glVertex2(left, bot);
+	    glTexCoord2f(0, 0);
+	    glVertex2(left, bot);
 	    
-	glTexCoord2f(1, 0);
-	glVertex2(right, bot);
+	    glTexCoord2f(1, 0);
+	    glVertex2(right, bot);
     
-	glTexCoord2f(1, 1);
-	glVertex2(right, top);
+	    glTexCoord2f(1, 1);
+	    glVertex2(right, top);
     
-	glTexCoord2f(0, 1);
-	glVertex2(left, top);
+	    glTexCoord2f(0, 1);
+	    glVertex2(left, top);
     glEnd();
 
     if (client.mouse_glide) {
-	int32_t max = 192;
-	real xstep = (real)client.ortho[WIDTH]/client.res[WIDTH];
-	real ystep = (real)client.ortho[HEIGHT]/client.res[HEIGHT];
+	    int32_t max = 192;
+	    real xstep = (real)client.ortho[WIDTH]/client.res[WIDTH];
+	    real ystep = (real)client.ortho[HEIGHT]/client.res[HEIGHT];
 
-	SDL_GetMouseState(&pos[X], &pos[Y]);
-	if (pos[X] >= client.center[X] + max/2)
-	    pos[X] = client.center[X] + max/2;
-	else if (pos[X] <= client.center[X] - max/2)
-	    pos[X] = client.center[X] - max/2;
+	    SDL_GetMouseState(&pos[X], &pos[Y]);
+	    if (pos[X] >= client.center[X] + max/2)
+	        pos[X] = client.center[X] + max/2;
+	    else if (pos[X] <= client.center[X] - max/2)
+	        pos[X] = client.center[X] - max/2;
 
-	if (pos[Y] >= client.center[Y] + max/2)
-	    pos[Y] = client.center[Y] + max/2;
-	else if (pos[Y] <= client.center[Y] - max/2)
-	    pos[Y] = client.center[Y] - max/2;
+	    if (pos[Y] >= client.center[Y] + max/2)
+	        pos[Y] = client.center[Y] + max/2;
+	    else if (pos[Y] <= client.center[Y] - max/2)
+	        pos[Y] = client.center[Y] - max/2;
 
-	left  = xstep*pos[X]-width/2;
-	right = xstep*pos[X]-width/2 + width;
-	top   = ystep*pos[Y]-height/2 + height;
-	bot   = ystep*pos[Y]-height/2;
+	    left  = xstep*pos[X]-width/2;
+	    right = xstep*pos[X]-width/2 + width;
+	    top   = ystep*pos[Y]-height/2 + height;
+	    bot   = ystep*pos[Y]-height/2;
 
-	vec4_set(color, 1.0, 1.0, 1.0, 1.0);
-	glColor4v(color);
-	glBegin(GL_QUADS);
-	    glTexCoord2f(0, 0);
-	    glVertex2(left, bot);
+	    vec4_set(color, 1.0, 1.0, 1.0, 1.0);
+	    glColor4v(color);
+	    glBegin(GL_QUADS);
+	        glTexCoord2f(0, 0);
+	        glVertex2(left, bot);
 
-	    glTexCoord2f(1, 0);
-	    glVertex2(right, bot);
+	        glTexCoord2f(1, 0);
+	        glVertex2(right, bot);
 
-	    glTexCoord2f(1, 1);
-	    glVertex2(right, top);
+	        glTexCoord2f(1, 1);
+	        glVertex2(right, top);
 
-	    glTexCoord2f(0, 1);
-	    glVertex2(left, top);
-	glEnd();
+	        glTexCoord2f(0, 1);
+	        glVertex2(left, top);
+	    glEnd();
     }
 
     glDisable(GL_TEXTURE_2D);
@@ -519,28 +641,28 @@ cl_target_computer_draw(void)
     ui_font_draw_text(fnt, x, y, fntsiz, color, "DIST");
 
     {
-	real distance = 0;
-	vec3_t tmp;
-	object_t *cam, *obj;
-	char buf[BUFSIZ];
+	    real distance = 0;
+	    vec3_t tmp;
+	    object_t *cam, *obj;
+	    char buf[BUFSIZ];
 
-	cam = g_hash_table_lookup(client.objects, &client.obj_id);
-	if (cam != NULL) {
-	    obj = g_hash_table_lookup(client.objects, &cam->target_id);
+	    cam = g_hash_table_lookup(client.objects, &client.obj_id);
+	    if (cam != NULL) {
+	        obj = g_hash_table_lookup(client.objects, &cam->target_id);
 	    
-	    if (obj != NULL) {
-		vec3_sub(cam->pos, obj->pos, tmp);
-		distance = vec3_len(tmp);
-		distance /= 100;
+	        if (obj != NULL) {
+		        vec3_sub(cam->pos, obj->pos, tmp);
+		        distance = vec3_len(tmp);
+		        distance /= 100;
+	        }
 	    }
-	}
 	    
     	sprintf(buf, "%.02f", distance);
 	
-	x = right - ui_font_get_strwidth(fnt, fntsiz, strlen(buf)) - 5 - 3;
-	y = y - ui_font_get_height(fnt, fntsiz)-2;
-	vec4_set(color, 0.18, 1.00, 1.00, 1);
-	ui_font_draw_text(fnt, x, y, fntsiz, color, buf);
+	    x = right - ui_font_get_strwidth(fnt, fntsiz, strlen(buf)) - 5 - 3;
+	    y = y - ui_font_get_height(fnt, fntsiz)-2;
+	    vec4_set(color, 0.18, 1.00, 1.00, 1);
+	    ui_font_draw_text(fnt, x, y, fntsiz, color, buf);
     }
 
     glDisable(GL_BLEND);
@@ -561,14 +683,14 @@ cl_target_draw(void)
     // multiply the modelview matrix with our ships matrix
     cam = g_hash_table_lookup(client.objects, &client.obj_id);
     if (! cam)
-	return;
+	    return;
 
     quat_to_mat(cam->orient, m1);
     mat4x4_translate(m1, -cam->pos[X], -cam->pos[Y], -cam->pos[Z]);
 
     obj = g_hash_table_lookup(client.objects, &cam->target_id);
     if (! obj)
-	return;
+	    return;
 
     quat_to_mat(obj->orient, m2);
 
@@ -624,11 +746,11 @@ cl_target_computer3d_draw(void)
 
     cam = g_hash_table_lookup(client.objects, &client.obj_id);
     if (client.targets->len == 0 || cam == NULL)
-	return;
+	    return;
 
     obj = g_hash_table_lookup(client.objects, &cam->target_id);
     if (! obj)
-	return;
+	    return;
 
 //    lighting_enable();
 
