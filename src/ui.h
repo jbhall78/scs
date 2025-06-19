@@ -121,6 +121,7 @@ typedef struct widget_s {
     gboolean	(*text)(struct widget_s *w, SDL_TextInputEvent *ev, gboolean *handled, GError **err);
     gboolean	(*mbutton)(struct widget_s *w, SDL_MouseButtonEvent *ev, struct widget_s **handled_by, GError **err);
     gboolean	(*mmotion)(struct widget_s *w, SDL_MouseMotionEvent *ev, widget_posv_t rmpos, GError **err);
+    gboolean	(*mwheel)(struct widget_s *w, SDL_MouseWheelEvent *ev, gboolean *handled, GError **err);
     gboolean	(*destroy)(struct widget_s *w, GError **err);
     gboolean    (*update)(struct widget_s *w, GError **err);
     gboolean	(*draw)(struct widget_s *w, GError **err);

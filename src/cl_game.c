@@ -885,6 +885,7 @@ cl_callbacks_t game_callbacks = {
     game_key,
     NULL, /* .text */
     game_mbutton,
+    NULL, /* .mwheel */
     NULL, /* .mmotion */
     NULL, /* .jbutton */
     NULL, /* .jmotion */

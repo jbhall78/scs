@@ -804,8 +804,10 @@ cl_callbacks_t newton_demo_callbacks = {
     demo_update,
     demo_draw,
     demo_key,
+    NULL, /* .text */
     demo_mbutton,
     demo_mmotion,
+    NULL, /* .mwheel */
     NULL, /* .jbutton */
     NULL, /* .jmotion */
     NULL, /* .jhat */

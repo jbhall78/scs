@@ -72,6 +72,12 @@ demo_mbutton(SDL_MouseButtonEvent *b, GError **err)
 }
 
 static gboolean
+demo_mwheel(SDL_MouseWheelEvent *ev, GError **err)
+{
+    return ui_mwheel(root, ev, err);
+}
+
+static gboolean
 demo_mmotion(SDL_MouseMotionEvent *m, GError **err)
 {
     return ui_mmotion(root, m, err);
@@ -289,6 +295,7 @@ cl_callbacks_t globe_demo_callbacks = {
     NULL, /* .text */
     demo_mbutton,
     demo_mmotion,
+    demo_mwheel,
     NULL, /* .jbutton */
     NULL, /* .jmotion */
     NULL, /* .jhat */
