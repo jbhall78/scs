@@ -219,8 +219,16 @@ cl_events(GError **err)
 		break;
 	    case SDL_TEXTINPUT:
 	    	// event->text.text is a char array (UTF-8 encoded string)
-		if (client.console.enabled)
+		if (client.console.enabled) {
 	    	    con_text(event.text.text[0]); // UTF-8 -> ASCII
+		} else {
+		    ret = CALL(client.callbacks->text)(&event.text, &tmp);
+		    if (ret != OK) {
+			g_propagate_error(err, tmp);
+			return ret;
+		    }
+		}
+
 		break;
 	}
     }

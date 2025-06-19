@@ -225,6 +225,25 @@ menu_key(SDL_KeyboardEvent *k, GError **err)
     return OK;
 }
 
+static gboolean
+menu_text(SDL_TextInputEvent *e, GError **err)
+{
+    GError *tmp = NULL;
+    gboolean handled = FALSE;
+    int ret;
+
+    if ((ret = ui_text(root, e, &handled, &tmp)) != OK) {
+    	g_propagate_error(err, tmp);
+	    return ret;
+    }
+
+    if (handled == TRUE)
+	    return OK;
+
+    return OK;
+}
+
+
 /* pass these right along to the UI handlers */
 static gboolean
 menu_mbutton(SDL_MouseButtonEvent *b, GError **err)
@@ -824,6 +843,7 @@ cl_callbacks_t menu_callbacks = {
     menu_update,
     menu_draw,
     menu_key,
+    menu_text,
     menu_mbutton,
     menu_mmotion,
     NULL, /* .jbutton */

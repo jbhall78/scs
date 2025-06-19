@@ -645,6 +645,54 @@ ui_key(widget_t *w, SDL_KeyboardEvent *k, gboolean *handled, GError **err)
     return OK;
 }
 
+gboolean
+ui_text(widget_t *w, SDL_TextInputEvent *e, gboolean *handled, GError **err)
+{
+    GError *tmp = NULL;
+    widget_t *active, *r;
+    widget_root_t *wr;
+    int ret;
+    widget_t *p;
+
+    r = ui_widget_get_root(w);
+    r->update(r, NULL);
+
+    wr = r->data;
+    active = wr->active;
+
+    /* no active widget, do nothing */
+    if (! active) {
+    	return OK;
+    }
+
+    /* we have an active widget, pass the keystroke onto it */
+    if ((ret = CALL(active->text)(active, e, handled, &tmp)) != OK) {
+    	g_propagate_error(err, tmp);
+        return ret;
+    }
+    if (*handled == FALSE) {
+    	// next, try to get the parents to handle the event
+	    for (p = active->parent; p; p = p->parent) {
+	        if ((ret = CALL(p->text)(p, e, handled, &tmp)) != OK) {
+		    g_propagate_error(err, tmp);
+		    return ret;
+	    }
+	    if (*handled == TRUE)
+		    break;
+	}
+}
+
+#if 0
+    for (i = 0; i < G_N_ELEMENTS(keyfuncs); i++) {
+	if (keyfuncs[i].type == active->type) {
+	    keyfuncs[i].func(active, k, NULL);
+	    break;
+	}
+    }
+#endif
+    return OK;
+}
+
 /*
  * z-index handling
  */
