@@ -222,7 +222,7 @@ sv_obj_update_col(gpointer key, gpointer val, gpointer data)
     if (accel1 > accel2) 
 	return;
 
-#if 0
+#if 1
     /* play a sound */
     {
 	snd_src_t *src = g_new0(snd_src_t, 1);
