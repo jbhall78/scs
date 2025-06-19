@@ -2,9 +2,6 @@ app-id: net.pixelops.scs
 runtime: org.freedesktop.Platform
 runtime-version: '24.08'
 sdk: org.freedesktop.Sdk
-workdir: /app
-environment:
-  PATH: /app/bin:/usr/bin
 
 command: /app/bin/scs
 
