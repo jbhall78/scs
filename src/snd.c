@@ -15,6 +15,98 @@ gboolean
 snd_load_snd(snd_t *snd, char *name, GError **err)
 {
     GError      *tmp = NULL;
+    char        *filename = NULL; // Initialize to NULL for safety
+    wav_t       *wav = NULL;    // Initialize to NULL for safety
+    ALenum       format;
+    ALenum       al_error;
+
+    // Clear any previous OpenAL errors
+    alGetError();
+
+    // Generate buffer ID
+    alGenBuffers(1, &snd->buf_id);
+    al_error = alGetError();
+    if (al_error != AL_NO_ERROR) {
+        g_set_error(err, SCS_ERROR, SCS_ERROR_SND, "can't generate OpenAL buffer: %s", alGetString(al_error));
+        return FAIL;
+    }
+
+    // Get the full path to the sound file
+    filename = getdatafilename(FILE_SOUND, name, &tmp);
+    if (! filename) {
+        g_propagate_error(err, tmp);
+        // No OpenAL buffers to delete yet
+        return FAIL;
+    }
+
+    // Load the WAV file into memory
+    if ((wav = wav_new(filename)) == NULL) {
+        g_set_error(err, SCS_ERROR, SCS_ERROR_SND, "can't load WAV file '%s'", filename);
+        alDeleteBuffers(1, &snd->buf_id); // Clean up OpenAL buffer
+        g_free(filename); // Free filename
+        return FAIL;
+    }
+
+    // Determine OpenAL format based on WAV properties
+    if (wav->channels == 1) { // Mono
+        if (wav->bits_per_sample == 8) {
+            format = AL_FORMAT_MONO8;
+        } else if (wav->bits_per_sample == 16) {
+            format = AL_FORMAT_MONO16;
+        } else {
+            g_set_error(err, SCS_ERROR, SCS_ERROR_SND, "Unsupported mono bit depth for OpenAL: %u", wav->bits_per_sample);
+            goto error_cleanup;
+        }
+    } else if (wav->channels == 2) { // Stereo
+        if (wav->bits_per_sample == 8) {
+            format = AL_FORMAT_STEREO8;
+        } else if (wav->bits_per_sample == 16) {
+            format = AL_FORMAT_STEREO16;
+        } else {
+            g_set_error(err, SCS_ERROR, SCS_ERROR_SND, "Unsupported stereo bit depth for OpenAL: %u", wav->bits_per_sample);
+            goto error_cleanup;
+        }
+    } else {
+        g_set_error(err, SCS_ERROR, SCS_ERROR_SND, "Unsupported number of channels for OpenAL: %u", wav->channels);
+        goto error_cleanup;
+    }
+
+    // Buffer the audio data into OpenAL
+    // IMPORTANT: Use wav->data_size (from the 'data' chunk) not wav->size if your wav_t struct was updated.
+    alBufferData(snd->buf_id, format, wav->data, wav->data_size, wav->sample_rate);
+    al_error = alGetError();
+    if (al_error != AL_NO_ERROR) {
+        g_set_error(err, SCS_ERROR, SCS_ERROR_SND, "can't buffer sound data for '%s': %s", filename, alGetString(al_error));
+        goto error_cleanup;
+    }
+
+    // Successful loading, free WAV data and filename
+    wav_free(wav);
+    g_free(filename);
+
+    return OK;
+
+error_cleanup:
+    // This label handles all failures after successful alGenBuffers or wav_new
+    if (wav != NULL) {
+        wav_free(wav);
+    }
+    if (filename != NULL) {
+        g_free(filename);
+    }
+    // Only delete the buffer if it was successfully generated
+    if (snd->buf_id != 0) { // Check if a buffer was actually generated
+        alDeleteBuffers(1, &snd->buf_id);
+        snd->buf_id = 0; // Invalidate ID
+    }
+    return FAIL;
+}
+
+#if 0
+gboolean
+snd_load_snd(snd_t *snd, char *name, GError **err)
+{
+    GError      *tmp = NULL;
     char        *filename;
     wav_t       *wav;
     ALenum	format;
@@ -24,39 +116,40 @@ snd_load_snd(snd_t *snd, char *name, GError **err)
     alGenBuffers(1, &snd->buf_id);
 
     if (alGetError() != AL_NO_ERROR) {
-	g_set_error(err, SCS_ERROR, SCS_ERROR_SND, "can't generate buffer");
-	return FAIL;
+	    g_set_error(err, SCS_ERROR, SCS_ERROR_SND, "can't generate buffer");
+	    return FAIL;
     }
 
     filename = getdatafilename(FILE_SOUND, name, &tmp);
     if (! filename) {
-	g_propagate_error(err, tmp);
-	return FAIL;
+	    g_propagate_error(err, tmp);
+	    return FAIL;
     }
 
     if ((wav = wav_new(filename)) == NULL) {
-	g_set_error(err, SCS_ERROR, SCS_ERROR_SND, "can't load sound: %s", filename);
-	return FAIL;
+	    g_set_error(err, SCS_ERROR, SCS_ERROR_SND, "can't load sound: %s", filename);
+	    return FAIL;
     }
 
     format = 0x1100;
     if (wav->bits_per_sample == 16)
-	format++;
+	    format++;
 
     if (wav->channels == 2)
-	format += 2;
+	    format += 2;
 
     alBufferData(snd->buf_id, AL_FORMAT_MONO16, wav->data, wav->size, wav->sample_rate);
 
     wav_free(wav);
 
     if (alGetError() != AL_NO_ERROR) {
-	g_set_error(err, SCS_ERROR, SCS_ERROR_SND, "can't buffer sound: %s", filename);
-	return FAIL;
+	    g_set_error(err, SCS_ERROR, SCS_ERROR_SND, "can't buffer sound: %s", filename);
+	    return FAIL;
     }
 
     return OK;
 }
+#endif
 
 void
 snd_unload_snd(snd_t *snd)
@@ -75,10 +168,10 @@ snd_cache_val_new(gpointer key)
     snd->name = strdup(name);
 
     if (! snd_load_snd(snd, name, &err)) {
-	printerr("Couldnt load sound: %s: %s\n", name, err->message);
-	g_free(snd->name);
-	g_free(snd);
-	return NULL;
+	    printerr("Couldnt load sound: %s: %s\n", name, err->message);
+	    g_free(snd->name);
+	    g_free(snd);
+	    return NULL;
     }
 
     return snd;
@@ -106,7 +199,7 @@ snd_init(GError **err)
     ALCcontext *ctx;
     char *def;
 
-#if 1
+#if 0
 print("SOUND DISABLED IN SOURCE!!!\n");
 client.snd_initialized = FALSE;
 return OK;
@@ -132,13 +225,13 @@ return OK;
 
     /* check for errors */
     if (alcGetError(dev) != ALC_NO_ERROR) {
-#if 0
-	g_set_error(err, SCS_ERROR, SCS_ERROR_SND, "can't open sound device");
-	return FAIL;
+#if 1
+	    g_set_error(err, SCS_ERROR, SCS_ERROR_SND, "can't open sound device");
+	    return FAIL;
 #else
-	client.snd_initialized = FALSE;
+	    client.snd_initialized = FALSE;
 
-	return OK;
+	    return OK;
 #endif
     }
         
@@ -160,7 +253,7 @@ snd_update(snd_listener_t *listener)
     real vec[6];
 
     if (! client.snd_initialized)
-	return;
+	    return;
 
     quat_to_vecs(listener->orient, fwd, up, NULL);
 
@@ -180,8 +273,8 @@ snd_update(snd_listener_t *listener)
     alListenerf(AL_GAIN, 1.0);
 
     if (alGetError() != AL_NO_ERROR) {
-	print("warning: error updating listener!\n");
-	return;
+	    print("warning: error updating listener!\n");
+	    return;
     }
 }
 
@@ -189,7 +282,7 @@ snd_t *
 snd_load(char *name)
 {
     if (! client.snd_initialized)
-	return NULL;
+	    return NULL;
 
     return g_cache_insert(sound_cache, name);
 }
@@ -198,7 +291,7 @@ void
 snd_unload(snd_t *snd)
 {
     if (! client.snd_initialized)
-	return;
+	    return;
 
     print("removing: %s\n", snd->name);
     g_cache_remove(sound_cache, snd->name);
@@ -208,7 +301,7 @@ void
 snd_play(snd_src_t *src)
 {
     if (! client.snd_initialized)
-	return;
+	    return;
 
     alGetError();
 
@@ -216,7 +309,7 @@ snd_play(snd_src_t *src)
     alSourcePlay(src->src_id);
 
     if (alGetError() != AL_NO_ERROR) 
-	printerr("error playing sound: %u\n", src->src_id);
+	    printerr("error playing sound: %u\n", src->src_id);
 }
 
 void
@@ -231,7 +324,7 @@ snd_src_spawn(snd_t *snd, int32_t id, object_t *obj, gboolean loop)
     snd_src_t *src;
 
     if (! client.snd_initialized)
-	return NULL;
+	    return NULL;
 
     src = g_new0(snd_src_t, 1);
     src->id  = id;
@@ -270,8 +363,8 @@ snd_src_update(snd_src_t *src)
     alSourcefv(src->src_id, AL_VELOCITY, src->obj->posv);
 
     if (alGetError() != AL_NO_ERROR) {
-	print("warning: error updating source!\n");
-	return;
+	    print("warning: error updating source!\n");
+	    return;
     }
 }
 
@@ -290,7 +383,7 @@ void
 snd_update_srcs(void)
 {
     if (! client.snd_initialized)
-	return;
+	    return;
 
     g_hash_table_foreach_remove(client.sounds, snd_update_srcs_cb, NULL);
 }
@@ -299,7 +392,7 @@ void
 snd_src_frag(snd_src_t *src)
 {
     if (! client.snd_initialized)
-	return;
+	    return;
 
     src->fragged = TRUE;
 }
@@ -310,7 +403,7 @@ snd_src_register(snd_src_t *src)
     uint32_t *id = g_new0(uint32_t, 1);
 
     if (! client.snd_initialized)
-	return;
+	    return;
 
     *id = src->id;
 
@@ -349,7 +442,7 @@ void
 snd_src_reap(void)
 {
     if (! client.snd_initialized)
-	return;
+	    return;
 
 //printf("wtf: %d\n", g_hash_table_size(client.sounds));
 
@@ -363,7 +456,7 @@ snd_shutdown(void)
     ALCdevice *dev;
 
     if (! client.snd_initialized)
-	return;
+	    return;
 
     ctx = alcGetCurrentContext();
     dev = alcGetContextsDevice(ctx);
