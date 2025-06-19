@@ -75,6 +75,7 @@ typedef struct cl_callbacks_s {
 
     /* event handlers */
     gboolean (*key)(SDL_KeyboardEvent *, GError **);
+    gboolean (*text)(SDL_TextInputEvent *, GError **);
     gboolean (*mbutton)(SDL_MouseButtonEvent *, GError **);
     gboolean (*mmotion)(SDL_MouseMotionEvent *, GError **);
     gboolean (*jbutton)(GError **);

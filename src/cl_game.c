@@ -883,6 +883,7 @@ cl_callbacks_t game_callbacks = {
     game_update,
     game_draw,
     game_key,
+    NULL, /* .text */
     game_mbutton,
     NULL, /* .mmotion */
     NULL, /* .jbutton */

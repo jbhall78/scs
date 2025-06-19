@@ -286,6 +286,7 @@ cl_callbacks_t globe_demo_callbacks = {
     demo_update,
     demo_draw,
     demo_key,
+    NULL, /* .text */
     demo_mbutton,
     demo_mmotion,
     NULL, /* .jbutton */

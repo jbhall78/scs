@@ -118,6 +118,7 @@ typedef struct widget_s {
 
     /* event handlers */
     gboolean	(*key)(struct widget_s *w, SDL_KeyboardEvent *ev, gboolean *handled, GError **err);
+    gboolean	(*text)(struct widget_s *w, SDL_TextInputEvent *ev, gboolean *handled, GError **err);
     gboolean	(*mbutton)(struct widget_s *w, SDL_MouseButtonEvent *ev, struct widget_s **handled_by, GError **err);
     gboolean	(*mmotion)(struct widget_s *w, SDL_MouseMotionEvent *ev, widget_posv_t rmpos, GError **err);
     gboolean	(*destroy)(struct widget_s *w, GError **err);

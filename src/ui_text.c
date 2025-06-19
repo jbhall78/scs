@@ -142,7 +142,7 @@ ui_widget_text_set_color(widget_t *w, char *key, vec3_t color)
 }
 
 static void
-ui_text_proc_key(widget_t *w, int32_t keysym, int32_t mod, uint16_t unicode)
+ui_text_proc_key(widget_t *w, int32_t keysym, int32_t mod)
 {
     widget_text_t *wt;
     uint32_t key;
@@ -157,15 +157,6 @@ ui_text_proc_key(widget_t *w, int32_t keysym, int32_t mod, uint16_t unicode)
 		g_array_remove_index(wt->buf, --wt->pos);
 	    break;
 	default:
-	    // map unicode to ascii
-	    if ((unicode & 0xFF80) == 0) {
-		key = unicode & 0x7F;
-		// make sure it is valid for input
-		if (key >= wt->font->range[LO] && key <= wt->font->range[HI]) {
-		    g_array_append_val(wt->buf, key);
-		    wt->pos++;
-		}
-	    }
 	    break;
     }
 }
@@ -177,7 +168,34 @@ ui_widget_text_key(widget_t *w, SDL_KeyboardEvent *k, gboolean *handled, GError 
     if (k->type == SDL_KEYUP)
 	return OK;
 
-    //ui_text_proc_key(w, k->keysym.sym, k->keysym.mod, k->keysym.unicode);
+    ui_text_proc_key(w, k->keysym.sym, k->keysym.mod);
+
+    *handled = TRUE;
+
+    return OK;
+}
+
+static void
+ui_text_proc_char(widget_t *w, char c)
+{
+    widget_text_t *wt;
+    uint32_t key;
+
+    assert(w != NULL);
+    wt = w->data;
+    assert(wt != NULL);
+
+    if (c >= wt->font->range[LO] && c <= wt->font->range[HI]) {
+	g_array_append_val(wt->buf, c);
+	wt->pos++;
+    }
+}
+
+gboolean
+ui_widget_text_text(widget_t *w, SDL_TextInputEvent *e, gboolean *handled, GError **err)
+{
+
+    ui_text_proc_char(w, e->text[0]);
 
     *handled = TRUE;
 
@@ -200,6 +218,7 @@ ui_widget_text_new(widget_t *parent, widget_posv_t pos, widget_sizev_t size)
     w->update  = &ui_widget_text_update;
     w->draw    = &ui_widget_text_draw;
     w->key     = &ui_widget_text_key;
+    w->text    = &ui_widget_text_text;
 
     w->set_pos(w, pos, NULL);
     w->set_size(w, size, NULL);
