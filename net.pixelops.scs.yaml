@@ -35,10 +35,6 @@ modules:
       - install -Dm 0755 libsndio.so.7.0 "/app/lib/libsndio.so.7.0"
       - ln -s libsndio.so.7.0 "/app/lib/libsndio.so.7"
       - ln -s libsndio.so.7 "/app/lib/libsndio.so"
-      - install -Dm 0755 libalut.so.0.1.0 "/app/lib/libalut.so.0.1.0"
-      - ln -s libalut.so.0.1.0 "/app/lib/libalut.so.0"
-      - ln -s libalut.so.0 "/app/lib/libalut.so"
-      - cp freealut.pc /app/share/pkgconfig
       - install -Dm 0755 libopenal.so.1 "/app/lib/libopenal.so.1"
       - ln -s libopenal.so.1 "/app/lib/libopenal.so"
       - tar -xzf openal_headers.tgz -C "/app/include"
@@ -56,12 +52,6 @@ modules:
       - type: file
         path: files/libGLU.so.1.3.1
         dest-filename: libGLU.so.1.3.1
-      - type: file
-        path: files/freealut.pc
-        dest-filename: freealut.pc
-      - type: file
-        path: files/libalut.so.0.1.0
-        dest-filename: libalut.so.0.1.0
       - type: file
         path: files/libopenal.so.1
         dest-filename: libopenal.so.1
