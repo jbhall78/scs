@@ -217,6 +217,17 @@ cl_events(GError **err)
 		    }
 		}
 		break;
+	    case SDL_MOUSEWHEEL:
+		if (client.console.enabled) {
+		    ; // con_mwheel
+	        } else {
+		    ret = CALL(client.callbacks->mwheel)(&event.wheel, &tmp);
+		    if (ret != OK) {
+			g_propagate_error(err, tmp);
+			return ret;
+		    }
+		}
+		break;     
 	    case SDL_TEXTINPUT:
 	    	// event->text.text is a char array (UTF-8 encoded string)
 		if (client.console.enabled) {
@@ -228,7 +239,6 @@ cl_events(GError **err)
 			return ret;
 		    }
 		}
-
 		break;
 	}
     }

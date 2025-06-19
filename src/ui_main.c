@@ -467,6 +467,46 @@ ui_mbutton(widget_t *root, SDL_MouseButtonEvent *ev, GError **err)
     return OK;
 }
 
+gboolean
+ui_mwheel(widget_t *root, SDL_MouseWheelEvent *ev, gboolean *handled, GError **err)
+{
+    GError *tmp = NULL;
+    widget_t *active, *r;
+    widget_root_t *wr;
+    int ret;
+    widget_t *p;
+
+    r = ui_widget_get_root(root);
+    r->update(r, NULL);
+
+    wr = r->data;
+    active = wr->active;
+
+    /* no active widget, do nothing */
+    if (! active) {
+    	return OK;
+    }
+
+    /* we have an active widget, pass the mouse wheel event onto it */
+    if ((ret = CALL(active->mwheel)(active, ev, handled, &tmp)) != OK) {
+    	g_propagate_error(err, tmp);
+        return ret;
+    }
+    if (*handled == FALSE) {
+    	// next, try to get the parents to handle the event
+        for (p = active->parent; p; p = p->parent) {
+            if ((ret = CALL(p->mwheel)(p, ev, handled, &tmp)) != OK) {
+	        g_propagate_error(err, tmp);
+		    return ret;
+	    }
+	    if (*handled == TRUE)
+	        break;
+	}
+    }
+
+    return OK;
+}
+
 static gboolean
 _ui_mmotion(widget_t *w, SDL_MouseMotionEvent *ev, widget_posv_t mpos, GError **err)
 {

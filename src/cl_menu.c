@@ -243,6 +243,23 @@ menu_text(SDL_TextInputEvent *e, GError **err)
     return OK;
 }
 
+static gboolean
+menu_mwheel(SDL_MouseWheelEvent *e, GError **err)
+{
+    GError *tmp = NULL;
+    gboolean handled = FALSE;
+    int ret;
+
+    if ((ret = ui_mwheel(root, e, &handled, &tmp)) != OK) {
+    	g_propagate_error(err, tmp);
+	    return ret;
+    }
+
+    if (handled == TRUE)
+	    return OK;
+
+    return OK;
+}
 
 /* pass these right along to the UI handlers */
 static gboolean
@@ -846,6 +863,7 @@ cl_callbacks_t menu_callbacks = {
     menu_text,
     menu_mbutton,
     menu_mmotion,
+    menu_mwheel,
     NULL, /* .jbutton */
     NULL, /* .jmotion */
     NULL, /* .jhat */

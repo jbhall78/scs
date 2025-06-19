@@ -285,15 +285,7 @@ ui_widget_scrollbar_mbutton(widget_t *w, SDL_MouseButtonEvent *ev, widget_t **ha
     widget_pos_t left, right, bot, top;
     widget_posv_t mpos;
 
-
-/*
-    if (ev->type == SDL_MOUSEWHEEL) {
-	if (ev->wheel.y > 0) {
-	    ui_widget_scrollbar_scroll_up(w);
-	} else if (ev->wheel.y < 0) {
-	    ui_widget_scrollbar_scroll_down(w);
-	} 
-    } else*/ if (ev->type == SDL_MOUSEBUTTONDOWN) {
+    if (ev->type == SDL_MOUSEBUTTONDOWN) {
 	mpos[X] = ev->x;
 	mpos[Y] = root->size[HEIGHT] - ev->y;
 
@@ -312,6 +304,29 @@ ui_widget_scrollbar_mbutton(widget_t *w, SDL_MouseButtonEvent *ev, widget_t **ha
     }
 
     *handled_by = w;
+
+    return OK;
+}
+
+static gboolean
+ui_widget_scrollbar_mwheel(widget_t *w, SDL_MouseWheelEvent *ev, gboolean *handled, GError **err)
+{
+    assert(w != NULL);
+    assert(w->type == UI_WIDGET_SCROLLBAR);
+    widget_scrollbar_t *wsb = w->data;
+    assert(wsb != NULL);
+    widget_t *root = ui_widget_get_root(w);
+    assert(root != NULL);
+    widget_pos_t left, right, bot, top;
+    widget_posv_t mpos;
+
+    if (ev->y > 0) {
+	ui_widget_scrollbar_scroll_up(w);
+    } else if (ev->y < 0) {
+	ui_widget_scrollbar_scroll_down(w);
+    } 
+
+    *handled = TRUE;
 
     return OK;
 }
@@ -349,6 +364,7 @@ ui_widget_scrollbar_new(widget_t *parent, gboolean verticle,
     w->update  = &ui_widget_scrollbar_update;
     w->draw    = &ui_widget_scrollbar_draw;
     w->mbutton = &ui_widget_scrollbar_mbutton;
+    w->mwheel  = &ui_widget_scrollbar_mwheel;
     w->set_size = &ui_widget_scrollbar_set_size;
     w->set_pos  = &ui_widget_scrollbar_set_pos;
 

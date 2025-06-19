@@ -109,8 +109,10 @@ cl_callbacks_t menu_callbacks = {
     menu_update,
     menu_draw,
     menu_key,
+    NULL, /* .text */
     menu_mbutton,
     menu_mmotion,
+    NULL, /* .mwheel */
     NULL, /* .jbutton */
     NULL, /* .jmotion */
     NULL, /* .jhat */
