@@ -14,6 +14,8 @@ finish-args:
   - --socket=wayland
   - --device=dri
   - --share=network
+  - --socket=pulseaudio
+
 
 cleanup:
   - '/include' # This will remove the /app/include directory
