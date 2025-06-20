@@ -787,7 +787,7 @@ ui_draw_earth(real x, real y, real z, real radius, int mode, real long_ang, real
 //    real axis_rotation = 23.6; // standard globe axis
     real axis_rotation = 0; // standard globe axis
 //    real rotation_speed = 0.01; // slow "realistic" rotation
-    real rotation_speed = 0.1;  // demo rotation
+    real rotation_speed = 0.001;  // demo rotation
     static GLUquadric *quad = NULL;
     static m_mat_t *mat = NULL;
     static tex_t *tex = NULL;
