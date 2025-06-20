@@ -330,7 +330,7 @@ game_load(GError **err)
     client.mouse_sensitivity = 0.01;
     client.mouse_invert = TRUE;
     client.mouse_glide = TRUE;
-    client.mouse_glide_sensitivity = 0.0075;
+    client.mouse_glide_sensitivity = 0.004;
 
     client.player_id = -1;
 

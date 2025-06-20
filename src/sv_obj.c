@@ -36,9 +36,9 @@ sv_send_obj_spawn(object_t *obj, conn_t *conn)
     net_pkt_pack_int32(pkt, 1, &obj->notarget);
 
     if (conn)
-	net_send(server.net, conn, pkt);
+    	net_send(server.net, conn, pkt);
     else
-	net_send_all(server.net, pkt);
+	    net_send_all(server.net, pkt);
 }
 
 void
@@ -52,9 +52,9 @@ sv_send_snd_spawn(char *name, snd_src_t *src, object_t *obj, conn_t *conn)
     net_pkt_pack_uint32(pkt, 1, &obj->id);
 
     if (conn)
-	net_send(server.net, conn, pkt);
+	    net_send(server.net, conn, pkt);
     else
-	net_send_all(server.net, pkt);
+	    net_send_all(server.net, pkt);
 }
 
 void
@@ -64,15 +64,15 @@ sv_obj_update_col_laser(object_t *obj1, object_t *obj2)
     vec4_t vnear, vfar;
 
     if (obj1->phys == OBJ_PHYS_LASER && obj2->phys == OBJ_PHYS_LASER)
-	return;
+	    return;
 
     /* make sure only 1 object is a laser, so we don't do this test twice */
     if (obj2->phys != OBJ_PHYS_LASER)
-	return;
+	    return;
 
 #if 0
     if (strcmp(obj1->mesh->name, "hornet") == 0)
-	return;
+	    return;
 #endif
 
     /* object 2 is the laser */
@@ -117,81 +117,81 @@ sv_obj_update_col_laser(object_t *obj1, object_t *obj2)
 
     //return;
     if (! line_sphere_intersect(l1, l2, obj1->pos, obj1->mesh->radius, h1, h2))
-	return;
+	    return;
 
 #if 1
     // figure out which hit is closer
     { 
-	vec3_t v1, v2, tmp;
+	    vec3_t v1, v2, tmp;
 	
-	vec3_sub(h1, obj1->pos, v1);
-	vec3_sub(h2, obj1->pos, v2);
+	    vec3_sub(h1, obj1->pos, v1);
+	    vec3_sub(h2, obj1->pos, v2);
 
-	if (vec3_len(v2) > vec3_len(v1)) {
-	    vec3_cp(h2, tmp);
-	    vec3_cp(h1, h2);
-	    vec3_cp(tmp, h1);
-	}
+	    if (vec3_len(v2) > vec3_len(v1)) {
+    	    vec3_cp(h2, tmp);
+	        vec3_cp(h1, h2);
+	        vec3_cp(tmp, h1);
+	    }
     }
 
     // build nearplane & convert our plane into normal/constant form
     {
-	vec3_t edge1, edge2;
-	vec3_t tmp[3];
+	    vec3_t edge1, edge2;
+	    vec3_t tmp[3];
 	
-	vec3_cp(h1, tmp[0]);
-	vec3_add(h1, up, tmp[1]);
-	vec3_add(h1, right, tmp[2]);
+	    vec3_cp(h1, tmp[0]);
+	    vec3_add(h1, up, tmp[1]);
+	    vec3_add(h1, right, tmp[2]);
 	
-	vec3_sub(tmp[1], tmp[0], edge1);
-	vec3_sub(tmp[2], tmp[0], edge2);
-	vec3_cross(edge1, edge2, vnear);
-	vec3_norm(vnear);
-	vnear[W] = vec3_dot(vnear, tmp[0]);
+	    vec3_sub(tmp[1], tmp[0], edge1);
+	    vec3_sub(tmp[2], tmp[0], edge2);
+	    vec3_cross(edge1, edge2, vnear);
+	    vec3_norm(vnear);
+	    vnear[W] = vec3_dot(vnear, tmp[0]);
     }
     // build farplane & convert our plane into normal/constant form
     {
-	vec3_t edge1, edge2;
-	vec3_t tmp[3];
+	    vec3_t edge1, edge2;
+	    vec3_t tmp[3];
 	
-	vec3_cp(h2, tmp[0]);
-	vec3_add(h2, up, tmp[1]);
-	vec3_add(h2, right, tmp[2]);
+	    vec3_cp(h2, tmp[0]);
+	    vec3_add(h2, up, tmp[1]);
+	    vec3_add(h2, right, tmp[2]);
 	
-	vec3_sub(tmp[1], tmp[0], edge1);
-	vec3_sub(tmp[2], tmp[0], edge2);
-	vec3_cross(edge1, edge2, vfar);
-	vec3_norm(vfar);
-	vfar[W] = vec3_dot(vfar, tmp[0]);
+	    vec3_sub(tmp[1], tmp[0], edge1);
+	    vec3_sub(tmp[2], tmp[0], edge2);
+	    vec3_cross(edge1, edge2, vfar);
+	    vec3_norm(vfar);
+	    vfar[W] = vec3_dot(vfar, tmp[0]);
     }
 
 
 
     {
-	real dist1, dist2, dist3, dist4;
+	    real dist1, dist2, dist3, dist4;
 	
-	dist1 = vec3_dot(vnear, l1) - vnear[W];
-	dist2 = vec3_dot(vnear, l2) - vnear[W];
+	    dist1 = vec3_dot(vnear, l1) - vnear[W];
+	    dist2 = vec3_dot(vnear, l2) - vnear[W];
 
-	dist3 = vec3_dot(vfar,  l1) - vfar[W];
-	dist4 = vec3_dot(vfar,  l2) - vfar[W];
+	    dist3 = vec3_dot(vfar,  l1) - vfar[W];
+	    dist4 = vec3_dot(vfar,  l2) - vfar[W];
 
 	//print("[%f/%f/%f/%f]\n", dist1, dist2, dist3, dist4);
-	if ((dist1 < 0 || dist3 < 0) && dist2 > 0 && dist4 > 0)
-	    print("collision: %s\n", obj1->mesh->name);
-	else
-	    return;
+	    if ((dist1 < 0 || dist3 < 0) && dist2 > 0 && dist4 > 0)
+	        print("collision: %s\n", obj1->mesh->name);
+	    else
+	        return;
     }
 #endif
 
 #if 1
     /* play a sound */
     {
-	snd_src_t *src = g_new0(snd_src_t, 1);
-	src->loop = FALSE;
-	src->id = g_rand_int(server.rand);
+	    snd_src_t *src = g_new0(snd_src_t, 1);
+	    src->loop = FALSE;
+	    src->id = g_rand_int(server.rand);
 
-	sv_send_snd_spawn("general_thud.wav", src, obj1, NULL);
+	    sv_send_snd_spawn("general_thud.wav", src, obj1, NULL);
     }
 #endif
 
@@ -206,30 +206,30 @@ sv_obj_update_col(gpointer key, gpointer val, gpointer data)
     vec3_t v;
 
     if (obj1->id == obj2->id)
-	return;
+	    return;
 
     if (obj1->phys == OBJ_PHYS_LASER || obj2->phys == OBJ_PHYS_LASER) {
-	sv_obj_update_col_laser(obj1, obj2);
-	return;
+	    sv_obj_update_col_laser(obj1, obj2);
+	    return;
     }
 	
     if (! (ret = sphere_sphere_intersect(obj1, obj2)))
-	return;
+	    return;
 
     accel1 = vec3_len(obj1->posv);
     accel2 = vec3_len(obj2->posv);
 
     if (accel1 > accel2) 
-	return;
+	    return;
 
 #if 1
     /* play a sound */
     {
-	snd_src_t *src = g_new0(snd_src_t, 1);
-	src->loop = FALSE;
-	src->id = g_rand_int(server.rand);
+	    snd_src_t *src = g_new0(snd_src_t, 1);
+	    src->loop = FALSE;
+	    src->id = g_rand_int(server.rand);
 
-	sv_send_snd_spawn("bang_gunishsound.wav", src, obj1, NULL);
+	    sv_send_snd_spawn("bang_gunishsound.wav", src, obj1, NULL);
     }
 #endif
 
@@ -251,105 +251,105 @@ sv_obj_update_pos_orient(object_t *obj)
 {
     vec3_t dir[3];
     quat_t q;
-    real maxpos = 3.0;
-    real maxrot = 4.0;
-    real accel = 0.01;
-    real accelrotz = 0.30;
-    real accelrotxy = 0.80;
+    real maxpos = 1.0;
+    real maxrot = 1.5;
+    real accel = 0.005;
+    real accelrotz = 0.15;
+    real accelrotxy = 0.40;
     real mod, off;
     uint8_t i;
 
     quat_to_vecs(obj->orient, dir[2], dir[1], dir[0]);
     if (obj->phys == OBJ_PHYS_LASER) {
-	vec3_t v;
-	vec3_cp(dir[Z], v);
-	vec3_norm(v);
-	vec3_scale(v, obj->posv[Z]);
-	vec3_add(obj->pos, v, obj->pos);
+	    vec3_t v;
+	    vec3_cp(dir[Z], v);
+	    vec3_norm(v);
+	    vec3_scale(v, obj->posv[Z]);
+	    vec3_add(obj->pos, v, obj->pos);
 
-	if (++obj->frame == 100)
-	    return TRUE;
+	    if (++obj->frame == 100)
+	        return TRUE;
     } else {
-	for (i = 0; i < 3; i++) {
-	    if (REAL_EQ(obj->posv[i], 0))
-		continue;
+	    for (i = 0; i < 3; i++) {
+	        if (REAL_EQ(obj->posv[i], 0))
+ 	            continue;
 
-	    mod = obj->posv[i] / fabs(obj->posv[i]);
+            mod = obj->posv[i] / fabs(obj->posv[i]);
 	    
-	    if (fabs(obj->posv[i]) >= maxpos)
-		obj->posv[i] = maxpos * mod;
+            if (fabs(obj->posv[i]) >= maxpos)
+	            obj->posv[i] = maxpos * mod;
 	    
-	    vec3_scale(dir[i], obj->posv[i]);
-	    vec3_add(dir[i], obj->pos, obj->pos);
+            vec3_scale(dir[i], obj->posv[i]);
+            vec3_add(dir[i], obj->pos, obj->pos);
 	    
-	    if (obj->phys != OBJ_PHYS_NONE) {
-		off = fabs(obj->posv[i]) - accel;
-		if (off < 0)
-		    off = 0;
-		obj->posv[i] = off * mod;
-	    }
-	}
+            if (obj->phys != OBJ_PHYS_NONE) {
+	            off = fabs(obj->posv[i]) - accel;
+	            if (off < 0)
+	                off = 0;
+	            obj->posv[i] = off * mod;
+            }
+        }
     }
 
-extern object_t *cube_obj;
-if (obj == cube_obj) {
-    static sys_timer_t *timer = NULL;
+    extern object_t *cube_obj;
+    if (obj == cube_obj) {
+        static sys_timer_t *timer = NULL;
 
-    if (timer == NULL) {
-	timer = sys_timer_new(scs.clock);
-	sys_timer_set_interval_ms(timer, 1000);
-	sys_timer_set_repeating(timer, TRUE);
-	sys_timer_reset(timer);
+        if (timer == NULL) {
+            timer = sys_timer_new(scs.clock);
+	        sys_timer_set_interval_ms(timer, 1000);
+	        sys_timer_set_repeating(timer, TRUE);
+	        sys_timer_reset(timer);
+        }
+        if (sys_timer_is_ready(timer)) {
+	        quat_set3(q, 45.0, 0, 0);
+	        quat_mult(obj->orient, q);
+
+	        quat_norm(obj->orient);
+        }
+
+        return FALSE;
     }
-    if (sys_timer_is_ready(timer)) {
-	quat_set3(q, 45.0, 0, 0);
-	quat_mult(obj->orient, q);
-
-	quat_norm(obj->orient);
-    }
-
-    return FALSE;
-}
 
 
     if (! REAL_EQ(obj->rotv[X], 0)) {
     	mod = obj->rotv[X] / fabs(obj->rotv[X]);
 	
-	if (fabs(obj->rotv[X]) >= maxrot)
-	    obj->rotv[X] = maxrot * mod;
+	    if (fabs(obj->rotv[X]) >= maxrot)
+	        obj->rotv[X] = maxrot * mod;
 	
-	quat_set3(q, obj->rotv[X], 0, 0);
-	quat_mult(obj->orient, q);
+	    quat_set3(q, obj->rotv[X], 0, 0);
+	    quat_mult(obj->orient, q);
 
 #if 1
-	if (obj->phys != OBJ_PHYS_NONE) {
-	    off = fabs(obj->rotv[X]) - accelrotxy;
-	    if (off < 0)
-		off = 0;
-	    obj->rotv[X] = off * mod;
-	}
+	    if (obj->phys != OBJ_PHYS_NONE) {
+	        off = fabs(obj->rotv[X]) - accelrotxy;
+	        if (off < 0)
+		        off = 0;
+	        obj->rotv[X] = off * mod;
+	    }
 #else
-	obj->rotv[X] = 0;
+	    obj->rotv[X] = 0;
 #endif
     }
     if (! REAL_EQ(obj->rotv[Y], 0)) {
     	mod = obj->rotv[Y] / fabs(obj->rotv[Y]);
 	
-	if (fabs(obj->rotv[Y]) >= maxrot)
-	    obj->rotv[Y] = maxrot * mod;
+	    if (fabs(obj->rotv[Y]) >= maxrot)
+	        obj->rotv[Y] = maxrot * mod;
 	
-	quat_set3(q, 0, obj->rotv[Y], 0);
-	quat_mult(obj->orient, q);
+	    quat_set3(q, 0, obj->rotv[Y], 0);
+	    quat_mult(obj->orient, q);
 
 #if 1
-	if (obj->phys != OBJ_PHYS_NONE) {
-	    off = fabs(obj->rotv[Y]) - accelrotxy;
-	    if (off < 0)
-		off = 0;
-	    obj->rotv[Y] = off * mod;
-	}
+	    if (obj->phys != OBJ_PHYS_NONE) {
+	        off = fabs(obj->rotv[Y]) - accelrotxy;
+	        if (off < 0)
+		        off = 0;
+	        obj->rotv[Y] = off * mod;
+	    }
 #else
-	obj->rotv[Y] = 0;
+	    obj->rotv[Y] = 0;
 #endif
     }
     if (! REAL_EQ(obj->rotv[Z], 0)) {
@@ -364,7 +364,7 @@ if (obj == cube_obj) {
 	if (obj->phys != OBJ_PHYS_NONE) {
 	    off = fabs(obj->rotv[Z]) - accelrotz;
 	    if (off < 0)
-		off = 0;
+		    off = 0;
 	    obj->rotv[Z] = off * mod;
 	}
     }
@@ -387,12 +387,12 @@ sv_obj_update(gpointer key, gpointer val, gpointer data)
     reap = sv_obj_update_pos_orient(obj);
 
     if (reap) {
-	sv_send_obj_frag(obj);
+	    sv_send_obj_frag(obj);
 
-	/* XXX - */
-	g_free(obj);
+	    /* XXX - */
+	    g_free(obj);
 
-	return TRUE;
+	    return TRUE;
     }
 
     pkt = net_pkt_new(PKT_OBJ_UPDATE, FALSE);
@@ -413,7 +413,7 @@ sv_spawn_obj(object_t *obj, char *model)
     uint32_t *id = g_new0(uint32_t, 1);
 
     do {
-	*id = g_rand_int(server.rand);
+	    *id = g_rand_int(server.rand);
     } while (g_hash_table_lookup(server.objects, id));
 
     obj->id = *id;

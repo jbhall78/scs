@@ -194,6 +194,86 @@ static void snd_destroy_key(gpointer key) { g_free(key); }
 gboolean
 snd_init(GError **err)
 {
+    ALCdevice *dev = NULL; // Initialize to NULL for safety
+    ALCcontext *ctx = NULL; // Initialize to NULL for safety
+    char *def;
+
+    // Ensure client.snd_initialized is FALSE by default
+    client.snd_initialized = FALSE; // <--- ADD THIS LINE early in the function
+
+    // Initialize the cache first
+    sound_cache = g_cache_new(snd_cache_val_new,
+                              snd_cache_val_destroy,
+                              snd_cache_key_dup,
+                              snd_cache_key_destroy,
+                              g_str_hash,
+                              g_direct_hash,
+                              g_str_equal);
+
+    // If g_cache_new somehow returns NULL (e.g., out of memory), though unlikely for this)
+    if (sound_cache == NULL) {
+        g_set_error(err, SCS_ERROR, SCS_ERROR_SND, "Failed to create sound cache.");
+        return FAIL;
+    }
+
+    client.sounds = g_hash_table_new_full(g_int_hash, g_int_equal, snd_destroy_key, NULL);
+
+    /* open the device */
+    dev = alcOpenDevice(NULL);
+    if (!dev) { // alcOpenDevice returns NULL on failure
+        g_set_error(err, SCS_ERROR, SCS_ERROR_SND, "can't open sound device: %s", alcGetString(NULL, alcGetError(NULL)));
+        goto error_cleanup; // Go to cleanup if device fails
+    }
+
+    /* create the context */
+    ctx = alcCreateContext(dev, NULL);
+    if (!ctx) { // alcCreateContext returns NULL on failure
+        g_set_error(err, SCS_ERROR, SCS_ERROR_SND, "can't create OpenAL context: %s", alcGetString(dev, alcGetError(dev)));
+        goto error_cleanup; // Go to cleanup if context fails
+    }
+
+    // Make context current *before* checking AL errors (alcGetError is per-context or per-device)
+    alcMakeContextCurrent(ctx);
+
+    /* check for errors after making current */
+    if (alcGetError(NULL) != ALC_NO_ERROR) { // Check AL error after making context current
+        g_set_error(err, SCS_ERROR, SCS_ERROR_SND, "can't make OpenAL context current: %s", alGetString(alGetError()));
+        goto error_cleanup;
+    }
+
+    // If everything succeeded, set initialized to TRUE
+    client.snd_initialized = TRUE;
+
+    print("sound system initialized\n");
+    def = (char *)alcGetString(dev, ALC_DEVICE_SPECIFIER);
+    print("sound: using device '%s'.\n", def);
+
+    return OK;
+
+error_cleanup:
+    // This cleanup block is executed if any error occurs above
+    if (ctx != NULL) {
+        alcMakeContextCurrent(NULL); // Detach context first
+        alcDestroyContext(ctx);
+    }
+    if (dev != NULL) {
+        alcCloseDevice(dev);
+    }
+    // No need to free sound_cache here, it's a global and remains allocated,
+    // but client.snd_initialized being FALSE will prevent its use.
+    // However, if you want to explicitly destroy it on init failure:
+    // if (sound_cache != NULL) {
+    //     g_cache_destroy(sound_cache); // This will call value_destroy for all existing elements
+    //     sound_cache = NULL;
+    // }
+    client.snd_initialized = FALSE; // Ensure this is FALSE on failure
+    return FAIL;
+}
+
+#if 0
+gboolean
+snd_init(GError **err)
+{
     ALCdevice *dev;
     ALCcontext *ctx;
     char *def;
@@ -209,7 +289,7 @@ return OK;
 		     snd_cache_key_dup,
 		     snd_cache_key_destroy,
 		     g_str_hash,
-		     g_direct_hash,
+		     NULL,
 		     g_str_equal);
 
     client.sounds = g_hash_table_new_full(g_int_hash, g_int_equal,
@@ -244,6 +324,7 @@ return OK;
 
     return OK;
 }
+#endif
 
 void
 snd_update(snd_listener_t *listener)
@@ -293,7 +374,7 @@ snd_unload(snd_t *snd)
 	    return;
 
     print("removing: %s\n", snd->name);
-    g_cache_remove(sound_cache, snd->name);
+    //g_cache_remove(sound_cache, snd->name);
 }
 
 void
