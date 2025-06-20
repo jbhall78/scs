@@ -13,6 +13,10 @@
 static tex_t *crosshair;
 static font_t *fnt;
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 /*
  * Radar Functions
  */
@@ -70,6 +74,7 @@ cl_radar_draw_circle(double radius, double rx, double ry)
  * @param x coordinate
  * @param y coordinate
  */
+#if 0
 void
 cl_radar_get_coords(object_t *obj, real *out_x, real *out_y)
 {
@@ -189,8 +194,8 @@ cl_radar_get_coords(object_t *obj, real *out_x, real *out_y)
     // Final check for floating point issues that might push points just outside circle.
     // Can clamp to radius if desired, or let OpenGL handle clipping.
 }
-
-#if 0
+#endif
+#if 1
 void
 cl_radar_get_coords(object_t *obj, real *x, real *y)
 {
@@ -208,9 +213,9 @@ cl_radar_get_coords(object_t *obj, real *x, real *y)
     object_t *cam;
 
     if ((cam = g_hash_table_lookup(client.objects, &client.obj_id)) != NULL) {
-	vec3_cp(cam->pos, loc);
+	    vec3_cp(cam->pos, loc);
 
-	quat_cp(cam->orient, orient);
+	    quat_cp(cam->orient, orient);
     }
 
     // get our radar screen coords
@@ -231,57 +236,57 @@ cl_radar_get_coords(object_t *obj, real *x, real *y)
 
     // build FBplane & convert our plane into normal/constant form
     {
-	vec3_t edge1, edge2;
+	    vec3_t edge1, edge2;
 
-	vec3_cp(loc, tmpPlane[0]);
-	vec3_add(loc, upVec, tmpPlane[1]);
-	vec3_add(loc, rightVec, tmpPlane[2]);
+	    vec3_cp(loc, tmpPlane[0]);
+	    vec3_add(loc, upVec, tmpPlane[1]);
+	    vec3_add(loc, rightVec, tmpPlane[2]);
 
 
-	vec3_sub(tmpPlane[1], tmpPlane[0], edge1);
-	vec3_sub(tmpPlane[2], tmpPlane[0], edge2);
-	vec3_cross(edge1, edge2, FBplane);
-	vec3_norm(FBplane);
-	FBplane[3] = vec3_dot(FBplane, tmpPlane[0]);
+	    vec3_sub(tmpPlane[1], tmpPlane[0], edge1);
+	    vec3_sub(tmpPlane[2], tmpPlane[0], edge2);
+	    vec3_cross(edge1, edge2, FBplane);
+	    vec3_norm(FBplane);
+	    FBplane[3] = vec3_dot(FBplane, tmpPlane[0]);
     }
 
     // build LRplane & convert our plane into normal/constant form
     {
-	vec3_t edge1, edge2;
+	    vec3_t edge1, edge2;
 
-	vec3_cp(loc, tmpPlane[0]);
-	vec3_add(loc, upVec, tmpPlane[1]);
-	vec3_add(loc, fwdVec, tmpPlane[2]);
+	    vec3_cp(loc, tmpPlane[0]);
+	    vec3_add(loc, upVec, tmpPlane[1]);
+	    vec3_add(loc, fwdVec, tmpPlane[2]);
 
 
-	vec3_sub(tmpPlane[1], tmpPlane[0], edge1);
-	vec3_sub(tmpPlane[2], tmpPlane[0], edge2);
-	vec3_cross(edge1, edge2, LRplane);
-	vec3_norm(LRplane);
-	LRplane[3] = vec3_dot(LRplane, tmpPlane[0]);
+	    vec3_sub(tmpPlane[1], tmpPlane[0], edge1);
+	    vec3_sub(tmpPlane[2], tmpPlane[0], edge2);
+	    vec3_cross(edge1, edge2, LRplane);
+	    vec3_norm(LRplane);
+	    LRplane[3] = vec3_dot(LRplane, tmpPlane[0]);
     }
 
     // now test to see which side our object is on
     { 
 
-	distance = vec3_dot(FBplane, obj->pos) - FBplane[3];
-	if (distance < 0) {
-	    *x = front[0];
-	    *y = front[1];
-	    ptr = front;
-	    FB = "front";
-	} else {
-	    *x = back[0];
-	    *y = back[1];
-	    ptr = back;
-	    FB = "back";
-	}
-	distance = vec3_dot(LRplane, obj->pos) - LRplane[3];
-	if (distance < 0) {
-	    LR = "left";
-	} else {
-	    LR = "right";
-	}
+	    distance = vec3_dot(FBplane, obj->pos) - FBplane[3];
+	    if (distance < 0) {
+	        *x = front[0];
+	        *y = front[1];
+	        ptr = front;
+	        FB = "front";
+	    } else {
+	        *x = back[0];
+	        *y = back[1];
+	        ptr = back;
+	        FB = "back";
+	    }
+	    distance = vec3_dot(LRplane, obj->pos) - LRplane[3];
+	    if (distance < 0) {
+	        LR = "left";
+	    } else {
+	        LR = "right";
+	    }
 //	printf("debug: %s, %s\n", FB, LR);
     }
 
@@ -290,59 +295,59 @@ cl_radar_get_coords(object_t *obj, real *x, real *y)
     // lets get the angles and look at them
     {
 	    double xA, yA;
-	{
-	    vec3_t fwd, up, right, dir;
+	    {
+	        vec3_t fwd, up, right, dir;
 
-	    quat_to_vecs(orient, fwd, up, right);
+	        quat_to_vecs(orient, fwd, up, right);
 
-	    vec3_sub(loc, obj->pos, dir);
-	    vec3_norm(dir);		// direction vector from our location to the object's position
+	        vec3_sub(loc, obj->pos, dir);
+	        vec3_norm(dir);		// direction vector from our location to the object's position
 
-	    vec3_norm(fwd);
-	    vec3_norm(dir);
-	    vec3_norm(right);
-	    vec3_norm(up);
+	        vec3_norm(fwd);
+	        vec3_norm(dir);
+	        vec3_norm(right);
+	        vec3_norm(up);
 
-	    vec3_inv(up);
+	        vec3_inv(up);
 
-	    xA=acos(vec3_dot(right, dir));
+	        xA=acos(vec3_dot(right, dir));
 
-	    yA=acos(vec3_dot(up, dir));
+	        yA=acos(vec3_dot(up, dir));
 
-	}
-	{
-	    double scanline;
-	    double sx, sy;
-	    double len, xp, yp;
-	    double a, b, c;
+	    }
+	    {
+	        double scanline;
+	        double sx, sy;
+	        double len, xp, yp;
+	        double a, b, c;
 
-	    yA *= RAD2DEG; // convert to degrees
-	    xA *= RAD2DEG; // convert to degrees
+	        yA *= RAD2DEG; // convert to degrees
+	        xA *= RAD2DEG; // convert to degrees
 
-	    xA = 180 - xA;
+	        xA = 180 - xA;
 
-	    //printf("angles: %s/%s x[%f] y[%f]\n", FB, LR, xA, yA);
+	        //printf("angles: %s/%s x[%f] y[%f]\n", FB, LR, xA, yA);
 
-	    a = radius*2.0;
-	    b = yA*a;
-	    c = b/180.0;
+	        a = radius*2.0;
+	        b = yA*a;
+	        c = b/180.0;
 
-	    scanline = (yA*(radius*2.0))/180.0; // convert yA/180 to x/(r*2)
-	    scanline -= radius; // figure out the scanline for line of circle
-	    sx = sqrt( radius*radius - scanline*scanline ); // circle calc
-	    len = abs((-sx) - sx); // get distance between points on line
-	    xp = xA*len/180; // convert xA/180 to xp/len
-	    *x = ptr[0] + (len/2) - xp; // offset p from origin of circle
+	        scanline = (yA*(radius*2.0))/180.0; // convert yA/180 to x/(r*2)
+	        scanline -= radius; // figure out the scanline for line of circle
+	        sx = sqrt( radius*radius - scanline*scanline ); // circle calc
+	        len = abs((-sx) - sx); // get distance between points on line
+	        xp = xA*len/180; // convert xA/180 to xp/len
+	        *x = ptr[0] + (len/2) - xp; // offset p from origin of circle
 
 
-	    scanline = (xA*(radius*2.0))/180.0; // convert yA/180 to x/(r*2)
-	    scanline -= radius; // figure out the scanline for line of circle
-	    sy = sqrt( radius*radius - scanline*scanline ); // circle calc
-	    len = abs((-sy) - sy); // get distance between points on line
-	    yp = yA*len/180; // convert xA/180 to xp/len
-	    *y = ptr[1] + (len/2) - yp; // offset p from origin of circle
+	        scanline = (xA*(radius*2.0))/180.0; // convert yA/180 to x/(r*2)
+	        scanline -= radius; // figure out the scanline for line of circle
+	        sy = sqrt( radius*radius - scanline*scanline ); // circle calc
+	        len = abs((-sy) - sy); // get distance between points on line
+	        yp = yA*len/180; // convert xA/180 to xp/len
+	        *y = ptr[1] + (len/2) - yp; // offset p from origin of circle
 
-	}
+	    }
     }
 }
 #endif
