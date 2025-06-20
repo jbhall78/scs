@@ -12,7 +12,7 @@
 #include "snd.h"
 
 /* run game server at 20 fps */
-#define SV_HZ	30	
+#define SV_HZ	120	
 
 /* limit game to 64 connections */
 #define SV_PLAYERS_MAX  64

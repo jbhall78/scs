@@ -14,8 +14,8 @@
 #include "timer.h"
 #include "game.h"
 
-#define	CL_HZ		30
-#define	FPS		30
+#define	CL_HZ		480
+#define	FPS		480
 
 /* extend SDL keycodes with mouse/joystick buttons */
 #define SDLK_LAST 100000
