@@ -324,7 +324,7 @@ game_load(GError **err)
     SDL_WarpMouseInWindow(client.window, client.center[X], client.center[Y]);
 
 #ifndef DEBUG
-    SDL_WM_GrabInput(SDL_GRAB_ON);
+    //SDL_WM_GrabInput(SDL_GRAB_ON);
 #endif
     client.mouse_drag_enabled = TRUE;
     client.mouse_sensitivity = 0.01;
@@ -450,7 +450,7 @@ game_unload(GError **err)
 	    snd_unload(snd_computer_prev);
 
 #ifndef DEBUG
-    SDL_WM_GrabInput(SDL_GRAB_OFF);
+    //SDL_WM_GrabInput(SDL_GRAB_OFF);
 #endif
 
     return OK;
