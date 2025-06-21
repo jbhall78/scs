@@ -22,20 +22,19 @@ cl_resize(gboolean fullscreen, int32_t w, int32_t h, GError **err)
     gboolean ret;
 
     if (client.console.height == client.res[HEIGHT]) {
-	client.console.height = client.res[HEIGHT];
+	    client.console.height = client.res[HEIGHT];
     } else {
-	// if you change this change in cl_pkt.c too
-	client.console.height = client.res[HEIGHT] / 2;
+	    // if you change this change in cl_pkt.c too
+	    client.console.height = client.res[HEIGHT] / 2;
     }
 
     vid_resize(fullscreen, w, h);
     ret = CALL(client.callbacks->screen_resize)(w, h, &tmp);
     if (ret != OK) {
-	g_propagate_error(err, tmp);
-	return ret;
+	    g_propagate_error(err, tmp);
+	    return ret;
     }
     con_resize();
-
 
     return OK;
 }
@@ -60,8 +59,8 @@ CMD_vid_mode(sh_state_t *st, int argc, char **argv, GError **err)
     gboolean ret;
 
     if (argc < 2) {
-	g_set_error(err, SCS_ERROR, SCS_ERROR_SH, "usage: %s %s", argv[0], usage);
-	return FAIL;
+    	g_set_error(err, SCS_ERROR, SCS_ERROR_SH, "usage: %s %s", argv[0], usage);
+	    return FAIL;
     }
 
     len = strlen(argv[1]);
@@ -70,69 +69,69 @@ CMD_vid_mode(sh_state_t *st, int argc, char **argv, GError **err)
     memset(buf, 0, BUFSIZ);
     p = &buf[0];
     for (i = 0; i < len; i++) {
-	if (argv[1][i] == 'x' || argv[1][i] == '\0')
-	    break;
-	*p++ = argv[1][i];
+	    if (argv[1][i] == 'x' || argv[1][i] == '\0')
+	        break;
+	    *p++ = argv[1][i];
     }
     if (strlen(buf) <= 0) {
-	g_set_error(err, SCS_ERROR, SCS_ERROR_SH, "usage: %s %s", argv[0], usage);
-	return FAIL;
+	    g_set_error(err, SCS_ERROR, SCS_ERROR_SH, "usage: %s %s", argv[0], usage);
+	    return FAIL;
     }
     width = atoi(buf);
     if (! (width > 0)) {
-	g_set_error(err, SCS_ERROR, SCS_ERROR_SH, "usage: %s %s", argv[0], usage);
-	return FAIL;
+	    g_set_error(err, SCS_ERROR, SCS_ERROR_SH, "usage: %s %s", argv[0], usage);
+	    return FAIL;
     }
 
     // parse height
     memset(buf, 0, BUFSIZ);
     p = &buf[0];
     for (i++; i < len; i++) {
-	if (argv[1][i] == '@' || argv[1][i] == '\0')
-	    break;
-	*p++ = argv[1][i];
+	    if (argv[1][i] == '@' || argv[1][i] == '\0')
+	        break;
+	    *p++ = argv[1][i];
     }
     if (strlen(buf) <= 0) {
-	g_set_error(err, SCS_ERROR, SCS_ERROR_SH, "usage: %s %s", argv[0], usage);
-	return FAIL;
+	    g_set_error(err, SCS_ERROR, SCS_ERROR_SH, "usage: %s %s", argv[0], usage);
+	    return FAIL;
     }
     height = atoi(buf);
     if (! (height > 0)) {
-	g_set_error(err, SCS_ERROR, SCS_ERROR_SH, "usage: %s %s", argv[0], usage);
-	return FAIL;
+	    g_set_error(err, SCS_ERROR, SCS_ERROR_SH, "usage: %s %s", argv[0], usage);
+	    return FAIL;
     }
 
     // parse bits per pixel (optional)
     memset(buf, 0, BUFSIZ);
     p = &buf[0];
     for (i++; i < len; i++) {
-	if (argv[1][i] == ' ' || argv[1][i] == '\0')
-	    break;
-	*p++ = argv[1][i];
+	    if (argv[1][i] == ' ' || argv[1][i] == '\0')
+	        break;
+	    *p++ = argv[1][i];
     }
     if (strlen(buf) > 0) {
-	bpp = atoi(buf);
-	if (! (bpp == 8 || bpp == 15 || bpp == 16 || bpp == 24 || bpp == 32)) {
-	    g_set_error(err, SCS_ERROR, SCS_ERROR_SH, "usage: %s %s", argv[0], usage);
-	    return FAIL;
-	}
+	    bpp = atoi(buf);
+	    if (! (bpp == 8 || bpp == 15 || bpp == 16 || bpp == 24 || bpp == 32)) {
+	        g_set_error(err, SCS_ERROR, SCS_ERROR_SH, "usage: %s %s", argv[0], usage);
+	        return FAIL;
+	    }
     }
 
     if (argc == 3 && argv[2][0] == 'f') {
-	fullscreen = TRUE;
+	    fullscreen = TRUE;
     }
 
 //    print(">>> attempting to set video mode: %dx%d@%d %s\n", width, height, bpp, (fullscreen) ? "fullscreen" : " ");
 
     vid_set(fullscreen, width, height);
     if (fullscreen == TRUE)
-	vec2_set(client.fullscreen_res, width, height);
+	    vec2_set(client.fullscreen_res, width, height);
 
     if (client.initialized) {
-	if ((ret = cl_resize(fullscreen, width, height, &tmp)) != OK) {
-	    g_propagate_error(err, tmp);
-	    return ret;
-	}
+	    if ((ret = cl_resize(fullscreen, width, height, &tmp)) != OK) {
+	        g_propagate_error(err, tmp);
+	        return ret;
+	    }
     }
 
     return OK;
@@ -147,7 +146,7 @@ cl_events(GError **err)
 
     // Parse global events, then send them off to their proper handlers.
     while (SDL_PollEvent(&event)) {
-	switch (event.type) {
+	    switch (event.type) {
 /*	    case SDL_VIDEORESIZE:
 		if ((ret = cl_resize(client.fullscreen, event.resize.w, event.resize.h, &tmp)) != OK) {
 		    g_propagate_error(err, tmp);
@@ -156,92 +155,93 @@ cl_events(GError **err)
 		break;*/
 
 	    case SDL_QUIT:
-		cl_shutdown(0);
-		break;
+		    cl_shutdown(0);
+		    break;
 
 	    // Keyboard Events
 	    case SDL_KEYDOWN:
-		switch (event.key.keysym.sym) {
-		    case SDLK_F12:
-			vid_screenshot();
-			break;
-		    case SDLK_BACKQUOTE:
-			con_toggle();
-			break;
-		    case SDLK_RETURN:
-                        if (event.key.keysym.mod & KMOD_ALT) {
-			    vid_toggle_fullscreen();
-			    break;
-			}
-			/* fallthrough */
-		    default:
-			if (client.console.enabled)
-			    con_key(&event.key);
-			else {
-			    ret = CALL(client.callbacks->key)(&event.key, &tmp);
-			    if (ret != OK) {
-				g_propagate_error(err, tmp);
-				return ret;
-			    }
-			}
-			break;
-		}
-		break;
+		    switch (event.key.keysym.sym) {
+		        case SDLK_F12:
+			        vid_screenshot();
+			        break;
+		        case SDLK_BACKQUOTE:
+			        con_toggle();
+			        break;
+		        case SDLK_RETURN:
+                    if (event.key.keysym.mod & KMOD_ALT) {
+			            vid_toggle_fullscreen();
+			            break;
+			        }
+			        /* fallthrough */
+		            default:
+			        if (client.console.enabled)
+			            con_key(&event.key);
+			        else {
+			            ret = CALL(client.callbacks->key)(&event.key, &tmp);
+			            if (ret != OK) {
+				            g_propagate_error(err, tmp);
+				            return ret;
+			            }
+			        }
+			        break;
+		    }
+		    break;
 	    case SDL_KEYUP:
-		if (client.console.enabled)
-		    con_key(&event.key);
-		else {
-		    ret = CALL(client.callbacks->key)(&event.key, &tmp);
-		    if (ret != OK) {
-			g_propagate_error(err, tmp);
-			return ret;
+		    if (client.console.enabled)
+		        con_key(&event.key);
+		    else {
+		        ret = CALL(client.callbacks->key)(&event.key, &tmp);
+		        if (ret != OK) {
+			        g_propagate_error(err, tmp);
+			        return ret;
+		        }
 		    }
-		}
-		break;
+		    break;
 	    case SDL_MOUSEMOTION:
-		if (! client.console.enabled) {
-		    ret = CALL(client.callbacks->mmotion)(&event.motion, &tmp);
-		    if (ret != OK) {
-			g_propagate_error(err, tmp);
-			return ret;
+		    if (! client.console.enabled) {
+		        ret = CALL(client.callbacks->mmotion)(&event.motion, &tmp);
+		        if (ret != OK) {
+			        g_propagate_error(err, tmp);
+			        return ret;
+		        }
 		    }
-		}
-		break;
+		    break;
 	    case SDL_MOUSEBUTTONDOWN:
 	    case SDL_MOUSEBUTTONUP:
-		if (! client.console.enabled) {
-		    ret = CALL(client.callbacks->mbutton)(&event.button, &tmp);
-		    if (ret != OK) {
-			g_propagate_error(err, tmp);
-			return ret;
+		    if (! client.console.enabled) {
+		        ret = CALL(client.callbacks->mbutton)(&event.button, &tmp);
+		        if (ret != OK) {
+			        g_propagate_error(err, tmp);
+			        return ret;
+		        }
 		    }
-		}
-		break;
+		    break;
 	    case SDL_MOUSEWHEEL:
-		if (client.console.enabled) {
-		    ; // con_mwheel
+		    if (client.console.enabled) {
+		        ; // con_mwheel
 	        } else {
-		    ret = CALL(client.callbacks->mwheel)(&event.wheel, &tmp);
-		    if (ret != OK) {
-			g_propagate_error(err, tmp);
-			return ret;
+		        ret = CALL(client.callbacks->mwheel)(&event.wheel, &tmp);
+		        if (ret != OK) {
+			        g_propagate_error(err, tmp);
+			        return ret;
+		        }
 		    }
-		}
-		break;     
+		    break;     
 	    case SDL_TEXTINPUT:
 	    	// event->text.text is a char array (UTF-8 encoded string)
-		if (client.console.enabled) {
+		    if (client.console.enabled) {
 	    	    con_text(event.text.text[0]); // UTF-8 -> ASCII
-		} else {
-		    ret = CALL(client.callbacks->text)(&event.text, &tmp);
-		    if (ret != OK) {
-			g_propagate_error(err, tmp);
-			return ret;
+		    } else {
+		        ret = CALL(client.callbacks->text)(&event.text, &tmp);
+		        if (ret != OK) {
+			        g_propagate_error(err, tmp);
+			        return ret;
+		        }
 		    }
-		}
-		break;
-	}
+		    break;
+	    }
     }
+
     return OK;
 }
 
@@ -253,7 +253,7 @@ cl_update(gpointer data)
 
     /* handle incoming net messages */
     if (client.conn) {
-	net_recv_pkts(client.net);
+	    net_recv_pkts(client.net);
     }
 
     /* handle input events */
@@ -262,18 +262,18 @@ cl_update(gpointer data)
     /* run game frame (NOTE: cl_events() can change the callbacks pointer */
     ret = CALL(client.callbacks->update)(&tmp);
     if (ret != OK) {
-	printerr("error during update: %s\n", tmp->message);
-	g_error_free(tmp);
+	    printerr("error during update: %s\n", tmp->message);
+	    g_error_free(tmp);
 
-	// prevent further updates & repeated messages
-	client.callbacks->update = NULL;
+	    // prevent further updates & repeated messages
+	    client.callbacks->update = NULL;
 
-	return FALSE;
+	    return FALSE;
     }
 
     /* send outgoing net messages */
     if (client.conn)
-	net_send_pkts(client.net);
+	    net_send_pkts(client.net);
 
     return TRUE;
 }
@@ -290,14 +290,14 @@ cl_draw(gpointer data)
     if (client.initialized) {
 	ret = CALL(cb->draw)(&tmp);
 	if (ret != OK) {
-    	    printerr("error during draw: %s\n", tmp->message);
+    	printerr("error during draw: %s\n", tmp->message);
 	    g_error_free(tmp);
 	}
     }
 
     // hopefully this works correctly even after an error
     if (client.console.enabled)
-	con_draw();
+	    con_draw();
 
     SDL_GL_SwapWindow(client.window);
 
@@ -316,14 +316,14 @@ cl_mode(cl_callbacks_t *cb, GError **err)
         /* shut down previous mode if we can */
         if (client.callbacks->unload != NULL) {
             if (! client.callbacks->unload(&tmp))
-		goto fail;
-	}
+		        goto fail;
+	    }
     }
 
     /* initialize new mode if we have to */
     if (cb->load != NULL) {
         if (! cb->load(&tmp))
-	    goto fail;
+	        goto fail;
     }
 
     client.callbacks = cb;
@@ -331,7 +331,7 @@ cl_mode(cl_callbacks_t *cb, GError **err)
     // send a screen resize event (in case one was received during previous mode)
     ret = CALL(client.callbacks->screen_resize)(client.res[WIDTH], client.res[HEIGHT], &tmp);
     if (ret != OK)
-	goto fail;
+	    goto fail;
 
     return OK;
 
@@ -345,28 +345,29 @@ cl_parse_cfg(GError **err)
 {
     GError *tmp = NULL;
     char *files[] = {
-	"cl_binds.cfg",
-	"cl_vars.cfg",
+	    "cl_binds.cfg",
+	    "cl_vars.cfg",
     };
     uint8_t i;
     FILE *f = NULL;
 
     for (i = 0; i < G_N_ELEMENTS(files); i++) {
-	if (! (f = opencfgfile(files[i], &tmp)))
-	    goto fail;
+	    if (! (f = opencfgfile(files[i], &tmp)))
+	        goto fail;
 
-	if (! sh_exec_file(client.shell, f, &tmp))
-	    goto fail;
+	    if (! sh_exec_file(client.shell, f, &tmp))
+	        goto fail;
 
-	fclose(f);
+	    fclose(f);
     }
 
     return OK;
 
 fail:
     if (f)
-	fclose(f);
+	    fclose(f);
     g_propagate_error(err, tmp);
+
     return FAIL;
 }
 
@@ -395,30 +396,30 @@ cl_init(GError **err)
     sh_cmd_add(client.shell, "quit", CMD_exit, NULL);
 
     if (! bind_init(&tmp))
-	goto fail;
+	    goto fail;
 
     /* load client data files */
     if (! cl_parse_cfg(&tmp))
-	goto fail;
+	    goto fail;
 
     if (! vid_init(&tmp))
-	goto fail;
+	    goto fail;
 
     if (! tex_init(&tmp))
-	goto fail;
+	    goto fail;
 
     if (! ui_font_init(&tmp))
-	goto fail;
+	    goto fail;
 
     if (! con_init(&tmp))
-	goto fail;
+	    goto fail;
 
     if (! cl_mode(&menu_callbacks, &tmp))
-	goto fail;
+	    goto fail;
 
     /* note: everything after here we should be able to recover from */
     if (! snd_init(&tmp))
-	goto fail;
+	    goto fail;
 
     return OK;
 
@@ -451,7 +452,7 @@ cl_main(gpointer data)
 
     /* initialize client stuff */
     if (! cl_init(&err)) {
-	printerr("Client failed to load: %s\n", err->message);
+	    printerr("Client failed to load: %s\n", err->message);
 
 	g_error_free(err);
 
@@ -488,8 +489,8 @@ cl_main(gpointer data)
 
     /* shutdown client stuff */
     if (! cl_exit(&err)) {
-	printerr("Client failed to shut down: %s\n", err->message);
-	exit(1);
+	    printerr("Client failed to shut down: %s\n", err->message);
+	    exit(1);
     }
 
     return NULL;
