@@ -60,6 +60,145 @@ cl_radar_draw_circle(double radius, double rx, double ry)
 }
 
 /*
+ * cl_radar_get_coords (Hybrid Version)
+ *
+ * This function calculates the 2D screen coordinates for an object to be
+ * displayed on one of two circular radar screens (front and aft).
+ *
+ * This version combines two approaches:
+ * 1. It uses an efficient dot-product method to determine if the object is
+ * in front of or behind the camera.
+ * 2. It preserves the original, specific mathematical approach using `acos`
+ * and scanline calculations to plot the object's final position on the
+ * radar circle, as this provides the desired visual mapping.
+ *
+ * @param obj The object in space to be plotted on the radar.
+ * @param out_x A pointer to store the final screen X coordinate.
+ * @param out_y A pointer to store the final screen Y coordinate.
+ */
+void
+cl_radar_get_coords(object_t *obj, real *out_x, real *out_y)
+{
+    // --- 1. Initial Setup and Constants ---
+
+    // Define radar properties
+    const real RADAR_RADIUS = 120.0;
+    const real RADAR_MAX_DISTANCE = 1000.0; // Max world units to show on radar
+
+    // Get the player's camera object
+    object_t *cam = g_hash_table_lookup(client.objects, &client.obj_id);
+    if (!cam) {
+        // If the camera doesn't exist, we can't calculate anything.
+        *out_x = -1.0;
+        *out_y = -1.0;
+        return;
+    }
+
+    // Get camera's orientation vectors
+    vec3_t cam_pos, cam_fwd, cam_up, cam_right;
+    vec3_cp(cam->pos, cam_pos);
+    quat_to_vecs(cam->orient, cam_fwd, cam_up, cam_right);
+
+    // Ensure orientation vectors are normalized to unit length
+    vec3_norm(cam_fwd);
+    vec3_norm(cam_up);
+    vec3_norm(cam_right);
+
+    // Define the center points of the two radar circles on the screen
+    vec2_t front_radar_center;
+    vec2_t back_radar_center;
+
+    vec2_set(front_radar_center, RADAR_RADIUS, client.ortho[HEIGHT] - RADAR_RADIUS);
+    vec2_set(back_radar_center, client.ortho[WIDTH] - RADAR_RADIUS, client.ortho[HEIGHT] - RADAR_RADIUS);
+
+    // --- 2. Determine Object's Position Relative to Camera ---
+
+    // Calculate the vector from the camera to the object
+    vec3_t relative_pos;
+    vec3_sub(obj->pos, cam_pos, relative_pos);
+
+    // Calculate the distance to the object. If it's too far, don't draw it.
+    real distance_to_obj = vec3_len(relative_pos);
+    if (distance_to_obj > RADAR_MAX_DISTANCE || distance_to_obj < 1.0) {
+        *out_x = -1.0;
+        *out_y = -1.0;
+        return;
+    }
+
+
+    // --- 3. Determine Which Radar to Use (Front or Back) ---
+
+    // Use the dot product to determine if the object is in front of or behind the camera.
+    // A positive result means the object is in the forward hemisphere.
+    real dot_fwd = vec3_dot(relative_pos, cam_fwd);
+    real *active_radar_center;
+
+    if (dot_fwd >= 0) {
+        active_radar_center = front_radar_center;
+    } else {
+        active_radar_center = back_radar_center;
+    }
+
+    // --- 4. Calculate Angles (Original Mathematical Approach) ---
+
+    // Create a normalized direction vector pointing from the camera to the object
+    vec3_t dir_to_obj;
+    vec3_cp(relative_pos, dir_to_obj);
+    vec3_norm(dir_to_obj);
+
+    // The original code calculated the angle against an inverted 'up' vector.
+    // We will preserve that for consistent calculations.
+    vec3_t up_inv;
+    vec3_cp(cam_up, up_inv);
+    vec3_inv(up_inv);
+
+    // Calculate the horizontal and vertical angles in radians using acos of the dot product.
+    // This gives the angle between the camera's axes and the direction to the target.
+    real angle_h_rad = acos(vec3_dot(cam_right, dir_to_obj));
+    real angle_v_rad = acos(vec3_dot(up_inv, dir_to_obj));
+
+
+    // --- 5. Calculate Screen Coordinates (Original Mathematical Approach) ---
+
+    // This block preserves the original mapping of angles to screen coordinates.
+    // It projects the spherical angles onto a 2D circle in a non-linear way.
+    {
+        // Convert radians to degrees for the original calculation
+        real angle_h_deg = angle_h_rad * RAD2DEG;
+        real angle_v_deg = angle_v_rad * RAD2DEG;
+
+        // The original logic adjusted the horizontal angle.
+        angle_h_deg = 180.0 - angle_h_deg;
+
+        // This calculation determines the final X coordinate.
+        real y_scanline = (angle_v_deg * (RADAR_RADIUS * 2.0)) / 180.0;
+        y_scanline -= RADAR_RADIUS;
+        
+        // Clamp scanline to prevent sqrt of a negative number
+        if (y_scanline > RADAR_RADIUS) y_scanline = RADAR_RADIUS;
+        if (y_scanline < -RADAR_RADIUS) y_scanline = -RADAR_RADIUS;
+
+        real sx = sqrt(RADAR_RADIUS * RADAR_RADIUS - y_scanline * y_scanline);
+        real chord_len_h = sx * 2.0;
+        real xp = (angle_h_deg * chord_len_h) / 180.0;
+        *out_x = active_radar_center[X] + (chord_len_h / 2.0) - xp;
+
+        // This calculation determines the final Y coordinate.
+        real x_scanline = (angle_h_deg * (RADAR_RADIUS * 2.0)) / 180.0;
+        x_scanline -= RADAR_RADIUS;
+
+        // Clamp scanline to prevent sqrt of a negative number
+        if (x_scanline > RADAR_RADIUS) x_scanline = RADAR_RADIUS;
+        if (x_scanline < -RADAR_RADIUS) x_scanline = -RADAR_RADIUS;
+
+        real sy = sqrt(RADAR_RADIUS * RADAR_RADIUS - x_scanline * x_scanline);
+        real chord_len_v = sy * 2.0;
+        real yp = (angle_v_deg * chord_len_v) / 180.0;
+        *out_y = active_radar_center[Y] + (chord_len_v / 2.0) - yp;
+    }
+}
+
+/*
  * cl_radar_get_coords
  *
  * This was one of the last things I worked on while developing this game.
@@ -195,7 +334,7 @@ cl_radar_get_coords(object_t *obj, real *out_x, real *out_y)
     // Can clamp to radius if desired, or let OpenGL handle clipping.
 }
 #endif
-#if 1
+#if 0
 void
 cl_radar_get_coords(object_t *obj, real *x, real *y)
 {
