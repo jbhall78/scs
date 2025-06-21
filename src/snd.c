@@ -374,7 +374,7 @@ snd_unload(snd_t *snd)
 	    return;
 
     print("removing: %s\n", snd->name);
-    //g_cache_remove(sound_cache, snd->name);
+    g_cache_remove(sound_cache, snd->name);
 }
 
 void
