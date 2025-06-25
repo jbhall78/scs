@@ -1,11 +1,6 @@
 SCS - Space Combat Simulator
 ============================
 
-Notice
-------
-⚠️  This game is experiencing bitrot, which is a degradation of digital data over time. Some of the libraries it uses are deprecated, which means that they are no longer supported by the software vendor. As a result, these libraries must be manually installed, which can be a time-consuming and error-prone process. I am working on reducing the number of outside dependencies this software requires, which will make it easier to maintain and update.
-
-
 Description:
 ------------
 
@@ -27,16 +22,30 @@ System Requirements
 * Linux Operating System
 * gcc
 * make
-* libtool
-* autoconf
-* automake
-* glib-2.0 (development package)
-* libxml-2.0 (development package)
-* SDL-1.2 (development package)
-* gnet-2.0 (development package) you will need 'bzr' to download this
-* SDL\_image-1.2 (development package)
-* openal (development package)
-* freealut (development package)
+* glib-2.0
+* libxml-2.0
+* SDL-2
+* SDL2\_image
+* openal
+
+Downloading and Running:
+------------------------
+
+* Create the following file and name it: `pixelops.flatpakrepo`
+
+```
+[Flatpak Repo]
+Title=PixelOps Games
+Url=https://repo.pixelops.net/
+GPGKey=LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptRE1FYUZ4RmhCWUpLd1lCQkFIYVJ3OEJBUWRBTjNWdmdzRUZyY3o1bkQwWDQyTXBTVG9DcU9tV1ZydEhRQ1VVCnRRa0kzViswRW1waGMyOXVRSEJwZUdWc2IzQnpMbTVsZElpWkJCTVdDZ0JCRmlFRTJEYTV0a3k4VmtpdVN0OEMKN0VZUkE3Znl1YzBGQW1oY1JZUUNHd01GQ1FXam1vQUZDd2tJQndJQ0lnSUdGUW9KQ0FzQ0JCWUNBd0VDSGdjQwpGNEFBQ2drUTdFWVJBN2Z5dWMxemt3RCtOQ0xMcGdiWTZ4YXZtclMvdTZydS9wMFdyOCtoMWpTdW40NUp6TmJlClpDc0EvMHN0ejc0MHFQMHkrZXdwSGhpVnlyTUVsTC8wTGhOUjFVK09JNTYxUFpvTnVEZ0VhRnhGaEJJS0t3WUIKQkFHWFZRRUZBUUVIUU1HTytoR3Q0aDRIeHQxN0pERHAzWmIxOHprOFljanM4cW1GeWcxSmRKUktBd0VJQjRoNApCQmdXQ2dBZ0ZpRUUyRGE1dGt5OFZraXVTdDhDN0VZUkE3Znl1YzBGQW1oY1JZUUNHd3dBQ2drUTdFWVJBN2Z5CnVjMjNkZ0Q2QTVTdFdGRU5CTHU4SkRyZVlMczlNc1ZwZmVkR2FWazhTV2JLeTNaT05JTUJBT2xXQlNuYmYramkKMTdTamVZQjZhb0l3VGdaZGc4L2w1VFZzd2ZVMlVXc0wKPVJtdlYKLS0tLS1FTkQgUEdQIFBVQkxJQyBLRVkgQkxPQ0stLS0tLQo=
+```
+
+* Download and install SCS by running the following commands:
+`flatpak remote-add --if-not-exists pixelops-games pixelops.flatpakrepo`
+`flatpak install pixelops-games net.pixelops.scs`
+
+* Run SCS with the following command:
+`flatpak run net.pixelops.scs`
 
 
 Building and Installing:
