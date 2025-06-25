@@ -41,12 +41,17 @@ GPGKey=LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptRE1FYUZ4RmhCWUpLd1lCQ
 ```
 
 * Download and install SCS by running the following commands:
-`flatpak remote-add --if-not-exists pixelops-games pixelops.flatpakrepo`
-`flatpak install pixelops-games net.pixelops.scs`
+```
+flatpak remote-add --if-not-exists pixelops-games pixelops.flatpakrepo
+```
+```
+flatpak install pixelops-games net.pixelops.scs
+```
 
 * Run SCS with the following command:
-`flatpak run net.pixelops.scs`
-
+```
+flatpak run net.pixelops.scs
+```
 
 Building and Installing:
 ------------------------
