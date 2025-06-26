@@ -16,18 +16,6 @@ Here are some additional details about the game:
 * Space Combat Simulator is a challenging and rewarding game that is sure to provide hours of entertainment.
 
 
-System Requirements
--------------------
-
-* Linux Operating System
-* gcc
-* make
-* glib-2.0
-* libxml-2.0
-* SDL-2
-* SDL2\_image
-* openal
-
 Downloading and Running:
 ------------------------
 
@@ -55,6 +43,19 @@ flatpak run net.pixelops.scs
 
 Building and Installing:
 ------------------------
+
+  System Requirements
+  -------------------
+
+  * Linux Operating System
+  * gcc
+  * binutils
+  * make
+  * glib-2.0 (development package)
+  * libxml-2.0 (development package)
+  * SDL-2 (development package)
+  * SDL2\_image (development package)
+  * openal (development package)
 
 First install all the required packages, then:
 
