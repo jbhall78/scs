@@ -42,6 +42,10 @@ modules:
       - make install DESTDIR=/app
       - ls -l /app/bin/scs
       - ldd /app/bin/scs
+      - install -Dm644 data/icons/icon-256.png /app/share/icons/hicolor/256x256/apps/net.pixelops.scs.png
+      - install -Dm644 data/icons/icon-128.png /app/share/icons/hicolor/128x128/apps/net.pixelops.scs.png
+      - install -Dm644 data/icons/icon-64.png /app/share/icons/hicolor/64x64/apps/net.pixelops.scs.png
+      - install -Dm644 data/icons/icon.svg /app/share/icons/hicolor/scalable/apps/net.pixelops.scs.svg
     sources:
       - type: git
         url: https://github.com/jbhall78/scs.git

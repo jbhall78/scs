@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Space Combat Simulator
+Comment=PixelOps Space Combat Simulator
+Exec=/app/bin/scs
+Icon=net.pixelops.scs
+Type=Application
+Categories=Game;
+StartupWMClass=SCS
