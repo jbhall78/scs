@@ -117,24 +117,27 @@ vid_init_gl(void)
 void
 vid_set(gboolean fullscreen, uint16_t resx, uint16_t resy)
 {
+    
     client.fullscreen		= fullscreen;
-    client.res[X]		= resx;
-    client.res[Y]		= resy;
-    client.center[X]		= resx / 2;
-    client.center[Y]		= resy / 2;
-    client.ortho[WIDTH]		= resx; //800;
-    client.ortho[HEIGHT]	= resy; //600;
-    //client.fov			= 45.0;
+    if (resx != 0 && resy != 0) {
+        client.res[X]		    = resx;
+        client.res[Y]		    = resy;
+        client.center[X]		= resx / 2;
+        client.center[Y]		= resy / 2;
+        client.ortho[WIDTH]		= resx;
+        client.ortho[HEIGHT]	= resy;
+        
+        glViewport(0, 0, client.res[X], client.res[Y]);
+    }
     client.fov			= 100.0;
     client.znear		= 1.0; //3.0;
     client.zfar			= 256000.0;
-
-    glViewport(0, 0, client.res[X], client.res[Y]);
 }
 
 gboolean
 vid_set_mode(void)
 {
+    SDL_DisplayMode dm;
     int rgb_size[3];
     int bpp;
     int flags;
@@ -148,6 +151,22 @@ vid_set_mode(void)
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,    8);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,   16);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+    if (client.res[X] == 0 && client.res[Y] == 0) {
+        // 2. Get information about the current desktop display mode
+        //    The first parameter (0) refers to the primary display.
+        //    If you have multiple monitors, you can iterate through display indices
+        //    using SDL_GetNumVideoDisplays() and then call this for each index.
+        if (SDL_GetDesktopDisplayMode(0, &dm) != 0) {
+            SDL_Log("SDL_GetDesktopDisplayMode failed: %s\n", SDL_GetError());
+            SDL_Quit();
+            return 1;
+        }
+        // Now, dm.w and dm.h contain the width and height of the desktop resolution.
+        int screen_width = dm.w;
+        int screen_height = dm.h;
+        vid_set(client.fullscreen, (uint16_t)screen_width, (uint16_t)screen_height);
+    }
 
     Uint32 window_flags = SDL_WINDOW_OPENGL; // Essential for OpenGL rendering
     // Translate SDL 1.x flags to SDL 2.0 flags
