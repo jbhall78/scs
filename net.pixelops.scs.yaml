@@ -46,6 +46,7 @@ modules:
       - install -Dm644 data/icons/icon-128.png /app/share/icons/hicolor/128x128/apps/net.pixelops.scs.png
       - install -Dm644 data/icons/icon-64.png /app/share/icons/hicolor/64x64/apps/net.pixelops.scs.png
       - install -Dm644 data/icons/icon.svg /app/share/icons/hicolor/scalable/apps/net.pixelops.scs.svg
+      - install -Dm644 data/icons/net.pixelops.scs.desktop /app/share/applications/net.pixelops.scs.desktop
     sources:
       - type: git
         url: https://github.com/jbhall78/scs.git
