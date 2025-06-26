@@ -44,25 +44,26 @@ flatpak run net.pixelops.scs
 Building and Installing:
 ------------------------
 
-  System Requirements
-  -------------------
+### System Requirements
 
-  * Linux Operating System
-  * gcc
-  * binutils
-  * make
-  * glib-2.0 (development package)
-  * libxml-2.0 (development package)
-  * SDL-2 (development package)
-  * SDL2\_image (development package)
-  * openal (development package)
+* Linux Operating System
+* gcc
+* binutils
+* make
+* glib-2.0 (development package)
+* libxml-2.0 (development package)
+* SDL-2 (development package)
+* SDL2\_image (development package)
+* openal (development package)
 
 First install all the required packages, then:
 
+    ```
 	git clone https://github.com/jbhall78/scs.git
 	cd scs
 	make
 	sudo make install
+    ```
 
 Screenshots:
 ------------
