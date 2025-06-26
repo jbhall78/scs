@@ -58,12 +58,10 @@ Building and Installing:
 
 First install all the required packages, then:
 
-    ```
 	git clone https://github.com/jbhall78/scs.git
 	cd scs
 	make
 	sudo make install
-    ```
 
 Screenshots:
 ------------
