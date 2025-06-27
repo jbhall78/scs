@@ -33,7 +33,7 @@ GPGKey=LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptRE1FYUZ4RmhCWUpLd1lCQ
 sudo flatpak remote-add --if-not-exists pixelops-games pixelops.flatpakrepo
 ```
 ```
-flatpak install pixelops-games net.pixelops.scs
+sudo flatpak install pixelops-games net.pixelops.scs
 ```
 
 * Run SCS with the following command:
@@ -67,25 +67,25 @@ Screenshots:
 ------------
 
 ### Main Menu
-![screenshot0](scs-screenshot0.png)
+![screenshot0](data/screenshots/scs-screenshot0.png)
 
 ### Targeted on a bomber with the grid and earth in the background.
-![screenshot](scs-screenshot.png)
+![screenshot](data/screenshots/scs-screenshot.png)
 
 ### Targeted on a snowflake with a test loop in the background.
-![screenshot](scs-screenshot1.png)
+![screenshot](data/screenshots/scs-screenshot1.png)
 
 ### Looking at some of the more advanced ships.
-![screenshot2](scs-screenshot2.png)
+![screenshot2](data/screenshots/scs-screenshot2.png)
 
 ### Multiplayer!
-![screenshot3](scs-screenshot3.png)
+![screenshot3](data/screenshots/scs-screenshot3.png)
 
 ### This game supports recording and playback of game sessions.
-![screenshot4](scs-screenshot4.png)
+![screenshot4](data/screenshots/scs-screenshot4.png)
 ### Using the engine for something else...
-![screenshot5](scs-screenshot5.png)
+![screenshot5](data/screenshots/scs-screenshot5.png)
 
 ### Game console
-![screenshot6](scs-screenshot6.png)
+![screenshot6](data/screenshots/scs-screenshot6.png)
 
