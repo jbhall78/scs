@@ -11,8 +11,9 @@ typedef struct {
 } snd_listener_t;
 
 typedef struct {
-    char *name;
+    char     *name;
     uint32_t buf_id;
+    int      ref_count; // New: Reference count
 } snd_t;
 
 typedef struct {
