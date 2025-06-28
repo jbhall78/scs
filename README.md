@@ -44,6 +44,11 @@ sudo flatpak remote-add --if-not-exists pixelops-games pixelops.flatpakrepo
 sudo flatpak install pixelops-games net.pixelops.scs
 ```
 
+* To run SCS execute following command:
+```
+flatpak run net.pixelops.scs
+```
+
 * If you have problems installing read this:
 > NOTE: If flatpak complains that the Sdk is missing run the following command:
 > ```
@@ -57,11 +62,6 @@ sudo flatpak install pixelops-games net.pixelops.scs
 > ```
 > sudo flatpak install flathub org.freedesktop.Platform.GL.nvidia-570-153-02 (replace 570-153-02 with your driver version)
 > ```
-
-* To run SCS execute following command:
-```
-flatpak run net.pixelops.scs
-```
 
 Building and Installing:
 ------------------------
