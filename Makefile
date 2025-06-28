@@ -30,5 +30,6 @@ flatpak-repo:
 		--gpg-sign=jason@pixelops.net \
 		$(HOME)/scs-flatpak-build \
 		net.pixelops.scs.yaml
+	cp pixelops.flatpakrepo $(HOME)/scs-flatpak-repo
 	aws s3 sync $(HOME)/scs-flatpak-repo/ s3://$(S3_FLATPAK_BUCKET)/ --delete
-	aws cloudfront create-invalidation --distribution-id $(CLOUDFRONT_DISTRIBUTION_ID) --paths "/summary*" "/summary.gpg*" "/repomd.xml*"
+	aws cloudfront create-invalidation --distribution-id $(CLOUDFRONT_DISTRIBUTION_ID) --paths "/summary*"
