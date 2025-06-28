@@ -24,19 +24,19 @@ Downloading and Running:
 * Add the flathub repository:
 
 ```
-sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 ```
 
 * Add the pixelops repository:
 
 ```
-sudo flatpak remote-add --if-not-exists pixelops-games https://repo.pixelops.net/pixelops.flatpakrepo
+flatpak remote-add --user --if-not-exists pixelops https://repo.pixelops.net/pixelops.flatpakrepo
 ```
 
 * Download and install SCS:
 
 ```
-sudo flatpak install pixelops-games net.pixelops.scs
+flatpak install --user pixelops net.pixelops.scs
 ```
 
 * To run SCS execute following command:
