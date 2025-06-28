@@ -43,7 +43,7 @@ sudo flatpak remote-add --if-not-exists pixelops-games pixelops.flatpakrepo
 ```
 sudo flatpak install pixelops-games net.pixelops.scs
 ```
-    NOTE: If flatpak complains that the Sdk is missing run the following command:
+NOTE: If flatpak complains that the Sdk is missing run the following command:
 > ```
 > sudo flatpak install flathub org.freedesktop.Sdk/x86_64/24.08
 > ```
