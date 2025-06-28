@@ -19,6 +19,14 @@ Here are some additional details about the game:
 Downloading and Running:
 ------------------------
 
+* Make sure `flatpak` is installed
+
+* Run the following to ensure you have the flathub repository enabled
+
+```
+sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+```
+
 * Create the following file and name it: `pixelops.flatpakrepo`
 
 ```
