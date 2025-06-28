@@ -51,7 +51,6 @@ sudo flatpak install pixelops-games net.pixelops.scs
 > ```
 > NOTE: If flatpak complains that the NVIDIA driver is missing, run the following command:
 > ```
-> ```
 > flatpak search org.freedesktop.Platform.GL.nvidia
 > ```
 > Find the correct driver version for your system and run the following command
