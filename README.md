@@ -21,37 +21,43 @@ Downloading and Running:
 
 * Make sure `flatpak` is installed
 
-* Run the following to ensure you have the flathub repository enabled
+* Add the flathub repository:
 
 ```
-sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 ```
 
-* Create the following file and name it: `pixelops.flatpakrepo`
+* Add the pixelops repository:
 
 ```
-[Flatpak Repo]
-Title=PixelOps Games
-Url=https://repo.pixelops.net/
-GPGKey=LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptRE1FYUZ4RmhCWUpLd1lCQkFIYVJ3OEJBUWRBTjNWdmdzRUZyY3o1bkQwWDQyTXBTVG9DcU9tV1ZydEhRQ1VVCnRRa0kzViswRW1waGMyOXVRSEJwZUdWc2IzQnpMbTVsZElpWkJCTVdDZ0JCRmlFRTJEYTV0a3k4VmtpdVN0OEMKN0VZUkE3Znl1YzBGQW1oY1JZUUNHd01GQ1FXam1vQUZDd2tJQndJQ0lnSUdGUW9KQ0FzQ0JCWUNBd0VDSGdjQwpGNEFBQ2drUTdFWVJBN2Z5dWMxemt3RCtOQ0xMcGdiWTZ4YXZtclMvdTZydS9wMFdyOCtoMWpTdW40NUp6TmJlClpDc0EvMHN0ejc0MHFQMHkrZXdwSGhpVnlyTUVsTC8wTGhOUjFVK09JNTYxUFpvTnVEZ0VhRnhGaEJJS0t3WUIKQkFHWFZRRUZBUUVIUU1HTytoR3Q0aDRIeHQxN0pERHAzWmIxOHprOFljanM4cW1GeWcxSmRKUktBd0VJQjRoNApCQmdXQ2dBZ0ZpRUUyRGE1dGt5OFZraXVTdDhDN0VZUkE3Znl1YzBGQW1oY1JZUUNHd3dBQ2drUTdFWVJBN2Z5CnVjMjNkZ0Q2QTVTdFdGRU5CTHU4SkRyZVlMczlNc1ZwZmVkR2FWazhTV2JLeTNaT05JTUJBT2xXQlNuYmYramkKMTdTamVZQjZhb0l3VGdaZGc4L2w1VFZzd2ZVMlVXc0wKPVJtdlYKLS0tLS1FTkQgUEdQIFBVQkxJQyBLRVkgQkxPQ0stLS0tLQo=
+flatpak remote-add --user --if-not-exists pixelops https://repo.pixelops.net/pixelops.flatpakrepo
 ```
 
-* Download and install SCS by running the following commands:
+* Download and install SCS:
+
 ```
-sudo flatpak remote-add --if-not-exists pixelops-games pixelops.flatpakrepo
+flatpak install --user pixelops net.pixelops.scs
 ```
+
+* To run SCS execute following command:
+
 ```
-sudo flatpak install pixelops-games net.pixelops.scs
+flatpak run net.pixelops.scs
 ```
+
+* If you have problems installing read this:
 > NOTE: If flatpak complains that the Sdk is missing run the following command:
 > ```
 > sudo flatpak install flathub org.freedesktop.Sdk/x86_64/24.08
 > ```
-
-* Run SCS with the following command:
-```
-flatpak run net.pixelops.scs
-```
+> NOTE: If flatpak complains that the NVIDIA driver is missing, run the following command:
+> ```
+> flatpak search org.freedesktop.Platform.GL.nvidia
+> ```
+> Find the correct driver version for your system and run the following command
+> ```
+> sudo flatpak install flathub org.freedesktop.Platform.GL.nvidia-570-153-02 (replace 570-153-02 with your driver version)
+> ```
 
 Building and Installing:
 ------------------------
