@@ -478,12 +478,12 @@ snd_src_reap_cb(gpointer key, gpointer val, gpointer data)
     snd_src_t *src = val;
     int32_t state;
 
-    print("getting called: %u\n", src->id);
+    //print("getting called: %u\n", src->id);
 
     if (! src->fragged)
         return FALSE; // Do not remove if not fragged
 
-    print("fragged: %u\n", src->id);
+    //print("fragged: %u\n", src->id);
 
     alGetSourcei(src->src_id, AL_SOURCE_STATE, &state);
     if (state != AL_STOPPED)
@@ -548,7 +548,7 @@ snd_shutdown(void)
             snd_t *snd = (snd_t *)value;
             printerr("Warning: Sound '%s' still in map during shutdown (ref_count: %d). Forcing free.\n",
                      snd->name ? snd->name : "UNKNOWN", snd->ref_count);
-            snd_free_data(snd); // Force free any remaining snd_t data
+            //snd_free_data(snd); // Force free any remaining snd_t data
         }
         g_hash_table_destroy(sound_map); // This will free the keys, but we've freed values.
         sound_map = NULL; // Invalidate the global pointer

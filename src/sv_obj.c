@@ -177,24 +177,18 @@ sv_obj_update_col_laser(object_t *obj1, object_t *obj2)
 	    dist4 = vec3_dot(vfar,  l2) - vfar[W];
 
 	//print("[%f/%f/%f/%f]\n", dist1, dist2, dist3, dist4);
-	    if ((dist1 < 0 || dist3 < 0) && dist2 > 0 && dist4 > 0)
+	    if ((dist1 < 0 || dist3 < 0) && dist2 > 0 && dist4 > 0) {
 	        print("collision: %s\n", obj1->mesh->name);
-	    else
-	        return;
+            /* play a sound */
+    
+	        snd_src_t *src = g_new0(snd_src_t, 1);
+	        src->loop = FALSE;
+	        src->id = g_rand_int(server.rand);
+
+	        sv_send_snd_spawn("general_thud.wav", src, obj1, NULL);
+        } 
     }
 #endif
-
-#if 1
-    /* play a sound */
-    {
-	    snd_src_t *src = g_new0(snd_src_t, 1);
-	    src->loop = FALSE;
-	    src->id = g_rand_int(server.rand);
-
-	    sv_send_snd_spawn("general_thud.wav", src, obj1, NULL);
-    }
-#endif
-
 }
 
 void
