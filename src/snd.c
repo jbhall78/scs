@@ -11,6 +11,8 @@
 // Renamed sound_cache to sound_map as it's now a GHashTable for explicit ref counting.
 static GHashTable *sound_map;
 
+double volume = 0.02;
+
 // Added a reference count to the snd_t structure
 // This allows multiple sound sources to share the same underlying sound data
 // and ensures it's only freed when no longer in use.
@@ -268,7 +270,7 @@ snd_update(snd_listener_t *listener)
     alListenerfv(AL_POSITION, listener->pos);
     alListenerfv(AL_VELOCITY, listener->posv);
     alListenerfv(AL_ORIENTATION, vec);
-    alListenerf(AL_GAIN, 1.0);
+    alListenerf(AL_GAIN, volume);
 
     if (alGetError() != AL_NO_ERROR) {
         print("warning: error updating listener!\n");

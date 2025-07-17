@@ -245,8 +245,8 @@ sv_obj_update_pos_orient(object_t *obj)
 {
     vec3_t dir[3];
     quat_t q;
-    real maxpos = 1.0;
-    real maxrot = 1.5;
+    real maxpos = 0.5;
+    real maxrot = 0.75;
     real accel = 0.005;
     real accelrotz = 0.15;
     real accelrotxy = 0.40;
