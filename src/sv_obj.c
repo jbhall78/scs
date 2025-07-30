@@ -246,9 +246,9 @@ sv_obj_update_pos_orient(object_t *obj)
     vec3_t dir[3];
     quat_t q;
     real maxpos = 0.5;
-    real maxrot = 0.75;
+    real maxrot = 1.5;
     real accel = 0.005;
-    real accelrotz = 0.15;
+    real accelrotz = 0.25;
     real accelrotxy = 0.40;
     real mod, off;
     uint8_t i;
@@ -261,7 +261,7 @@ sv_obj_update_pos_orient(object_t *obj)
 	    vec3_scale(v, obj->posv[Z]);
 	    vec3_add(obj->pos, v, obj->pos);
 
-	    if (++obj->frame == 100)
+	    if (++obj->frame == 4000)
 	        return TRUE;
     } else {
 	    for (i = 0; i < 3; i++) {

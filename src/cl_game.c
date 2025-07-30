@@ -327,7 +327,7 @@ game_load(GError **err)
     //SDL_WM_GrabInput(SDL_GRAB_ON);
 #endif
     client.mouse_drag_enabled = TRUE;
-    client.mouse_sensitivity = 0.01;
+    client.mouse_sensitivity = 0.025;
     client.mouse_invert = TRUE;
     client.mouse_glide = TRUE;
     client.mouse_glide_sensitivity = 0.004;
