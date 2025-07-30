@@ -13,7 +13,8 @@ typedef struct {
 typedef struct {
     char     *name;
     uint32_t buf_id;
-    int      ref_count; // New: Reference count
+    //int      ref_count; // New: Reference count
+    // dont need reference counting because the server code never calls snd_unload
 } snd_t;
 
 typedef struct {

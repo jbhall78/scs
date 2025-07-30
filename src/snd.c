@@ -149,27 +149,10 @@ snd_free_data(snd_t *snd)
 // It frees the integer ID key.
 static void snd_destroy_key(gpointer key) { g_free(key); }
 
-// This is the destroy function for the sound_map (GHashTable).
-// It will be called when an entry is removed from the sound_map,
-// but we will manually manage freeing the snd_t object using ref_count.
 static void snd_map_value_destroy(gpointer val) {
-    // This function will be called by g_hash_table_destroy or g_hash_table_remove.
-    // We don't free the snd_t* here directly, as it's managed by ref_count.
-    // The actual freeing happens in snd_free_data when ref_count drops to 0.
-    // This function essentially means "GCache's old snd_cache_val_destroy" is replaced
-    // by our manual ref-counting logic in snd_unload.
-    // Nothing to do here directly, as snd_t will be freed when its ref_count hits 0.
-    // However, for robustness if an snd_t somehow remains in the map but ref_count
-    // wasn't decremented properly, we can add a check here for debugging.
     snd_t *snd = val;
-    if (snd->ref_count > 0) {
-        printerr("Warning: snd_map_value_destroy called for sound '%s' with ref_count %d > 0. Memory leak?\n",
-                 snd->name ? snd->name : "UNKNOWN", snd->ref_count);
-    }
-    // We should *not* free snd here, as it's handled by snd_unload/snd_free_data
-    // based on ref_count.
+    snd_free_data(snd);
 }
-
 
 gboolean
 snd_init(GError **err)
@@ -289,14 +272,14 @@ snd_load(char *name)
 
     if (snd) {
         // Sound already loaded, increment ref_count
-        snd->ref_count++;
+        //snd->ref_count++;
         return snd;
     }
 
     // Sound not loaded, create a new one
     snd = g_new0(snd_t, 1);
     snd->name = strdup(name); // Duplicate name for storage in snd_t and as key in map
-    snd->ref_count = 1; // Initial reference count
+    //snd->ref_count = 1; // Initial reference count
 
     GError *err = NULL;
     if (! snd_load_snd(snd, name, &err)) {
@@ -323,19 +306,19 @@ snd_unload(snd_t *snd)
     if (! client.snd_initialized || snd == NULL || snd->name == NULL)
         return;
 
-    print("unloading: %s, ref_count before: %d\n", snd->name, snd->ref_count);
+    //print("unloading: %s, ref_count before: %d\n", snd->name, snd->ref_count);
 
     // Decrement reference count
-    snd->ref_count--;
+    //snd->ref_count--;
 
     // If reference count drops to 0, free the sound data and remove from map
-    if (snd->ref_count <= 0) {
-        print("ref_count for %s dropped to 0. Freeing.\n", snd->name);
+    //if (snd->ref_count <= 0) {
+    //    print("ref_count for %s dropped to 0. Freeing.\n", snd->name);
         // Remove from hash table. The key is freed by the hash table's key_destroy_func.
         g_hash_table_remove(sound_map, snd->name);
         // Free the actual snd_t data and OpenAL buffer
-        snd_free_data(snd);
-    }
+        //snd_free_data(snd);
+    //}
 }
 
 void
@@ -504,9 +487,9 @@ snd_src_reap_cb(gpointer key, gpointer val, gpointer data)
     
     // Crucial: Decrement the reference count of the underlying sound data (snd_t)
     // as this source is no longer using it.
-    if (src->snd) {
-        snd_unload(src->snd); // This will handle freeing snd->name and snd if ref_count hits 0.
-    }
+    //if (src->snd) {
+    //    snd_unload(src->snd); // This will handle freeing snd->name and snd if ref_count hits 0.
+    //}
 
     // Note: The key (uint32_t *id) for client.sounds needs to be freed by snd_destroy_key,
     // which is provided as the key_destroy_func to g_hash_table_new_full.
@@ -543,7 +526,7 @@ snd_shutdown(void)
     if (sound_map != NULL) {
         // Iterate through the sound_map to ensure all snd_t objects are freed.
         // This is important because snd_unload might not have been called for all.
-        GHashTableIter iter;
+      /*  GHashTableIter iter;
         gpointer key, value;
         g_hash_table_iter_init(&iter, sound_map);
         while (g_hash_table_iter_next(&iter, &key, &value)) {
@@ -551,7 +534,7 @@ snd_shutdown(void)
             printerr("Warning: Sound '%s' still in map during shutdown (ref_count: %d). Forcing free.\n",
                      snd->name ? snd->name : "UNKNOWN", snd->ref_count);
             //snd_free_data(snd); // Force free any remaining snd_t data
-        }
+        }*/
         g_hash_table_destroy(sound_map); // This will free the keys, but we've freed values.
         sound_map = NULL; // Invalidate the global pointer
     }
