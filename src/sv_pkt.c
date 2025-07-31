@@ -43,7 +43,7 @@ sv_player_attack(conn_t *conn, player_t *player, int32_t weapon)
     vec3_t pos, dir, up, right, tmp, v;
 
     if (weapon != 1)
-	return;
+		return;
 
     obj = player->obj;
 
@@ -54,41 +54,39 @@ sv_player_attack(conn_t *conn, player_t *player, int32_t weapon)
 
 
     for (i = 0; i < G_N_ELEMENTS(origins); i++) {
-	obj = g_new0(object_t, 1);
-	obj->phys = OBJ_PHYS_LASER;
-	obj->notarget = TRUE;
+		obj = g_new0(object_t, 1);
+		obj->phys = OBJ_PHYS_LASER;
+		obj->notarget = TRUE;
 
-	sv_spawn_obj(obj, "laser");
+		sv_spawn_obj(obj, "laser");
 
-	quat_cp(orient, obj->orient);
+		quat_cp(orient, obj->orient);
 
-	// scale our origin along the camRight axis
-	vec3_cp(right, tmp);
-	vec3_scale(tmp, origins[i]);
+		// scale our origin along the camRight axis
+		vec3_cp(right, tmp);
+		vec3_scale(tmp, origins[i]);
 
-	// now subtract them to obtain the offset vector
+		// now subtract them to obtain the offset vector
     	vec3_cp(pos, obj->pos);
-	vec3_sub(obj->pos, tmp, obj->pos);
-	vec3_set(obj->posv, 0, 0, -30);
+		vec3_sub(obj->pos, tmp, obj->pos);
+		vec3_set(obj->posv, 0, 0, -30);
 
-	// move them forward
-	vec3_cp(dir, v);
-	vec3_norm(v);
-	vec3_scale(v, -obj->posv[Z]);
-	vec3_add(obj->pos, v, obj->pos);
+		// move them forward
+		vec3_cp(dir, v);
+		vec3_norm(v);
+		vec3_scale(v, -obj->posv[Z]);
+		vec3_add(obj->pos, v, obj->pos);
 
-	sv_send_obj_spawn(obj, NULL);
+		sv_send_obj_spawn(obj, NULL);
 
-#if 1
-    	/* play a sound */
-	{
-	    snd_src_t *src = g_new0(snd_src_t, 1);
-	    src->loop = FALSE;
-	    src->id = g_rand_int(server.rand);
+	   	/* play a sound */
+		{
+	    	snd_src_t *src = g_new0(snd_src_t, 1);
+	    	src->loop = FALSE;
+	    	src->id = g_rand_int(server.rand);
 	    
-	    sv_send_snd_spawn("short_shitty_laser.wav", src, obj, NULL);
-	}
-#endif
+	    	sv_send_snd_spawn("short_shitty_laser.wav", src, obj, NULL);
+		}
     }
 }
 
