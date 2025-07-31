@@ -675,81 +675,80 @@ net_send_pkts(net_state_t *net)
     uint32_t ticks;
 
     for (l = net->connections; l; l = l->next) {
-	conn = l->data;
-	ticks = net->clock->ticks();
+		conn = l->data;
+		ticks = net->clock->ticks();
 
-	/* send a ping if needed */
-	if (conn->sock->state == STATE_ESTABLISHED) {
-	    /* first check how long they have been idle */
-	    if (conn->last_rx_ping != 0 && ticks - conn->last_rx_ping > 30000) {
-		/* disconnect after 10 seconds */
-		pkt = net_pkt_new(PKT_CONN_PING_TIMEOUT, FALSE);
-		pkt->session_id = conn->session_id;
+		/* send a ping if needed */
+		if (conn->sock->state == STATE_ESTABLISHED) {
+	    	/* first check how long they have been idle */
+	    	if (conn->last_rx_ping != 0 && ticks - conn->last_rx_ping > 30000) {
+				/* disconnect after 10 seconds */
+				pkt = net_pkt_new(PKT_CONN_PING_TIMEOUT, FALSE);
+				pkt->session_id = conn->session_id;
 
-		/* send the packet to upper layers so they can
-		   do the cleanup.
+				/* send the packet to upper layers so they can
+		   			do the cleanup.
 		
                    NOTE: this can mess with the connections list so 
                          break here and we'll process the rest of the
                          packets next time
-		 */
-		net->pkt_cb(conn, pkt);
-		break;
-	    }
-	    /* idle time hasnt been hit, lets see if we need 
-	       to send a ping */
-	    if (ticks - conn->last_rx_ping > 2000 &&
-		ticks - conn->last_tx_ping > 300) {
-		pkt = net_pkt_new(PKT_PING, FALSE);
-		net_pkt_pack_uint32(pkt, 1, &ticks);
+		 		*/
+				net->pkt_cb(conn, pkt);
+				break;
+	    	}
+	    	/* idle time hasnt been hit, lets see if we need 
+	       		to send a ping */
+	    	if (ticks - conn->last_rx_ping > 2000 &&
+				ticks - conn->last_tx_ping > 300) {
+				pkt = net_pkt_new(PKT_PING, FALSE);
+				net_pkt_pack_uint32(pkt, 1, &ticks);
 		
-		net_send(net, conn, pkt);
-		conn->last_tx_ping = ticks;
-	    }
-	}
+				net_send(net, conn, pkt);
+				conn->last_tx_ping = ticks;
+	    	}
+		}
 
-	/* process reliable packets */
-	if (! g_queue_is_empty(conn->reliable_sendq)) {
-	    // this needs to be converted into a loop but i am going to wait until
-	    // i switch over to my own data types before i do this.
-	    // it might be difficult to traverse a g_queue structure without
-	    // modifying it
-	    // making it a loop will allow us to attempt to send multiple
-	    // reliable packets per frame (which could considerably improve performance)
+		/* process reliable packets */
+		if (! g_queue_is_empty(conn->reliable_sendq)) {
+	    	// this needs to be converted into a loop but i am going to wait until
+	    	// i switch over to my own data types before i do this.
+	    	// it might be difficult to traverse a g_queue structure without
+	    	// modifying it
+	    	// making it a loop will allow us to attempt to send multiple
+	    	// reliable packets per frame (which could considerably improve performance)
 
 
     	    /* transmit initial packet */
-	    if (conn->last_reliable_xmit > 0) {
-		/* we have already sent the packet once, wait for our retry
-		   time */
-		if (ticks - conn->last_reliable_xmit > 300) {
-		    pkt = g_queue_peek_head(conn->reliable_sendq);
+	    	if (conn->last_reliable_xmit > 0) {
+				/* we have already sent the packet once, wait for our retry
+		   			time */
+				if (ticks - conn->last_reliable_xmit > 300) {
+		    		pkt = g_queue_peek_head(conn->reliable_sendq);
 #if (NET_DEBUG >= 1)
-		    printf("[%c]    sending   reliable packet: [type:0x%04x] [seq:0x%08x] [sid:0x%08x] (retransmit)\n",
-			    is_client__new() ? 'c' : 's',
-			    pkt->type, pkt->sequence, pkt->session_id);
+		    		printf("[%c]    sending   reliable packet: [type:0x%04x] [seq:0x%08x] [sid:0x%08x] (retransmit)\n",
+			    		is_client__new() ? 'c' : 's',
+			    		pkt->type, pkt->sequence, pkt->session_id);
 #endif
-		    net->drv->send(net, conn, pkt);
-		    conn->last_reliable_xmit = ticks;
-		}
-	    } else {
-		pkt = g_queue_peek_head(conn->reliable_sendq);
+		    		net->drv->send(net, conn, pkt);
+		    		conn->last_reliable_xmit = ticks;
+				}
+	    	} else {
+				pkt = g_queue_peek_head(conn->reliable_sendq);
 #if (NET_DEBUG >= 4)
-		if (g_random_int() % 2)
-		    continue;
+				if (g_random_int() % 2)
+		    		continue;
 #endif
-		net->drv->send(net, conn, pkt);
-		conn->last_reliable_xmit = ticks;
+				net->drv->send(net, conn, pkt);
+				conn->last_reliable_xmit = ticks;
 #if (NET_DEBUG >= 2)
-       		if (pkt->type != PKT_OBJ_UPDATE) {
-		    printf("[%c]    sending   reliable packet: [type:0x%04x] [seq:0x%08x] [sid:0x%08x]\n",
-			    is_client__new() ? 'c' : 's',
-			    pkt->type, pkt->sequence, pkt->session_id);
-		}
+       			if (pkt->type != PKT_OBJ_UPDATE) {
+		    		printf("[%c]    sending   reliable packet: [type:0x%04x] [seq:0x%08x] [sid:0x%08x]\n",
+			    		is_client__new() ? 'c' : 's',
+			    	pkt->type, pkt->sequence, pkt->session_id);
+				}
 #endif
-	    }
-	}
+	    	}
+		}
     }
-
     /* don't delete the reliable packet now, wait for ack */
 }
