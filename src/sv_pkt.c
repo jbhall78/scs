@@ -36,7 +36,7 @@ sv_send_conn_registered(player_t *player)
 void
 sv_player_attack(conn_t *conn, player_t *player, int32_t weapon)
 {
-    real origins[] = { -3, 3 };
+    real origins[] = { -1, 1 };
     object_t *obj;
     int8_t i = 0;
     quat_t orient;
@@ -62,9 +62,15 @@ sv_player_attack(conn_t *conn, player_t *player, int32_t weapon)
 
 		quat_cp(orient, obj->orient);
 
-		// scale our origin along the camRight axis
-		vec3_cp(right, tmp);
-		vec3_scale(tmp, origins[i]);
+		vec3_t v;
+		vec3_zero(v);
+		vec3_cp(right, v);
+		vec3_scale(v, origins[i] * 10.0);
+		vec3_cp(v, tmp);
+
+		vec3_cp(up, v);
+		vec3_scale(v, -10.0);
+		vec3_sub(v,tmp, tmp);
 
 		// now subtract them to obtain the offset vector
     	vec3_cp(pos, obj->pos);
