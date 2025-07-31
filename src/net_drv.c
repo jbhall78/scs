@@ -709,37 +709,36 @@ net_send_pkts(net_state_t *net)
 		}
 
 		/* process reliable packets */
-		if (! g_queue_is_empty(conn->reliable_sendq)) {
-	    	// this needs to be converted into a loop but i am going to wait until
-	    	// i switch over to my own data types before i do this.
-	    	// it might be difficult to traverse a g_queue structure without
-	    	// modifying it
-	    	// making it a loop will allow us to attempt to send multiple
-	    	// reliable packets per frame (which could considerably improve performance)
-
-
+	    if (! g_queue_is_empty(conn->reliable_sendq)) {
     	    /* transmit initial packet */
 	    	if (conn->last_reliable_xmit > 0) {
 				/* we have already sent the packet once, wait for our retry
 		   			time */
 				if (ticks - conn->last_reliable_xmit > 300) {
-		    		pkt = g_queue_peek_head(conn->reliable_sendq);
+		    		//pkt = g_queue_peek_head(conn->reliable_sendq);
+					for (guint i = 0; i < g_queue_get_length(conn->reliable_sendq); i++) {
+        				pkt_t *pkt = g_queue_peek_nth(conn->reliable_sendq, i);
+
 #if (NET_DEBUG >= 1)
-		    		printf("[%c]    sending   reliable packet: [type:0x%04x] [seq:0x%08x] [sid:0x%08x] (retransmit)\n",
-			    		is_client__new() ? 'c' : 's',
-			    		pkt->type, pkt->sequence, pkt->session_id);
+		    			printf("[%c]    sending   reliable packet: [type:0x%04x] [seq:0x%08x] [sid:0x%08x] (retransmit)\n",
+			    			is_client__new() ? 'c' : 's',
+			    			pkt->type, pkt->sequence, pkt->session_id);
 #endif
-		    		net->drv->send(net, conn, pkt);
-		    		conn->last_reliable_xmit = ticks;
+		    			net->drv->send(net, conn, pkt);
+		    			conn->last_reliable_xmit = ticks;
+					}
 				}
 	    	} else {
-				pkt = g_queue_peek_head(conn->reliable_sendq);
+				//pkt = g_queue_peek_head(conn->reliable_sendq);
 #if (NET_DEBUG >= 4)
 				if (g_random_int() % 2)
 		    		continue;
 #endif
-				net->drv->send(net, conn, pkt);
-				conn->last_reliable_xmit = ticks;
+				for (guint i = 0; i < g_queue_get_length(conn->reliable_sendq); i++) {
+        			pkt_t *pkt = g_queue_peek_nth(conn->reliable_sendq, i);
+					net->drv->send(net, conn, pkt);
+					conn->last_reliable_xmit = ticks;
+				}
 #if (NET_DEBUG >= 2)
        			if (pkt->type != PKT_OBJ_UPDATE) {
 		    		printf("[%c]    sending   reliable packet: [type:0x%04x] [seq:0x%08x] [sid:0x%08x]\n",
