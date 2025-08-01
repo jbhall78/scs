@@ -329,7 +329,7 @@ snd_play(snd_src_t *src)
 
     alGetError();
 
-    print("playing sound: %u\n", src->id);
+    //print("playing sound: %u\n", src->id);
     alSourcePlay(src->src_id);
 
     if (alGetError() != AL_NO_ERROR) 
@@ -452,9 +452,9 @@ snd_src_register(snd_src_t *src)
 
     *id = src->id;
 
-    print("inserting: %u: %d\n", src->id, g_hash_table_size(client.sounds));
+    //print("inserting: %u: %d\n", src->id, g_hash_table_size(client.sounds));
     g_hash_table_insert(client.sounds, id, src); 
-    print("  sounds: %d\n", g_hash_table_size(client.sounds));
+    //print("  sounds: %d\n", g_hash_table_size(client.sounds));
 }
 
 gboolean
@@ -483,7 +483,7 @@ snd_src_reap_cb(gpointer key, gpointer val, gpointer data)
     }
     src->src_id = 0; // Invalidate source ID
 
-    print("reaped sound: %u\n", src->id);
+    //print("reaped sound: %u\n", src->id);
     
     // Crucial: Decrement the reference count of the underlying sound data (snd_t)
     // as this source is no longer using it.

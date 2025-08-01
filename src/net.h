@@ -12,7 +12,7 @@
 
 #define SCS_NET_VER  0x01
 #define SCS_NET_GAME "scs"
-#define SCS_NET_PORT 31337
+#define SCS_NET_PORT 27015
 
 typedef enum {
     MSG_ACK            = 0x00,
