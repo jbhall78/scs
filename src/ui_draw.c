@@ -42,17 +42,17 @@ ui_draw_cursor(widget_t *w)
     bot   = wr->mpos[Y] - wr->cursor->size[HEIGHT];
 
     glBegin(GL_QUADS);
-	glTexCoord2f(0,  0);
-	glVertex2d(left, bot);
+		glTexCoord2f(0,  0);
+		glVertex2d(left, bot);
 	    
-	glTexCoord2f(1, 0);
-	glVertex2d(right, bot);
+		glTexCoord2f(1, 0);
+		glVertex2d(right, bot);
     
-	glTexCoord2f(1, 1);
-	glVertex2d(right, top);
+		glTexCoord2f(1, 1);
+		glVertex2d(right, top);
     
-	glTexCoord2f(0,  1);
-	glVertex2d(left, top);
+		glTexCoord2f(0,  1);
+		glVertex2d(left, top);
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
@@ -114,30 +114,30 @@ ui_draw_arrow(direction_t direction, uint16_t padding, widget_posv_t pos, widget
     switch(direction) {
 	case NORTH:
 	    glBegin(GL_TRIANGLES);
-	    glVertex2f(left, bot);
-	    glVertex2f(right, bot);
-	    glVertex2f(cx, top);
+	    	glVertex2f(left, bot);
+	    	glVertex2f(right, bot);
+	    	glVertex2f(cx, top);
 	    glEnd();
 	    break;
 	case SOUTH:
 	    glBegin(GL_TRIANGLES);
-	    glVertex2f(cx, bot);
-	    glVertex2f(right, top);
-	    glVertex2f(left, top);
+	    	glVertex2f(cx, bot);
+	    	glVertex2f(right, top);
+	    	glVertex2f(left, top);
 	    glEnd();
 	    break;
 	case WEST:
 	    glBegin(GL_TRIANGLES);
-	    glVertex2f(right, bot);
-	    glVertex2f(right, top);
-	    glVertex2f(left, cy);
+	    	glVertex2f(right, bot);
+	    	glVertex2f(right, top);
+	    	glVertex2f(left, cy);
 	    glEnd();
 	    break;
 	case EAST:
 	    glBegin(GL_TRIANGLES);
-	    glVertex2f(left, bot);
-	    glVertex2f(right, cy);
-	    glVertex2f(left, top);
+	    	glVertex2f(left, bot);
+	    	glVertex2f(right, cy);
+	    	glVertex2f(left, top);
 	    glEnd();
 	    break;
 	default:
@@ -160,18 +160,18 @@ ui_draw_3d_grid(real GRID_SCALE, real GRID_XSTEPS, real GRID_ZSTEPS)
     glColor3f(0.6758, 0.8438, 0.8984);	// light cyan -> white w/a little gray
     glLineWidth(1.0);
     glBegin(GL_LINES);
-    for (loopX = -GRID_XSTEPS; loopX <= GRID_XSTEPS; loopX++) {
-	double xLocal = GRID_SCALE * loopX;
+    	for (loopX = -GRID_XSTEPS; loopX <= GRID_XSTEPS; loopX++) {
+			double xLocal = GRID_SCALE * loopX;
 
-	glVertex3f(xLocal, 0.0, -zExtent);
-	glVertex3f(xLocal, 0.0,  zExtent);
-    }
-    for (loopZ = -GRID_ZSTEPS; loopZ <= GRID_ZSTEPS; loopZ++) {
-	double zLocal = GRID_SCALE * loopZ;
+			glVertex3f(xLocal, 0.0, -zExtent);
+			glVertex3f(xLocal, 0.0,  zExtent);
+    	}
+    	for (loopZ = -GRID_ZSTEPS; loopZ <= GRID_ZSTEPS; loopZ++) {
+			double zLocal = GRID_SCALE * loopZ;
 
-	glVertex3f(-xExtent, 0.0, zLocal);
-	glVertex3f( xExtent, 0.0, zLocal);
-    }
+			glVertex3f(-xExtent, 0.0, zLocal);
+			glVertex3f( xExtent, 0.0, zLocal);
+    	}
     glEnd();
     glPopMatrix();
 }
@@ -219,14 +219,14 @@ ui_draw_spiral_wireframe(real radius, real length)
     glColor3f(1.0, 1.0, 0.0);
 
     for (i = 0; i < length; i += 1.0) {
-	glBegin(GL_LINES);
-	glVertex3f(v[X], v[Y], -v[Z]);
-	v[X] = sin(ang * DEG2RAD) * (radius / 2);
-	v[Y] = cos(ang * DEG2RAD) * (radius / 2);
-	v[Z] += 1;
-	ang += 10;
-	glVertex3f(v[X], v[Y], -v[Z]);
-	glEnd();
+		glBegin(GL_LINES);
+			glVertex3f(v[X], v[Y], -v[Z]);
+			v[X] = sin(ang * DEG2RAD) * (radius / 2);
+			v[Y] = cos(ang * DEG2RAD) * (radius / 2);
+			v[Z] += 1;
+			ang += 10;
+			glVertex3f(v[X], v[Y], -v[Z]);
+		glEnd();
     }
     glPopMatrix();
 }
@@ -244,68 +244,68 @@ ui_draw_uv_sphere_wireframe(real radius, real long_ang, real lat_ang, vec3_t col
 
     /* longitude lines */
     for (i = 0; i <= 360; i += long_ang) {
-	real xx, yy;
+		real xx, yy;
 
-	glPushMatrix();
-	// try to accomplish without glrotate
-	glRotatef(i, 0, 1, 0);
+		glPushMatrix();
+		// try to accomplish without glrotate
+		glRotatef(i, 0, 1, 0);
 
-        glBegin(GL_LINES);
-            for (j = 0; j < 360; j += 5) {
-                double x, y, z;
+        	glBegin(GL_LINES);
+            	for (j = 0; j < 360; j += 5) {
+                	double x, y, z;
 
-                x = sin(j * DEG2RAD) * (radius / 2);
-                y = cos(j * DEG2RAD) * (radius / 2);
-  		z = 0;
-                glVertex3f(x, y, z);
+                	x = sin(j * DEG2RAD) * (radius / 2);
+                	y = cos(j * DEG2RAD) * (radius / 2);
+  					z = 0;
+                	glVertex3f(x, y, z);
 
-                x = sin((j + 5) * DEG2RAD) * (radius / 2);
-                y = cos((j + 5) * DEG2RAD) * (radius / 2);
-  		z = 0;
-                glVertex3f(x, y, z);
-            }
-        glEnd();
-	glPopMatrix();
+                	x = sin((j + 5) * DEG2RAD) * (radius / 2);
+                	y = cos((j + 5) * DEG2RAD) * (radius / 2);
+  					z = 0;
+                	glVertex3f(x, y, z);
+            	}
+        	glEnd();
+		glPopMatrix();
     }
     glPopMatrix();
 
     glColor3v(color_lat);
     glPushMatrix();
-    static int printed = 0;
-    for (i = 0; i <= 360; i+= lat_ang) {
-	double xx, yy;
-	double a, b, c, d, e, f;
+    	static int printed = 0;
+    	for (i = 0; i <= 360; i+= lat_ang) {
+			double xx, yy;
+			double a, b, c, d, e, f;
 
-	glPushMatrix();
+			glPushMatrix();
 
-	a = M_PI / 360;
-	b = a * i;
-	c = cos(b);
-	d = sin(b);
-	e = d * (radius / 2);
-	glTranslatef(0, c * (radius / 2), 0);
+			a = M_PI / 360;
+			b = a * i;
+			c = cos(b);
+			d = sin(b);
+			e = d * (radius / 2);
+			glTranslatef(0, c * (radius / 2), 0);
 
 /*
 	if (! printed)
 	    printf("i: %f, a: %f, b: %f, c: %f, d: %f, e: %f, t: %f\n", i, a, b, c, d, e, c * (radius / 2));
 */
 
-        glBegin(GL_LINES);
-            for (j = 0; j < 360; j += 5) {
-                double x, y, z;
+        	glBegin(GL_LINES);
+            	for (j = 0; j < 360; j += 5) {
+                	double x, y, z;
 
-                x = sin(j * DEG2RAD) * e;
-                y = 0;
-  		z = cos(j * DEG2RAD) * e; 
-                glVertex3f(x, y, z);
+                	x = sin(j * DEG2RAD) * e;
+                	y = 0;
+  					z = cos(j * DEG2RAD) * e; 
+                	glVertex3f(x, y, z);
 
-                x = sin((j + 5) * DEG2RAD) * e;
-                y = 0;
-  		z = cos((j + 5) * DEG2RAD) * e;
-                glVertex3f(x, y, z);
-            }
-        glEnd();
-	glPopMatrix();
+                	x = sin((j + 5) * DEG2RAD) * e;
+                	y = 0;
+  					z = cos((j + 5) * DEG2RAD) * e;
+                	glVertex3f(x, y, z);
+            	}
+        	glEnd();
+		glPopMatrix();
     }
 
     glPopMatrix();
@@ -316,40 +316,40 @@ static void
 ui_draw_digital_char(digital_char_type_t *char_type, digital_num_parts_t *parts, real x, real y, real height, real width)
 {
     if (*char_type == DIGITAL_CHAR_COLON) {
-	real cx;
-	real cy1, cy2;
-	real radius = width / 10;
-	real i;
-	real xx, yy;
+		real cx;
+		real cy1, cy2;
+		real radius = width / 10;
+		real i;
+		real xx, yy;
 
-	cx  = width / 2 - (radius / 2);
-	cy1 = height / 4 * 1;
-	cy2 = height / 4 * 3;
+		cx  = width / 2 - (radius / 2);
+		cy1 = height / 4 * 1;
+		cy2 = height / 4 * 3;
 
-	// draw two circles at cx,cy1 & cx,cy2
-	glBegin(GL_POLYGON);
-	for (i = 0.0; i < M_PI*2; i += (M_PI*2/360*30)) {
-	    xx = x + cx + sin(i) * (radius / 2);
-	    yy = y + cy1 + cos(i) * (radius / 2);
-	    glVertex2f(xx, yy);
-	}
-	glEnd();
+		// draw two circles at cx,cy1 & cx,cy2
+		glBegin(GL_POLYGON);
+			for (i = 0.0; i < M_PI*2; i += (M_PI*2/360*30)) {
+	    		xx = x + cx + sin(i) * (radius / 2);
+	    		yy = y + cy1 + cos(i) * (radius / 2);
+	    		glVertex2f(xx, yy);
+			}
+		glEnd();
 
-	glBegin(GL_POLYGON);
-	for (i = 0.0; i < M_PI*2; i += (M_PI*2/360*30)) {
-	    xx = x + cx + sin(i) * (radius / 2);
-	    yy = y + cy2 + cos(i) * (radius / 2);
-	    glVertex2f(xx, yy);
-	}
-	glEnd();
+		glBegin(GL_POLYGON);
+			for (i = 0.0; i < M_PI*2; i += (M_PI*2/360*30)) {
+	    		xx = x + cx + sin(i) * (radius / 2);
+	    		yy = y + cy2 + cos(i) * (radius / 2);
+	    		glVertex2f(xx, yy);
+			}
+		glEnd();
 
-	return;
+		return;
     } else if (*char_type == DIGITAL_CHAR_NUM) {
-	real xpadding = width / 10; //5.0;
-	real ypadding = height / 15; // 5.0;
-	real extrusion_width = xpadding;	// height of 45degree triangle
-	real line_width = height / 8; // 15.0;
-	real line_height = line_width;
+		real xpadding = width / 10; //5.0;
+		real ypadding = height / 15; // 5.0;
+		real extrusion_width = xpadding;	// height of 45degree triangle
+		real line_width = height / 8; // 15.0;
+		real line_height = line_width;
 
 /*
 	static int printed = 0;
@@ -366,146 +366,146 @@ parts->mid_bot);
 */
 
 
-	/* left */
-	if (parts->left_top) {
-	    real left, right, top, top_e, bottom, bottom_e, center;
+		/* left */
+		if (parts->left_top) {
+		    real left, right, top, top_e, bottom, bottom_e, center;
 
-	    left     = x + xpadding;
-	    right    = x + xpadding + line_width;
-	    center   = x + xpadding + (line_width / 2);
-	    top_e    = y + height - ypadding - extrusion_width;
-	    top      = y + height - ypadding - extrusion_width * 2;
-	    bottom   = y + (height / 2) + extrusion_width;
-	    bottom_e = y + (height / 2);
+		    left     = x + xpadding;
+		    right    = x + xpadding + line_width;
+		    center   = x + xpadding + (line_width / 2);
+	   		top_e    = y + height - ypadding - extrusion_width;
+	    	top      = y + height - ypadding - extrusion_width * 2;
+	    	bottom   = y + (height / 2) + extrusion_width;
+	    	bottom_e = y + (height / 2);
 
-	    glBegin(GL_POLYGON);
-	        glVertex2f(center, bottom_e);
-		glVertex2f(right, bottom);
-		glVertex2f(right, top);
-		glVertex2f(center, top_e);
-		glVertex2f(left, top);
-		glVertex2f(left, bottom);
-	    glEnd();
-	}
-	if (parts->left_bot) {
-	    real left, right, top, top_e, bottom, bottom_e, center;
+	    	glBegin(GL_POLYGON);
+	        	glVertex2f(center, bottom_e);
+				glVertex2f(right, bottom);
+				glVertex2f(right, top);
+				glVertex2f(center, top_e);
+				glVertex2f(left, top);
+				glVertex2f(left, bottom);
+	    	glEnd();
+		}
+		if (parts->left_bot) {
+	    	real left, right, top, top_e, bottom, bottom_e, center;
 
-	    left     = x + xpadding;
-	    right    = x + xpadding + line_width;
-	    center   = x + xpadding + (line_width / 2);
-	    top_e    = y + (height / 2);
-	    top      = y + (height / 2) - extrusion_width;
-	    bottom   = y + ypadding + extrusion_width*2;
-	    bottom_e = y + ypadding + extrusion_width;
+	    	left     = x + xpadding;
+	    	right    = x + xpadding + line_width;
+	    	center   = x + xpadding + (line_width / 2);
+	    	top_e    = y + (height / 2);
+	    	top      = y + (height / 2) - extrusion_width;
+	    	bottom   = y + ypadding + extrusion_width*2;
+	    	bottom_e = y + ypadding + extrusion_width;
 
-	    glBegin(GL_POLYGON);
-	        glVertex2f(center, bottom_e);
-		glVertex2f(right, bottom);
-		glVertex2f(right, top);
-		glVertex2f(center, top_e);
-		glVertex2f(left, top);
-		glVertex2f(left, bottom);
-	    glEnd();
-	}
-	/* right */
-	if (parts->right_top) {
-	    real left, right, top, top_e, bottom, bottom_e, center;
+	    	glBegin(GL_POLYGON);
+	        	glVertex2f(center, bottom_e);
+				glVertex2f(right, bottom);
+				glVertex2f(right, top);
+				glVertex2f(center, top_e);
+				glVertex2f(left, top);
+				glVertex2f(left, bottom);
+	    	glEnd();
+		}
+		/* right */
+		if (parts->right_top) {
+	    	real left, right, top, top_e, bottom, bottom_e, center;
 
-	    left     = x + width  - xpadding - line_width;
-	    right    = x + width  - xpadding;
-	    center   = x + width  - xpadding - (line_width / 2);
-	    top_e    = y + height - ypadding - extrusion_width;
-	    top      = y + height - ypadding - extrusion_width * 2;
-	    bottom   = y + (height / 2) + extrusion_width;
-	    bottom_e = y + (height / 2);
+	    	left     = x + width  - xpadding - line_width;
+	    	right    = x + width  - xpadding;
+	    	center   = x + width  - xpadding - (line_width / 2);
+	    	top_e    = y + height - ypadding - extrusion_width;
+	    	top      = y + height - ypadding - extrusion_width * 2;
+	    	bottom   = y + (height / 2) + extrusion_width;
+	    	bottom_e = y + (height / 2);
 
-	    glBegin(GL_POLYGON);
-	        glVertex2f(center, bottom_e);
-		glVertex2f(right, bottom);
-		glVertex2f(right, top);
-		glVertex2f(center, top_e);
-		glVertex2f(left, top);
-		glVertex2f(left, bottom);
-	    glEnd();
-	}
-	if (parts->right_bot) {
-	    real left, right, top, top_e, bottom, bottom_e, center;
+	    	glBegin(GL_POLYGON);
+	        	glVertex2f(center, bottom_e);
+				glVertex2f(right, bottom);
+				glVertex2f(right, top);
+				glVertex2f(center, top_e);
+				glVertex2f(left, top);
+				glVertex2f(left, bottom);
+	    	glEnd();
+		}
+		if (parts->right_bot) {
+	    	real left, right, top, top_e, bottom, bottom_e, center;
 
-	    left     = x + width  - xpadding - line_width;
-	    right    = x + width  - xpadding;
-	    center   = x + width  - xpadding - (line_width / 2);
-	    top_e    = y + (height / 2);
-	    top      = y + (height / 2) - extrusion_width;
-	    bottom   = y + ypadding + extrusion_width*2;
-	    bottom_e = y + ypadding + extrusion_width;
+	    	left     = x + width  - xpadding - line_width;
+	    	right    = x + width  - xpadding;
+	    	center   = x + width  - xpadding - (line_width / 2);
+	    	top_e    = y + (height / 2);
+	    	top      = y + (height / 2) - extrusion_width;
+	    	bottom   = y + ypadding + extrusion_width*2;
+	    	bottom_e = y + ypadding + extrusion_width;
 
-	    glBegin(GL_POLYGON);
-	        glVertex2f(center, bottom_e);
-		glVertex2f(right, bottom);
-		glVertex2f(right, top);
-		glVertex2f(center, top_e);
-		glVertex2f(left, top);
-		glVertex2f(left, bottom);
-	    glEnd();
-	}
-	/* middle */
-	if (parts->mid_top) {
-	    real left_e, left, right, right_e, top, bottom, center;
-	    left_e  = x + xpadding * 2;
-	    left    = x + xpadding * 2 + extrusion_width;
-	    right_e = x + width - xpadding * 2;
-	    right   = x + width - xpadding * 2 - extrusion_width;
-	    top     = y + height - ypadding;
-	    bottom  = y + height - ypadding - line_height;
-	    center  = y + height - ypadding - (line_height / 2);
+	    	glBegin(GL_POLYGON);
+	        	glVertex2f(center, bottom_e);
+				glVertex2f(right, bottom);
+				glVertex2f(right, top);
+				glVertex2f(center, top_e);
+				glVertex2f(left, top);
+				glVertex2f(left, bottom);
+	    	glEnd();
+		}
+		/* middle */
+		if (parts->mid_top) {
+	    	real left_e, left, right, right_e, top, bottom, center;
+	    	left_e  = x + xpadding * 2;
+	    	left    = x + xpadding * 2 + extrusion_width;
+	    	right_e = x + width - xpadding * 2;
+	    	right   = x + width - xpadding * 2 - extrusion_width;
+	    	top     = y + height - ypadding;
+	    	bottom  = y + height - ypadding - line_height;
+	    	center  = y + height - ypadding - (line_height / 2);
 
-	    glBegin(GL_POLYGON);
-	        glVertex2f(left_e, center);
-		glVertex2f(left, bottom);
-		glVertex2f(right, bottom);
-		glVertex2f(right_e, center);
-		glVertex2f(right, top);
-		glVertex2f(left, top);
-	    glEnd();
-	} 
-	if (parts->mid_mid) {
-	    real left_e, left, right, right_e, top, bottom, center;
-	    left_e  = x + xpadding * 2;
-	    left    = x + xpadding * 2 + extrusion_width;
-	    right_e = x + width - xpadding * 2;
-	    right   = x + width - xpadding * 2 - extrusion_width;
-	    center  = y + (height / 2);
-	    top     = y + (height / 2) + (line_height / 2);
-	    bottom  = y + (height / 2) - (line_height / 2);
+	    	glBegin(GL_POLYGON);
+	        	glVertex2f(left_e, center);
+				glVertex2f(left, bottom);
+				glVertex2f(right, bottom);
+				glVertex2f(right_e, center);
+				glVertex2f(right, top);
+				glVertex2f(left, top);
+	    	glEnd();
+		} 
+		if (parts->mid_mid) {
+	    	real left_e, left, right, right_e, top, bottom, center;
+	    	left_e  = x + xpadding * 2;
+	    	left    = x + xpadding * 2 + extrusion_width;
+	    	right_e = x + width - xpadding * 2;
+	    	right   = x + width - xpadding * 2 - extrusion_width;
+	    	center  = y + (height / 2);
+	    	top     = y + (height / 2) + (line_height / 2);
+	    	bottom  = y + (height / 2) - (line_height / 2);
 
-	    glBegin(GL_POLYGON);
-	        glVertex2f(left_e, center);
-		glVertex2f(left, bottom);
-		glVertex2f(right, bottom);
-		glVertex2f(right_e, center);
-		glVertex2f(right, top);
-		glVertex2f(left, top);
-	    glEnd();
-	}
-	if (parts->mid_bot) {
-	    real left_e, left, right, right_e, top, bottom, center;
-	    left_e  = x + xpadding*2;
-	    left    = x + xpadding*2 + extrusion_width;
-	    right_e = x + width - xpadding*2;
-	    right   = x + width - xpadding*2 - extrusion_width;
-	    center  = y + ypadding + (line_height / 2);
-	    top     = y + ypadding + line_height;
-	    bottom  = y + ypadding;
+	    	glBegin(GL_POLYGON);
+	        	glVertex2f(left_e, center);
+				glVertex2f(left, bottom);
+				glVertex2f(right, bottom);
+				glVertex2f(right_e, center);
+				glVertex2f(right, top);
+				glVertex2f(left, top);
+	    	glEnd();
+		}
+		if (parts->mid_bot) {
+	    	real left_e, left, right, right_e, top, bottom, center;
+	    	left_e  = x + xpadding*2;
+	    	left    = x + xpadding*2 + extrusion_width;
+	    	right_e = x + width - xpadding*2;
+	    	right   = x + width - xpadding*2 - extrusion_width;
+	    	center  = y + ypadding + (line_height / 2);
+	    	top     = y + ypadding + line_height;
+	    	bottom  = y + ypadding;
 
-	    glBegin(GL_POLYGON);
-	        glVertex2f(left_e, center);
-		glVertex2f(left, bottom);
-		glVertex2f(right, bottom);
-		glVertex2f(right_e, center);
-		glVertex2f(right, top);
-		glVertex2f(left, top);
-	    glEnd();
-	}
+	    	glBegin(GL_POLYGON);
+	        	glVertex2f(left_e, center);
+				glVertex2f(left, bottom);
+				glVertex2f(right, bottom);
+				glVertex2f(right_e, center);
+				glVertex2f(right, top);
+				glVertex2f(left, top);
+	    	glEnd();
+		}
     }
 }
 
@@ -547,94 +547,94 @@ ui_draw_digital_text(char *str, int _x, int _y, int _width, int _height)
 	c = str[i];
 	switch (c) {
 	    case '1':
-		char_type = DIGITAL_CHAR_NUM;
-		num_parts.right_top = 1;
-		num_parts.right_bot = 1;
-		break;
+			char_type = DIGITAL_CHAR_NUM;
+			num_parts.right_top = 1;
+			num_parts.right_bot = 1;
+			break;
 	    case '2':
-		char_type = DIGITAL_CHAR_NUM;
-		num_parts.mid_top   = 1;
-		num_parts.right_top = 1;
-		num_parts.mid_mid   = 1;
-		num_parts.left_bot  = 1;
-		num_parts.mid_bot   = 1;
-		break;
+			char_type = DIGITAL_CHAR_NUM;
+			num_parts.mid_top   = 1;
+			num_parts.right_top = 1;
+			num_parts.mid_mid   = 1;
+			num_parts.left_bot  = 1;
+			num_parts.mid_bot   = 1;
+			break;
 	    case '3':
-		char_type = DIGITAL_CHAR_NUM;
-		num_parts.mid_top   = 1;
-		num_parts.right_top = 1;
-		num_parts.mid_mid   = 1;
-		num_parts.right_bot = 1;
-		num_parts.mid_bot   = 1;
+			char_type = DIGITAL_CHAR_NUM;
+			num_parts.mid_top   = 1;
+			num_parts.right_top = 1;
+			num_parts.mid_mid   = 1;
+			num_parts.right_bot = 1;
+			num_parts.mid_bot   = 1;
 		break;
 	    case '4':
-		char_type = DIGITAL_CHAR_NUM;
-		num_parts.right_top = 1;
-		num_parts.left_top  = 1;
-		num_parts.mid_mid   = 1;
-		num_parts.right_bot = 1;
-		break;
+			char_type = DIGITAL_CHAR_NUM;
+			num_parts.right_top = 1;
+			num_parts.left_top  = 1;
+			num_parts.mid_mid   = 1;
+			num_parts.right_bot = 1;
+			break;
 	    case '5':
-		char_type = DIGITAL_CHAR_NUM;
-		num_parts.mid_top   = 1;
-		num_parts.left_top  = 1;
-		num_parts.mid_mid   = 1;
-		num_parts.right_bot = 1;
-		num_parts.mid_bot   = 1;
-		break;
+			char_type = DIGITAL_CHAR_NUM;
+			num_parts.mid_top   = 1;
+			num_parts.left_top  = 1;
+			num_parts.mid_mid   = 1;
+			num_parts.right_bot = 1;
+			num_parts.mid_bot   = 1;
+			break;
 	    case '6':
-		char_type = DIGITAL_CHAR_NUM;
-		num_parts.mid_top   = 1;
-		num_parts.left_top  = 1;
-		num_parts.mid_mid   = 1;
-		num_parts.left_bot  = 1;
-		num_parts.right_bot = 1;
-		num_parts.mid_bot   = 1;
-		break;
+			char_type = DIGITAL_CHAR_NUM;
+			num_parts.mid_top   = 1;
+			num_parts.left_top  = 1;
+			num_parts.mid_mid   = 1;
+			num_parts.left_bot  = 1;
+			num_parts.right_bot = 1;
+			num_parts.mid_bot   = 1;
+			break;
 	    case '7':
-		char_type = DIGITAL_CHAR_NUM;
-		num_parts.mid_top   = 1;
-		num_parts.right_top = 1;
-		num_parts.right_bot = 1;
-		break;
+			char_type = DIGITAL_CHAR_NUM;
+			num_parts.mid_top   = 1;
+			num_parts.right_top = 1;
+			num_parts.right_bot = 1;
+			break;
 	    case '8':
-		char_type = DIGITAL_CHAR_NUM;
-		num_parts.mid_top   = 1;
-		num_parts.left_top  = 1;
-		num_parts.right_top = 1;
-		num_parts.mid_mid   = 1;
-		num_parts.left_bot  = 1;
-		num_parts.right_bot = 1;
-		num_parts.mid_bot   = 1;
-		break;
+			char_type = DIGITAL_CHAR_NUM;
+			num_parts.mid_top   = 1;
+			num_parts.left_top  = 1;
+			num_parts.right_top = 1;
+			num_parts.mid_mid   = 1;
+			num_parts.left_bot  = 1;
+			num_parts.right_bot = 1;
+			num_parts.mid_bot   = 1;
+			break;
 	    case '9':
-		char_type = DIGITAL_CHAR_NUM;
-		num_parts.mid_top   = 1;
-		num_parts.left_top  = 1;
-		num_parts.right_top = 1;
-		num_parts.mid_mid   = 1;
-		num_parts.right_bot = 1;
-		num_parts.mid_bot   = 1;
-		break;
+			char_type = DIGITAL_CHAR_NUM;
+			num_parts.mid_top   = 1;
+			num_parts.left_top  = 1;
+			num_parts.right_top = 1;
+			num_parts.mid_mid   = 1;
+			num_parts.right_bot = 1;
+			num_parts.mid_bot   = 1;
+			break;
 	    case '0':
-		char_type = DIGITAL_CHAR_NUM;
-		num_parts.mid_top   = 1;
-		num_parts.left_top  = 1;
-		num_parts.right_top = 1;
-		num_parts.left_bot  = 1;
-		num_parts.right_bot = 1;
-		num_parts.mid_bot   = 1;
-		break;
+			char_type = DIGITAL_CHAR_NUM;
+			num_parts.mid_top   = 1;
+			num_parts.left_top  = 1;
+			num_parts.right_top = 1;
+			num_parts.left_bot  = 1;
+			num_parts.right_bot = 1;
+			num_parts.mid_bot   = 1;
+			break;
 	    case ':':
-		char_type = DIGITAL_CHAR_COLON;
-		break;
+			char_type = DIGITAL_CHAR_COLON;
+			break;
 	    default:
-		print("warning: cannot draw char with digital font: '%c'\n", c);
-		continue;
-		break;
-	}
-	ui_draw_digital_char(&char_type, &num_parts, px, y, height, width);
-	px += width;
+			print("warning: cannot draw char with digital font: '%c'\n", c);
+			continue;
+			break;
+		}
+		ui_draw_digital_char(&char_type, &num_parts, px, y, height, width);
+		px += width;
     }
 }
 
@@ -806,7 +806,7 @@ ui_draw_earth(real x, real y, real z, real radius, int mode, real long_ang, real
 
     // object lighting parameters 
     if (mat == NULL)
-	mat = g_new0(m_mat_t, 1);
+		mat = g_new0(m_mat_t, 1);
     assert(mat != NULL);
 
     // configure opengl quadric
@@ -816,11 +816,11 @@ ui_draw_earth(real x, real y, real z, real radius, int mode, real long_ang, real
 	    gluQuadricDrawStyle(quad, GLU_LINE);
 	} else if (mode == 1) {
 	    gluQuadricDrawStyle(quad, GLU_FILL);
-    	    gluQuadricNormals(quad, GLU_SMOOTH);
+    	gluQuadricNormals(quad, GLU_SMOOTH);
 	} else if (mode == 2) {
 	    gluQuadricDrawStyle(quad, GLU_FILL);
-    	    gluQuadricNormals(quad, GLU_SMOOTH);
-    	    gluQuadricTexture(quad, 1);
+    	gluQuadricNormals(quad, GLU_SMOOTH);
+    	gluQuadricTexture(quad, 1);
 	}
     }
     assert(quad != NULL);
@@ -851,19 +851,19 @@ ui_draw_earth(real x, real y, real z, real radius, int mode, real long_ang, real
     glMaterialf(GL_FRONT, GL_SHININESS, mat->shininess);
 
     if (mode == 2) {
-	if (tex == NULL) {
-	    tex = tex_load("earth/hires.png");
-	}
-	assert(tex != NULL);
+		if (tex == NULL) {
+	    	tex = tex_load("earth/hires.png");
+		}
+		assert(tex != NULL);
 
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, tex->id);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, tex->id);
     }
 
     // set rotational parameters
     rotation += rotation_speed;
     if (rotation >= 360) {
-	rotation = 0;
+		rotation = 0;
     }
 
     // earth 
@@ -886,23 +886,23 @@ ui_draw_earth(real x, real y, real z, real radius, int mode, real long_ang, real
     lighting_disable();
 
     if (mode == 2)
-	glDisable(GL_TEXTURE_2D);
+		glDisable(GL_TEXTURE_2D);
 
     // longitude / latitude lines 
     glPushMatrix();
-	glRotatef(axis_rotation, 1.0, 0, 0);		// X
+		glRotatef(axis_rotation, 1.0, 0, 0);		// X
 
-	// fixup long/lat lines
-	// -10 degree looks ok after looking at a few map images
-	glRotatef(-10, 0.0, 1.0, 0);			// Y
+		// fixup long/lat lines
+		// -10 degree looks ok after looking at a few map images
+		glRotatef(-10, 0.0, 1.0, 0);			// Y
 
-	// apply movement rotation
-	glRotatef(rotation, 0.0, 1.0, 0);		// Y
+		// apply movement rotation
+		glRotatef(rotation, 0.0, 1.0, 0);		// Y
 
-        // draw long/lat lines
-        glLineWidth(1.0);
+		// draw long/lat lines
+    	glLineWidth(1.0);
 
-	// use polygon offset feature to draw sphere & long/lat overlay on top
+		// use polygon offset feature to draw sphere & long/lat overlay on top
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         ui_draw_uv_sphere_wireframe(radius*2, long_ang, lat_ang, color_long, color_lat);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
