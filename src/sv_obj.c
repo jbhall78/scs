@@ -255,28 +255,35 @@ sv_obj_update_pos_orient(object_t *obj)
 
     quat_to_vecs(obj->orient, dir[2], dir[1], dir[0]);
     if (obj->phys == OBJ_PHYS_LASER) {
+        // if the object is a laser just move it forward by our velocity
 	    vec3_t v;
 	    vec3_cp(dir[Z], v);
 	    vec3_norm(v);
 	    vec3_scale(v, obj->posv[Z]);
 	    vec3_add(obj->pos, v, obj->pos);
 
+        // delete after 4000 frames
 	    if (++obj->frame == 4000)
 	        return TRUE;
     } else {
+        // if it is a generic object iterate throught the x, y, z elements
 	    for (i = 0; i < 3; i++) {
+            // do nothing if we are not moving
 	        if (REAL_EQ(obj->posv[i], 0))
  	            continue;
 
             mod = obj->posv[i] / fabs(obj->posv[i]);
 	    
+            // clamp to limits
             if (fabs(obj->posv[i]) >= maxpos)
 	            obj->posv[i] = maxpos * mod;
 	    
+            // apply velocity
             vec3_scale(dir[i], obj->posv[i]);
             vec3_add(dir[i], obj->pos, obj->pos);
 	    
             if (obj->phys != OBJ_PHYS_NONE) {
+                // regular game physics is to slowly decelerate
 	            off = fabs(obj->posv[i]) - accel;
 	            if (off < 0)
 	                off = 0;
@@ -285,6 +292,7 @@ sv_obj_update_pos_orient(object_t *obj)
         }
     }
 
+    // rotate cube by 45 degrees every second
     extern object_t *cube_obj;
     if (obj == cube_obj) {
         static sys_timer_t *timer = NULL;
@@ -305,10 +313,11 @@ sv_obj_update_pos_orient(object_t *obj)
         return FALSE;
     }
 
-
+    // apply our X rotation
     if (! REAL_EQ(obj->rotv[X], 0)) {
     	mod = obj->rotv[X] / fabs(obj->rotv[X]);
 	
+        // clamp to limits
 	    if (fabs(obj->rotv[X]) >= maxrot)
 	        obj->rotv[X] = maxrot * mod;
 	
@@ -317,6 +326,7 @@ sv_obj_update_pos_orient(object_t *obj)
 
 #if 1
 	    if (obj->phys != OBJ_PHYS_NONE) {
+            // decelerate
 	        off = fabs(obj->rotv[X]) - accelrotxy;
 	        if (off < 0)
 		        off = 0;
@@ -326,9 +336,12 @@ sv_obj_update_pos_orient(object_t *obj)
 	    obj->rotv[X] = 0;
 #endif
     }
+
+    // apply our Y rotation
     if (! REAL_EQ(obj->rotv[Y], 0)) {
     	mod = obj->rotv[Y] / fabs(obj->rotv[Y]);
 	
+        // clamp to limits
 	    if (fabs(obj->rotv[Y]) >= maxrot)
 	        obj->rotv[Y] = maxrot * mod;
 	
@@ -337,6 +350,7 @@ sv_obj_update_pos_orient(object_t *obj)
 
 #if 1
 	    if (obj->phys != OBJ_PHYS_NONE) {
+            // decelerate
 	        off = fabs(obj->rotv[Y]) - accelrotxy;
 	        if (off < 0)
 		        off = 0;
@@ -346,21 +360,25 @@ sv_obj_update_pos_orient(object_t *obj)
 	    obj->rotv[Y] = 0;
 #endif
     }
+
+    // apply our Z rotation
     if (! REAL_EQ(obj->rotv[Z], 0)) {
     	mod = obj->rotv[Z] / fabs(obj->rotv[Z]);
 	
-	if (fabs(obj->rotv[Z]) >= maxrot)
-	    obj->rotv[Z] = maxrot * mod;
+        // clamp to limits
+    	if (fabs(obj->rotv[Z]) >= maxrot)
+	        obj->rotv[Z] = maxrot * mod;
 	
-	quat_set3(q, 0, 0, obj->rotv[Z]);
-	quat_mult(obj->orient, q);
+	    quat_set3(q, 0, 0, obj->rotv[Z]);
+	    quat_mult(obj->orient, q);
 
-	if (obj->phys != OBJ_PHYS_NONE) {
-	    off = fabs(obj->rotv[Z]) - accelrotz;
-	    if (off < 0)
-		    off = 0;
-	    obj->rotv[Z] = off * mod;
-	}
+	    if (obj->phys != OBJ_PHYS_NONE) {
+            // decelerate
+	        off = fabs(obj->rotv[Z]) - accelrotz;
+	        if (off < 0)
+		        off = 0;
+	        obj->rotv[Z] = off * mod;
+	    }
     }
 
     quat_norm(obj->orient);
