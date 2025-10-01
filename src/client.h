@@ -204,7 +204,7 @@ typedef struct {
 extern client_t client;
 extern cl_callbacks_t menu_callbacks;
 extern cl_callbacks_t game_callbacks;
-extern cl_callbacks_t newton_demo_callbacks;
+extern cl_callbacks_t survival_demo_callbacks;
 extern cl_callbacks_t globe_demo_callbacks;
 
 gboolean vid_init(GError **);

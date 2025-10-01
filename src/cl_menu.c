@@ -41,22 +41,20 @@ menu_single_player(widget_t *w, void *data)
 }
 
 static void
-menu_newton_demo(widget_t *w, void *data)
+menu_survival_demo(widget_t *w, void *data)
 {
     GError *tmp = NULL;
 
-#if 0 /* DISABLED DUE TO 32BIT ASSEMBLY */
-    if (cl_mode(&newton_demo_callbacks, &tmp) != OK) {
+    if (cl_mode(&survival_demo_callbacks, &tmp) != OK) {
         printerr("Client failed to load: %s\n", tmp->message);
         g_error_free(tmp);
 
 	if (client.console.initialized) {
-            client.console.enabled = TRUE;
+        client.console.enabled = TRUE;
 	    cl_mode(&menu_callbacks, NULL);
 	} else
-            cl_shutdown(1);
+        cl_shutdown(1);
     }
-#endif
 }
 
 static void
@@ -727,7 +725,7 @@ menu_load_engine_demos(void)
     pos[Y] = start - step*0;
     save_width = size[WIDTH];
     size[WIDTH] = 600;
-    b = ui_widget_button_new(w, "Newtonian Gravity Simulation", pos, size, menu_newton_demo);
+    b = ui_widget_button_new(w, "SSN-Based Survival Agent", pos, size, menu_survival_demo);
     ui_widget_button_set_color(b, "background", color2);
 
     pos[Y] = start - step*1;
